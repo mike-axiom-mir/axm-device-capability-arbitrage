@@ -131,6 +131,49 @@ recovery:
   bootloader_recovery: unknown
   known_brick_risk: unknown
   recovery_state: DOCUMENTED
+  paths:
+    - id: stock_factory_reset
+      from_state: stock
+      target_state: original_stock_firmware
+      method: manufacturer_factory_reset
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: unknown
+        application_state: not_applicable
+      source_claim_ids:
+        - stock_factory_reset
+      notes:
+        - "Roborock documents firmware return to the original factory version; map/history/account-state retention is not asserted here."
+    - id: return_to_stock_after_valetudo
+      from_state: rooted_valetudo
+      target_state: stock
+      method: return_to_stock
+      availability: false
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: not_applicable
+        user_data: not_applicable
+        application_state: not_applicable
+      source_claim_ids:
+        - post_modification_irreversibility
+      notes:
+        - "Valetudo explicitly states that reverting the rooted installation to stock is unavailable."
+    - id: rooted_state_reprovision
+      from_state: rooted_valetudo
+      target_state: rooted_valetudo
+      method: rooted_firmware_reflash_or_update
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - rooted_firmware_and_ssh_execution
+      notes:
+        - "The modified state can be maintained/reprovisioned through the documented rooted workflow; exact state retention is not established."
   notes:
     - "Roborock documents a factory reset that returns a stock S5 to its original factory firmware."
     - "Valetudo separately states that rooting/installing Valetudo is a permanent change and that reverting to stock is not available."
@@ -242,6 +285,7 @@ evidence:
 
 notes:
   - "This record intentionally treats recovery as state-dependent: stock reset exists, while post-Valetudo return-to-stock is documented as unavailable."
+  - "Structured recovery.paths now makes those state transitions explicit and evidence-linked rather than leaving them only in summary fields."
   - "The robot category pressures the schema because useful compute is physically coupled to mobile actuators, a battery, navigation state and an original appliance function."
   - "No local rooting, power measurement, market-price collection or long-duration non-vacuum workload test has been performed by AXM."
   - "Any modification/deployment should be limited to owned or explicitly authorized hardware and should preserve visible operator control over mobile actuators."
