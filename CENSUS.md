@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    6 / 25
-Categories: 6 / 8
+Devices:    7 / 25
+Categories: 7 / 8
 ```
 
 This counter is intentionally conservative. A candidate does not count merely because it looks interesting.
@@ -33,6 +33,7 @@ A device counts when it has:
 | 4 | Roborock S5 | Robot vacuum | Valetudo-supported OTA rooting, root SSH execution and local-only control; stock recovery differs materially from post-root recovery | COMMUNITY_VERIFIED | No | `devices/roborock/s5.yaml` |
 | 5 | Synology DiskStation DS220+ | NAS / storage appliance | Manufacturer-supported Container Manager path on exact model; 2 GB RAM, SATA persistence and documented reset/reinstall paths | DOCUMENTED | No | `devices/synology/ds220-plus.yaml` |
 | 6 | Dell Wyse 3040 Thin Client | Thin client / endpoint | Exact-model Debian 12 installation plus community OpenWrt execution; UEFI USB/PXE boot, AC Recovery and manufacturer sub-4-W power claim | COMMUNITY_VERIFIED | No | `devices/dell/wyse-3040.yaml` |
+| 7 | Amazon Fire TV Stick 4K Max 1st Gen / AFTKA | Media / TV / signage hardware | Manufacturer-documented Fire OS 7 APK sideload/launch path through opt-in ADB; application execution without evidence of root or unattended service startup | DOCUMENTED | No | `devices/amazon/fire-tv-stick-4k-max-1st-gen-aftka.yaml` |
 
 ## Category coverage
 
@@ -41,7 +42,7 @@ A device counts when it has:
 - [ ] IP camera / NVR
 - [ ] Phone / tablet / handheld terminal
 - [ ] Smart-home / microcontroller appliance
-- [ ] Media / TV / signage hardware
+- [x] Media / TV / signage hardware
 - [x] NAS / storage appliance
 - [x] Robot / autonomous appliance
 - [x] E-reader / e-ink device
@@ -61,12 +62,12 @@ These are research targets, **not capability claims**.
 1. One OpenIPC-supported IP camera with an exact SoC/model mapping.
 2. One old Android phone with unlock/recovery and offline operation.
 3. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
-4. One Android TV box or digital-signage device with clean local runtime.
-5. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
-6. One non-safety vehicle/infotainment computer with a documented application execution path.
-7. One console/handheld gaming device with a supported homebrew or Linux execution surface.
-8. One industrial/commercial surplus device with conventional local execution but non-PC market positioning.
-9. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
+4. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
+5. One non-safety vehicle/infotainment computer with a documented application execution path.
+6. One console/handheld gaming device with a supported homebrew or Linux execution surface.
+7. One industrial/commercial surplus device with conventional local execution but non-PC market positioning.
+8. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
+9. One additional media/signage box only if it exposes a materially different execution/recovery/locality pattern from the AFTKA Fire TV record.
 10. One additional thin client only if it exposes a materially different execution/recovery/power pattern from the Wyse 3040.
 
 ## Schema pressure discovered so far
@@ -112,9 +113,21 @@ Dell documents Wyse 3040 units with both 8 GB and 16 GB eMMC and optional WLAN/B
 
 Future market and matching work should preserve variant-sensitive state rather than silently assigning the most capable known configuration to every unit. Where a capability contract depends on a variant, the candidate should remain conditional until the actual unit configuration is observed.
 
+### Developer execution vs operating-system authority
+
+The seventh record exposes another execution-boundary problem:
+
+```text
+custom application execution != administrator/root ownership of the operating system
+```
+
+Amazon documents an opt-in ADB path for sideloading and launching custom APKs on Fire TV. That is a real custom-code surface. The evidence gathered for AFTKA does **not** establish root privilege, bootloader access, cold-boot application restart, fully offline operation, or low-level restore media.
+
+Future matching must preserve this distinction. A device can be useful as a sandboxed/application runtime without inheriting the capabilities of a general root Linux host.
+
 ## First comparison set is now structurally complete
 
-The low-power registry experiment now has three evidence-backed candidates from three marketed categories:
+The low-power registry experiment still has three evidence-backed candidates from three marketed categories:
 
 ```text
 TP-Link Archer C7 v5      -> router / OpenWrt
@@ -122,7 +135,9 @@ Synology DS220+           -> NAS / supported containers
 Dell Wyse 3040            -> thin client / conventional Debian
 ```
 
-This does **not** mean the comparison is complete. Used-market snapshots, common workload measurements, provisioning friction and power/restart evidence still need to be collected before ranking them.
+The Fire TV record is **not** silently added to that comparison merely because it has 2 GB RAM and Wi-Fi. Its unattended-start behavior, power profile, offline runtime and application lifecycle are still unknown.
+
+This does **not** mean the comparison is complete. Used-market snapshots, common workload measurements, provisioning friction and power/restart evidence still need to be collected before ranking the three current candidates.
 
 ## What the first milestone must prove
 
