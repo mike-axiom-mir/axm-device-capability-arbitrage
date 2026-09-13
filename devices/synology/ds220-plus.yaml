@@ -137,8 +137,38 @@ recovery:
   bootloader_recovery: unknown
   known_brick_risk: unknown
   recovery_state: DOCUMENTED
+  paths:
+    - id: mode_1_admin_network_reset
+      from_state: operating_dsm
+      target_state: operating_dsm
+      method: physical_reset_mode_1
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: partially_reset
+        user_data: preserved
+        application_state: unknown
+      source_claim_ids:
+        - official_reset_and_dsm_reinstall
+      notes:
+        - "The documented scope is administrator credential/network recovery; application/container-state effects are not asserted."
+    - id: mode_2_dsm_reinstall
+      from_state: operating_dsm
+      target_state: reinstalled_dsm
+      method: physical_reset_mode_2_and_dsm_reinstall
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: preserved
+        application_state: unknown
+      source_claim_ids:
+        - official_reset_and_dsm_reinstall
+      notes:
+        - "Synology documents stored data as unaffected while system configuration is cleared; application/container-state survival remains unknown."
   notes:
     - "Synology's current reset documentation distinguishes a DSM reinstallation path that clears system configuration while preserving stored data from a factory-reset path that erases user data."
+    - "The structured paths model only operations directly linked to evidence.claims in this record; the destructive erase-all path remains a legacy summary until its exact source claim is added."
     - "A generic recovery=true flag would hide materially different data impact."
 
 locality:
@@ -242,5 +272,6 @@ evidence:
 notes:
   - "This is the first NAS/storage-appliance record and the first census record with a manufacturer-supported container execution surface."
   - "It also adds a recovery distinction different from the Roborock case: DSM reinstallation may preserve stored data, while a separate factory-reset path erases it. Recovery quality therefore needs both target state and data-impact semantics."
+  - "Structured recovery.paths now preserves the evidence-linked Mode 1 and Mode 2 transitions without pretending application/container state survival is known."
   - "No local container test, used-market sample, drive-cost model or AXM power measurement has been performed."
   - "The DS220+ is a plausible candidate for the existing low-power local registry contract, but the repo should not mark it a contract winner until market cost, storage cost, fully offline provisioning and restart behavior are grounded."
