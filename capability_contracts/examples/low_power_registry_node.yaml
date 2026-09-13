@@ -1,0 +1,57 @@
+contract_version: "0.1"
+contract_id: low-power-local-registry-node
+
+purpose:
+  summary: "Maintain a small local registry/state index continuously without requiring a conventional PC."
+  marketed_product_category_required: false
+
+required:
+  execution:
+    custom_code: true
+    accepted_surfaces:
+      - linux_userspace
+      - native_binary
+      - container
+      - jvm
+      - wasm
+      - script_runtime
+  memory:
+    ram_mb_min: 64
+    persistent_state: true
+  connectivity:
+    local_networking: true
+  boot:
+    unattended_boot: true
+  locality:
+    cloud_required: false
+  recovery:
+    documented_recovery_path: true
+
+preferred:
+  power:
+    average_watts_max: 10
+  networking:
+    ethernet: true
+  execution:
+    open_firmware: true
+    package_manager: true
+  recovery:
+    removable_boot_or_dual_firmware: true
+  economics:
+    used_price_eur_max: 30
+    repeat_provisioning_minutes_max: 30
+
+excluded_or_penalized:
+  - "vendor cloud required for basic runtime"
+  - "no known recovery path"
+  - "hardware revisions cannot be distinguished"
+  - "unsafe mains modification required only to reach compute"
+
+scoring_notes:
+  - "Purchase price alone must not decide the result."
+  - "A router, thin client, NAS, TV box, phone or other device may qualify if the verified capability contract is met."
+  - "A multi-device composition may compete if total useful cost remains lower and recovery does not become materially worse."
+
+verification:
+  state: EXAMPLE_ONLY
+  note: "This contract exists to exercise the schema and future matcher; it is not yet a deployment recommendation."
