@@ -224,11 +224,13 @@ Current working structure:
 ├── EVIDENCE_STANDARD.md
 ├── SAFETY_AND_RECOVERY.md
 ├── CENSUS.md
+├── NEXT_BUILD.md
 ├── research/
 ├── devices/
 ├── capability_contracts/
 ├── evidence/
 ├── scoring/
+├── tools/
 └── experiments/
 ```
 
@@ -243,10 +245,11 @@ The structure should grow only when evidence or use requires it.
 - [`COST_MODEL.md`](COST_MODEL.md) — total useful cost instead of sticker-price ranking.
 - [`SAFETY_AND_RECOVERY.md`](SAFETY_AND_RECOVERY.md) — modification depth, authorization and recovery boundaries.
 - [`research/RESEARCH_SEED_v0.1.md`](research/RESEARCH_SEED_v0.1.md) — preserved origin direction before the split.
+- [`NEXT_BUILD.md`](NEXT_BUILD.md) — grounded next-build priorities and stop conditions.
 
-## First device record
+## Current census records
 
-The initial census entry is the Sony ILCE-6000 / α6000:
+### Sony ILCE-6000 / α6000 — consumer camera
 
 - [`devices/sony/ilce-6000.yaml`](devices/sony/ilce-6000.yaml)
 - [`evidence/sony/ilce-6000-doom.md`](evidence/sony/ilce-6000-doom.md)
@@ -254,6 +257,15 @@ The initial census entry is the Sony ILCE-6000 / α6000:
 The record deliberately leaves SoC, RAM, privilege depth, unattended boot, recovery quality and market cost unknown where the current evidence does not establish them.
 
 The important verified finding is the **execution surface**: a working public implementation demonstrates a custom PlayMemories/Android application running native game code on the camera, consuming physical controls, rendering custom frames and reading removable storage.
+
+### TP-Link Archer C7 v5 — Wi-Fi router
+
+- [`devices/tp-link/archer-c7-v5.yaml`](devices/tp-link/archer-c7-v5.yaml)
+- [`evidence/tp-link/archer-c7-v5-openwrt.md`](evidence/tp-link/archer-c7-v5-openwrt.md)
+
+The exact v5 hardware is represented as a small general Linux node after OpenWrt installation: QCA9563 / MIPS, 128 MB RAM, 16 MB flash, five Gigabit Ethernet ports, dual-band Wi-Fi, USB, serial, and a documented U-Boot/TFTP recovery path. Market price and measured power remain deliberately unfilled until evidence is collected.
+
+Current census count: **2 / 25 devices, 2 / 8 marketed categories**.
 
 ## Example capability contract
 
