@@ -1,0 +1,263 @@
+schema_version: "0.1"
+record_id: amazon-fire-tv-stick-4k-max-1st-gen-aftka
+
+identity:
+  manufacturer: Amazon
+  model: Fire TV Stick 4K Max - 1st Gen (2021)
+  common_name: Fire TV Stick 4K Max 1st Gen
+  marketed_category: media_streaming_device
+  hardware_revision: AFTKA
+  release_period: 2021
+  configuration_scope:
+    build_model: AFTKA
+    note: "This record is scoped to Amazon build model AFTKA, not later Fire TV Stick 4K Max generations."
+
+compute:
+  soc: MediaTek MT8696 + MT7921LS
+  architecture: 32_bit_application_abi
+  cpu: quad_core_1_8_ghz
+  cpu_cores: 4
+  clock_mhz: 1800
+  accelerator:
+    gpu: IMG_GE9215_750MHz
+    npu: unknown
+    dsp: unknown
+  notes:
+    - "Amazon's exact-model specification documents a 32-bit application ABI; this record does not infer kernel architecture beyond that statement."
+
+memory:
+  ram_mb: 2048
+  ram_type: DDR4
+  internal_persistent_storage_mb: 8000
+  removable_storage:
+    present: unknown
+  notes:
+    - "Amazon specifies 8 GB device storage; free application-writable capacity is smaller and has not been measured locally."
+
+execution:
+  surfaces:
+    - type: android_apk
+      environment: Fire_OS_7_Android_9_API_28
+      version: Fire OS 7
+      custom_code: true
+      privilege: application_user
+      access_method: adb_sideload_after_user_enabled_developer_options
+      state: DOCUMENTED
+      notes:
+        - "Amazon documents `adb install` for sideloading user-supplied APKs and launching them from the Fire TV UI or through Android activity-manager commands."
+        - "Application execution does not establish root, unrestricted Linux administration or bootloader access."
+    - type: adb
+      environment: Fire_OS_7
+      version: unknown
+      custom_code: true
+      privilege: unknown
+      access_method: local_network_adb_with_device_authorization
+      state: DOCUMENTED
+      notes:
+        - "Amazon documents network ADB after enabling ADB Debugging/Apps from Unknown Sources; the first connection requires visible authorization on the Fire TV device."
+        - "ADB availability is not represented as root privilege."
+
+connectivity:
+  ethernet:
+    present: optional_external_dongle
+    speed_mbps: 100
+  wifi:
+    present: true
+    standards:
+      - 802.11a
+      - 802.11b
+      - 802.11g
+      - 802.11n
+      - 802.11ac
+      - 802.11ax
+    mimo: 2x2
+    bands:
+      - 2.4_GHz
+      - 5_GHz
+    custom_code_socket_access: expected_android_app_capability_but_not_separately_verified_here
+  bluetooth:
+    present: true
+    version: "5.0"
+  usb:
+    present: true_for_power_and_documented_fire_tv_debug_flows_but_exact_aftka_data_mode_not_scoped_here
+    modes: unknown
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  controls:
+    - paired_remote
+  sensors: []
+  microphones:
+    - type: remote_microphone_accessory
+      built_into_device: false
+      accessible_to_custom_code: unknown
+  notes:
+    - "Amazon documents a microphone button on the remote. This does not prove that AFTKA itself contains a microphone or that arbitrary APKs can access the remote microphone."
+
+outputs:
+  display:
+    present: true
+    interface: HDMI
+    custom_rendering_verified: DOCUMENTED_android_application_surface
+  audio:
+    present: true
+    interface: HDMI
+    custom_audio_verified: DOCUMENTED_android_application_surface
+  leds: unknown
+  motors: []
+  relays: []
+
+power:
+  source:
+    battery: false
+    external_power: true
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "No credible exact-model wall-power measurement was collected. Adapter ratings and neighboring Fire TV models are not substituted for measured AFTKA consumption."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "The documented APK/ADB path does not establish cold-power-loss -> Fire OS -> custom-app automatic restart behavior."
+
+recovery:
+  factory_reset: true
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: official_factory_reset
+      from_state: configured_fire_os
+      target_state: fresh_setup_state
+      method: settings_or_remote_button_factory_reset
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: unknown
+      source_claim_ids:
+        - official_factory_reset
+      notes:
+        - "Amazon explicitly states that account information and downloaded content are removed. Application-local data impact is left unknown rather than inferred beyond the source."
+        - "This path does not prove recovery from boot-firmware corruption or unsupported low-level modification."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: true
+  local_network_operation: true
+  offline_operation: unknown
+  notes:
+    - "Amazon's stock setup flow requires Wi-Fi and signing in to or creating an Amazon account."
+    - "Amazon documents local-network ADB, but the evidence gathered here does not prove that a previously provisioned custom APK remains fully functional during an internet outage."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - development_computer_for_adb_sideload
+    - display_for_initial_setup_and_authorization
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "Amazon documents that AFTKA was sold through amazon.nl, but no current used-market sample was collected. Historical availability is not a price measurement."
+
+roles:
+  - role: local_display_kiosk
+    confidence: medium
+    reason: "The exact model has a documented Android APK runtime, HDMI output and local-network ADB sideload path, but unattended app restart and offline behavior remain unverified."
+  - role: media_player
+    confidence: high
+    reason: "Hardware media decode, HDMI output and Fire OS application execution are manufacturer-documented core capabilities."
+  - role: application_test_target
+    confidence: high
+    reason: "Amazon explicitly documents ADB installation and launch of sideloaded Fire TV applications."
+  - role: local_registry
+    confidence: low
+    reason: "2 GB RAM and networking are not enough by themselves; unattended boot, custom-service restart, wall power and cloud-independent operation are still unknown."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: exact_model_hardware_and_os
+      state: DOCUMENTED
+      source: "https://developer.amazon.com/docs/device-specs/device-specifications-fire-tv-streaming-media-player.html"
+      proves:
+        - "Fire TV Stick 4K Max 1st Gen (2021) build model AFTKA"
+        - "Fire OS 7 / Android API level 28"
+        - "MediaTek MT8696 + MT7921LS, quad-core 1.8 GHz CPU, 2 GB DDR4 RAM and 8 GB storage"
+        - "Wi-Fi 6 2x2 MIMO, Bluetooth 5.0 and optional 10/100 Ethernet dongle"
+        - "32-bit application ABI and IMG GE9215 750 MHz GPU"
+      does_not_prove:
+        - "root or bootloader access"
+        - "wall-power consumption"
+        - "unattended custom-app startup"
+    - id: documented_apk_sideload_and_launch
+      state: DOCUMENTED
+      source: "https://developer.amazon.com/docs/fire-tv/installing-and-running-your-app.html"
+      proves:
+        - "user-supplied APKs can be installed with adb install"
+        - "sideloaded apps can be launched from Fire TV or through an ADB activity-manager command"
+      does_not_prove:
+        - "root privilege"
+        - "persistent background execution across reboot"
+    - id: documented_adb_authorization
+      state: DOCUMENTED
+      source: "https://developer.amazon.com/docs/fire-tv/connecting-adb-to-device.html"
+      proves:
+        - "ADB Debugging and Apps from Unknown Sources can be enabled through Fire TV settings"
+        - "network ADB requires the Fire TV and development computer on the same network"
+        - "first ADB connection requires visible device authorization"
+      does_not_prove:
+        - "internet-facing remote administration"
+        - "root privilege"
+    - id: stock_setup_requires_network_and_account
+      state: DOCUMENTED
+      source: "https://www.amazon.com/gp/help/customer/display.html?nodeId=G7HTKNXBW4GPXSH6"
+      proves:
+        - "Amazon's Fire TV setup flow requires Wi-Fi"
+        - "Amazon's Fire TV setup flow requires sign-in to or creation of an Amazon account"
+      does_not_prove:
+        - "internet is required for every sideloaded app after provisioning"
+    - id: official_factory_reset
+      state: DOCUMENTED
+      source: "https://www.amazon.com/gp/help/customer/display.html?nodeId=GBVZEZKT6A6LH4UP"
+      proves:
+        - "Fire TV provides a settings/remote-button factory reset path"
+        - "factory reset removes account information and downloaded content"
+        - "the device returns to a setup/remote-pairing flow after reset"
+      does_not_prove:
+        - "recovery from boot-firmware corruption"
+        - "official flash-image availability"
+        - "bootloader or USB recovery"
+
+notes:
+  - "This is the first media/TV/signage-class census record."
+  - "The main schema lesson is that a real developer execution surface must not be silently promoted into administrator/root ownership of the operating system."
+  - "No AXM local ADB test, cold-power-loss test, offline-runtime test, wall-power measurement or used-market sample has been performed."
