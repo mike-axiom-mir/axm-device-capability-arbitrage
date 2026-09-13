@@ -1,0 +1,321 @@
+schema_version: "0.1"
+record_id: dell-wyse-3040
+
+identity:
+  manufacturer: Dell
+  model: Wyse 3040 Thin Client
+  common_name: Dell Wyse 3040
+  marketed_category: thin_client
+  hardware_revision: unknown
+  lifecycle:
+    product_availability: discontinued
+    state: DOCUMENTED
+  configuration_scope:
+    ram_mb: 2048
+    emmc_variants_mb:
+      - 8000
+      - 16000
+    wlan_bluetooth: optional
+    note: "Dell documents both 8 GB and 16 GB eMMC configurations and optional WLAN/Bluetooth. An individual unit must be inspected before treating variant-sensitive fields as exact."
+
+compute:
+  soc: Intel Cherry Trail
+  cpu: Intel Atom x5-Z8350
+  architecture: amd64
+  cpu_cores: 4
+  clock_mhz: 1440
+  notes:
+    - "Dell documents the x5-Z8350 quad-core 1.44 GHz platform; the Debian exact-model installation report identifies the usable architecture as amd64."
+
+memory:
+  ram_mb: 2048
+  ram_type: DDR3L_1600
+  soldered: true
+  internal_persistent_storage_mb:
+    variants:
+      - 8000
+      - 16000
+    type: eMMC
+    soldered: true
+  removable_storage:
+    present: false
+  external_storage_interfaces:
+    - USB_2_0
+    - USB_3_0
+  notes:
+    - "The marketed model spans 8 GB and 16 GB eMMC configurations; exact-unit storage must not be inferred from model name alone."
+
+execution:
+  surfaces:
+    - type: linux_userspace
+      environment: Debian
+      version: "Debian 12 in cited exact-model installation report"
+      custom_code: true
+      privilege: root
+      access_method: "UEFI USB boot followed by Debian installation to internal eMMC"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "Debian's InstallingDebianOn page for Dell Wyse 3040 documents a successful Debian 12 installation on the exact model."
+        - "The report requires GRUB installation to the EFI removable-media path because of the Wyse 3040 UEFI behavior."
+        - "Ethernet/Wi-Fi may require firmware; exact network behavior depends on configuration and installed firmware."
+    - type: linux_userspace
+      environment: OpenWrt
+      version: "community-built x86_64 Atom-targeted image; upstream image compatibility is not assumed"
+      custom_code: true
+      privilege: root
+      access_method: "USB-booted Linux environment writes a custom OpenWrt image to internal eMMC"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "A public exact-model project documents building and booting OpenWrt on multiple Wyse 3040 units."
+        - "The cited project explicitly warns its original guide is old and that stock/current OpenWrt images should not be assumed to work unchanged."
+    - type: manufacturer_app
+      environment: Dell_Wyse_ThinLinux
+      version: "ThinLinux 2.2 supported on 16 GB / 2 GB Wyse 3040 configurations"
+      custom_code: unknown
+      privilege: unknown
+      access_method: "Dell ThinLinux operating-system image"
+      state: DOCUMENTED
+      notes:
+        - "Dell describes ThinLinux as Ubuntu-Linux-based and able to run local applications, but this record does not promote that statement into arbitrary-code/root access without a stronger execution proof."
+
+connectivity:
+  ethernet:
+    present: true
+    ports_1gbit: 1
+  wifi:
+    present: optional
+    standards:
+      - 802.11a
+      - 802.11b
+      - 802.11g
+      - 802.11n
+      - 802.11ac
+    custom_code_socket_access: true_on_community_linux_when_supported_firmware_loaded
+  bluetooth:
+    present: optional
+  usb:
+    present: true
+    usb_2_0_ports: 3
+    usb_3_class_ports: 1
+    boot_supported: true
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  controls:
+    - power_button
+  sensors: []
+
+outputs:
+  display_ports:
+    count: 2
+    type: DisplayPort
+    custom_rendering_state: COMMUNITY_VERIFIED
+  audio:
+    combo_jack: true
+    integrated_speaker: documented_on_some_product_material
+    custom_audio_access: unknown
+  leds:
+    present: true
+  motors: []
+  relays: []
+
+power:
+  external_power:
+    present: true
+    documented_inputs:
+      - "5 Vdc / 3 A"
+      - "12 Vdc / 2 A"
+  manufacturer_claimed_consumption:
+    watts: "<4"
+    state: DOCUMENTED
+    source_class: manufacturer_datasheet
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: promising_unverified
+  notes:
+    - "Dell's less-than-4-W figure is a manufacturer product claim, not an AXM wall-power measurement and not yet tied to a specific Debian registry workload."
+
+boot:
+  firmware: UEFI
+  unattended_boot: configurable
+  ac_recovery:
+    options:
+      - PowerOff
+      - PowerOn
+      - LastState
+    state: DOCUMENTED
+  wake_on_lan: true
+  auto_on_schedule: documented
+  usb_boot: true
+  pxe_boot: true
+  auto_start_custom_code: supported_by_installed_linux_service_manager_but_not_locally_tested
+  secure_boot: configurable
+  bootloader_access: standard_uefi_setup_and_boot_menu
+  notes:
+    - "Dell documents AC Recovery, Wake-on-LAN, auto-on scheduling, USB boot support and UEFI/PXE boot."
+    - "End-to-end cold-power-loss -> Debian -> registry-service restart has not been locally verified."
+
+recovery:
+  factory_reset: bios_factory_defaults_documented
+  official_restore: thin_client_os_imaging_documented_but_not_scoped_as_primary_recovery_here
+  rescue_partition: unknown
+  removable_media_recovery: true
+  usb_recovery: true
+  serial_recovery: unknown
+  bootloader_recovery: uefi_boot_menu_and_usb_boot
+  known_brick_risk: unknown
+  recovery_state: COMMUNITY_VERIFIED
+  paths:
+    - id: reinstall_debian_from_usb
+      from_state: installed_linux_or_userspace_failure
+      target_state: fresh_debian_install
+      method: uefi_usb_boot_and_reinstall
+      availability: true
+      state: COMMUNITY_VERIFIED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: must_recreate
+      source_claim_ids:
+        - exact_model_debian_install
+        - official_usb_boot_and_firmware_controls
+      notes:
+        - "This is an OS reprovisioning path, not proof of recovery from failed eMMC, firmware flash or physical hardware damage."
+    - id: restore_bios_factory_defaults
+      from_state: altered_bios_configuration
+      target_state: factory_bios_configuration
+      method: bios_restore_factory_defaults
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: partially_reset
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - official_usb_boot_and_firmware_controls
+      notes:
+        - "Dell documents restoring factory BIOS settings. This path does not itself reinstall or recover the operating system."
+
+locality:
+  state: fully_local
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: false
+  local_network_operation: true
+  offline_operation: true
+  notes:
+    - "The community Debian/OpenWrt paths are conventional locally administered Linux installations and do not require a Dell cloud service for runtime."
+    - "Network access may still be convenient for package installation/updates; that is not equivalent to vendor-cloud dependence."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: 0_if_internal_emmc_is_sufficient
+  setup_minutes: unknown
+  special_tools:
+    - USB_flash_drive
+    - keyboard_for_initial_setup
+    - display_or_equivalent_console_for_initial_setup
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "A current used-market sample has not yet been collected. Do not use Dell's historical/new-product pricing as a used-market value."
+
+roles:
+  - role: local_registry
+    confidence: high
+    reason: "2 GB RAM, internal eMMC, Gigabit Ethernet, full community-verified Debian execution, configurable AC recovery and manufacturer-claimed sub-4-W consumption make this a strong contract candidate; market price and workload measurements are still missing."
+  - role: heartbeat_watchdog
+    confidence: high
+    reason: "Always-on thin-client form factor, local Linux, Ethernet, Wake-on-LAN and AC-recovery controls fit a small watchdog workload."
+  - role: lightweight_deterministic_worker
+    confidence: medium
+    reason: "General amd64 Linux execution is available, but the Atom CPU, 2 GB soldered RAM and small eMMC impose real workload limits."
+  - role: local_display_kiosk
+    confidence: high
+    reason: "Dual DisplayPort plus full Linux execution creates a conventional local signage/kiosk path beyond the device's original remote-desktop role."
+  - role: storage_node
+    confidence: low
+    reason: "8/16 GB soldered eMMC is limited; USB storage is possible but adds cost, failure surfaces and power."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-13"
+  claims:
+    - id: exact_model_hardware
+      state: DOCUMENTED
+      source: "https://www.dell.com/support/manuals/en-us/wyse-3040-thin-client/3040_ug/system-specifications?guid=guid-b35dd1df-32f3-4c36-84a9-52d9a5c0810c"
+      proves:
+        - "Intel Cherry Trail x5-Z8350 quad-core 1.44 GHz platform"
+        - "2 GB soldered DDR3L memory"
+        - "8 GB and 16 GB soldered eMMC variants"
+        - "Gigabit Ethernet, optional WLAN/Bluetooth, four USB ports and two DisplayPort outputs"
+        - "UEFI BIOS and Wake-on-LAN support"
+      does_not_prove:
+        - "which eMMC/WLAN variant a particular used unit contains"
+        - "Debian compatibility by itself"
+    - id: manufacturer_low_power_claim
+      state: DOCUMENTED
+      source: "https://i.dell.com/sites/csdocuments/shared-content_data-sheets_documents/en/wyse-3040-thin-client-exec-sum-and-data-sheet.pdf"
+      proves:
+        - "Dell markets the Wyse 3040 as consuming less than 4 watts"
+      does_not_prove:
+        - "AXM local wall-power draw"
+        - "idle/average/peak power for a Debian registry workload"
+    - id: exact_model_debian_install
+      state: COMMUNITY_VERIFIED
+      source: "https://wiki.debian.org/InstallingDebianOn/Dell/Wyse%203040"
+      proves:
+        - "Debian 12 installation was completed on a Dell Wyse 3040"
+        - "the platform is used as amd64"
+        - "internal eMMC is usable by Debian"
+        - "GRUB requires the EFI removable-media-path workaround on the documented unit"
+      does_not_prove:
+        - "identical behavior on every BIOS version or hardware option"
+        - "Wi-Fi works without the appropriate firmware"
+    - id: exact_model_openwrt_execution
+      state: COMMUNITY_VERIFIED
+      source: "https://github.com/pjobson/dell-wyse-3040-openwrt"
+      proves:
+        - "custom x86_64/Atom OpenWrt was built and installed to Wyse 3040 eMMC"
+        - "USB boot plus local Linux can be used to reimage the internal eMMC"
+        - "AC Recovery can be configured to Power On in BIOS"
+      does_not_prove:
+        - "current stock OpenWrt images work unchanged"
+        - "the old community instructions remain the best deployment path"
+    - id: official_thinlinux_support
+      state: DOCUMENTED
+      source: "https://www.dell.com/support/manuals/en-us/wyse-3040-thin-client/tlinux_2.2.x_rn/supported-platforms?guid=guid-64ab4fcb-6d2d-4d69-b647-1fe7e85ffaab&lang=en-us"
+      proves:
+        - "Dell ThinLinux 2.2 supports a Wyse 3040 16 GB flash / 2 GB RAM configuration with BIOS 1.2.5 or later"
+      does_not_prove:
+        - "arbitrary root execution in Dell ThinLinux"
+    - id: official_usb_boot_and_firmware_controls
+      state: DOCUMENTED
+      source: "https://www.dell.com/support/manuals/en-us/wyse-3040-thin-client/3040_ug/accessing-thin-client-bios-settings-on-wyse-thinlinux?guid=guid-c1e8988c-6824-4554-b7be-82edef949e1a&lang=en-us"
+      proves:
+        - "F12 UEFI boot menu can boot internal eMMC, PXE or attached USB media"
+        - "BIOS exposes restore-default and factory-default options"
+      does_not_prove:
+        - "recovery from eMMC hardware failure"
+        - "OS data preservation during reinstallation"
+    - id: official_power_boot_management
+      state: DOCUMENTED
+      source: "https://www.dell.com/support/manuals/en-us/wyse-cloud-client-manager/wyse-wms_1.0_ag/configuring-wyse-3040-thin-client-bios-settings?guid=guid-18edcf1d-6797-4823-bdfa-85c45ced03ad&lang=en-us"
+      proves:
+        - "Wyse 3040 BIOS management includes USB boot support"
+        - "AC Recovery can select restored-power behavior"
+        - "Wake-on-LAN and automatic power-on scheduling are configurable"
+
+notes:
+  - "This is the first thin-client/POS-class census record and the first candidate intentionally selected to complete the three-category comparison set for the low-power registry contract."
+  - "The record exposes a configuration-identity problem: model name alone does not determine 8-vs-16-GB eMMC or optional WLAN. Variant-sensitive facts remain enumerated rather than silently choosing the better configuration."
+  - "The manufacturer sub-4-W claim is promising but not substituted for local measured idle/average/peak workload power."
+  - "No AXM local install, cold-boot test, market-price sample, eMMC health measurement or long-duration registry workload has been performed."
