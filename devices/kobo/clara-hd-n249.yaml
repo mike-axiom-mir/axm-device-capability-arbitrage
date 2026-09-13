@@ -1,0 +1,206 @@
+schema_version: "0.1"
+record_id: kobo-clara-hd-n249
+
+identity:
+  manufacturer: Rakuten Kobo
+  model: Clara HD
+  common_name: Kobo Clara HD
+  marketed_category: ereader
+  hardware_revision: N249
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  note: "Community Kobo tooling targets ARM Linux generally, but this record does not promote an exact architecture claim without model-specific hardware evidence."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: 8000
+  storage_marketing_value: "8 GB"
+  removable_storage:
+    present: unknown
+  notes:
+    - "Kobo's launch material states 8 GB of storage; usable capacity is lower because system software occupies part of it."
+
+execution:
+  surfaces:
+    - type: native_binary
+      environment: Kobo Linux userspace
+      version: "firmware 4.38.23171 in cited working/regression report"
+      custom_code: true
+      privilege: unknown
+      access_method: "KOReader community installation/launcher path"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "KOReader contains an explicit Kobo Clara HD device definition."
+        - "A 2026 KOReader bug report documents Kobo Clara HD firmware 4.38.23171, a regression in newer builds, and rollback to a known working KOReader build."
+    - type: shell
+      environment: Kobo Linux userspace
+      version: unknown
+      custom_code: true
+      privilege: unknown
+      access_method: "NickelMenu cmd_spawn / cmd_output actions"
+      state: DOCUMENTED
+      notes:
+        - "NickelMenu is designed to launch custom scripts and actions on Kobo eReaders."
+        - "NickelMenu documentation includes command-spawn examples that execute local shell commands and can start telnetd."
+        - "NickelMenu currently states firmware 5.x is not supported; exact firmware compatibility must be checked before deployment."
+
+connectivity:
+  ethernet: false
+  wifi:
+    present: true
+    custom_code_socket_access: unknown
+  bluetooth: false
+  usb:
+    present: true
+    connector: unknown
+    mass_storage_or_user_storage_access: documented
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  controls:
+    - power_button
+    - touchscreen
+  sensors: []
+
+outputs:
+  display:
+    present: true
+    type: "6-inch HD Carta E Ink touchscreen"
+    resolution: unknown
+    pixel_density_ppi: 300
+    custom_rendering_verified: true
+    state: COMMUNITY_VERIFIED
+  frontlight:
+    present: true
+    type: ComfortLight_PRO
+  speaker:
+    present: false
+  motors: []
+  relays: []
+
+power:
+  battery:
+    present: true
+  external_power:
+    present: true
+    method: USB
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  thermal_notes: unknown
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+
+recovery:
+  factory_reset: documented
+  official_restore: documented_by_manual_factory_reset
+  rescue_partition: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  serial_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  notes:
+    - "Kobo documents a manual factory-reset sequence for the Clara HD that returns the reader to original settings and removes local books/settings."
+    - "NickelMenu documents its own uninstall/failsafe mechanism, but that is not equivalent to full firmware recovery."
+
+locality:
+  state: local_after_provisioning
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: true
+  note: "Community native applications and scripts execute locally after installation; Kobo's own setup/account requirements are a separate product-layer question still to research."
+
+economics:
+  market_region: unknown
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  setup_minutes: unknown
+  special_tools: []
+  replacement_availability: unknown
+  market_data_state: not_collected
+
+roles:
+  - role: offline_script_host
+    confidence: high
+    reason: "Community tooling demonstrates local native application execution and shell command/script launching on Kobo-class devices, with Clara HD-specific KOReader support evidence."
+  - role: low_power_human_machine_display
+    confidence: medium
+    reason: "E Ink display plus verified custom rendering makes the device interesting for slow-changing local status/UI workloads; refresh/power measurements are not yet collected."
+  - role: offline_data_courier
+    confidence: medium
+    reason: "USB-accessible local storage and local custom execution are documented, but automated transfer behavior still needs testing."
+  - role: always_on_infrastructure_node
+    confidence: low
+    reason: "Unattended boot, long-running networking, sleep behavior and power draw are not yet established for this workload."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-13"
+  claims:
+    - id: exact_model_identity
+      state: DOCUMENTED
+      source: "https://help.kobo.com/hc/en-us/articles/360019127253-Kobo-Clara-HD"
+      proves:
+        - "Kobo Clara HD model number is N249"
+        - "device exposes a power button and USB port"
+    - id: official_display_storage_launch_specs
+      state: DOCUMENTED
+      source: "https://www.kobo.com/news/rakuten-kobo-launches-kobo-clara-hd-its-newest-entry-level-feature-rich-ereader"
+      proves:
+        - "6-inch 300 ppi HD Carta E Ink display"
+        - "8 GB marketed storage"
+        - "ComfortLight PRO"
+    - id: clara_hd_native_application_execution
+      state: COMMUNITY_VERIFIED
+      source: "https://github.com/koreader/koreader/issues/15444"
+      proves:
+        - "KOReader was running on Kobo Clara HD firmware 4.38.23171"
+        - "a known-working KOReader build could be restored after a regression"
+      does_not_prove:
+        - "root privilege"
+        - "unattended boot"
+        - "support on every firmware version"
+    - id: clara_hd_device_support_in_koreader
+      state: COMMUNITY_VERIFIED
+      source: "https://github.com/koreader/koreader/blob/master/frontend/device/kobo/device.lua"
+      proves:
+        - "KOReader contains an explicit Kobo Clara HD device definition"
+    - id: nickelmenu_command_execution
+      state: DOCUMENTED
+      source: "https://github.com/pgaskin/NickelMenu"
+      proves:
+        - "NickelMenu launches custom scripts/actions on Kobo eReaders"
+        - "NickelMenu command actions can spawn local processes/shell commands"
+      does_not_prove:
+        - "Clara HD compatibility on firmware 5.x"
+        - "root privilege for every launched command"
+    - id: official_manual_reset
+      state: DOCUMENTED
+      source: "https://help.kobo.com/hc/en-us/articles/360017605314-Manual-reset-your-Kobo-Clara-Colour-Kobo-Clara-BW-Kobo-Clara-HD-Kobo-Nia-Kobo-Elipsa-Kobo-Clara-2E-Kobo-Elipsa-2E"
+      proves:
+        - "Kobo documents a manual factory-reset path for Clara HD"
+        - "the reset removes local content/settings and returns the reader to original settings"
+
+notes:
+  - "This record is intentionally useful without needing a precise CPU/RAM claim: the execution surface itself is evidenced."
+  - "The e-reader category pressures the schema differently from camera/router records because E Ink, aggressive sleep behavior and human-readable low-refresh output may be valuable while always-on compute may be a poor fit."
+  - "No used-market price or measured power data has been collected yet."
