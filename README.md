@@ -208,9 +208,11 @@ For each device, capture enough data to compare real capability, real cost, real
 
 Then test whether capability-first ranking exposes candidates that conventional product-category shopping would miss.
 
+Track progress in [`CENSUS.md`](CENSUS.md).
+
 ## Repository direction
 
-Planned structure:
+Current working structure:
 
 ```text
 /
@@ -221,7 +223,8 @@ Planned structure:
 ├── COST_MODEL.md
 ├── EVIDENCE_STANDARD.md
 ├── SAFETY_AND_RECOVERY.md
-├── device_classes/
+├── CENSUS.md
+├── research/
 ├── devices/
 ├── capability_contracts/
 ├── evidence/
@@ -230,6 +233,31 @@ Planned structure:
 ```
 
 The structure should grow only when evidence or use requires it.
+
+## Working research layers
+
+- [`FOUNDATION.md`](FOUNDATION.md) — protects the central hypothesis and root boundary.
+- [`RESEARCH_METHOD.md`](RESEARCH_METHOD.md) — discovery → execution surface → evidence → recovery → cost → role mapping.
+- [`CAPABILITY_SCHEMA.md`](CAPABILITY_SCHEMA.md) — v0.1 device-record semantics and unknown discipline.
+- [`EVIDENCE_STANDARD.md`](EVIDENCE_STANDARD.md) — truth states, source integrity, local verification and contradictions.
+- [`COST_MODEL.md`](COST_MODEL.md) — total useful cost instead of sticker-price ranking.
+- [`SAFETY_AND_RECOVERY.md`](SAFETY_AND_RECOVERY.md) — modification depth, authorization and recovery boundaries.
+- [`research/RESEARCH_SEED_v0.1.md`](research/RESEARCH_SEED_v0.1.md) — preserved origin direction before the split.
+
+## First device record
+
+The initial census entry is the Sony ILCE-6000 / α6000:
+
+- [`devices/sony/ilce-6000.yaml`](devices/sony/ilce-6000.yaml)
+- [`evidence/sony/ilce-6000-doom.md`](evidence/sony/ilce-6000-doom.md)
+
+The record deliberately leaves SoC, RAM, privilege depth, unattended boot, recovery quality and market cost unknown where the current evidence does not establish them.
+
+The important verified finding is the **execution surface**: a working public implementation demonstrates a custom PlayMemories/Android application running native game code on the camera, consuming physical controls, rendering custom frames and reading removable storage.
+
+## Example capability contract
+
+[`capability_contracts/examples/low_power_registry_node.yaml`](capability_contracts/examples/low_power_registry_node.yaml) demonstrates the inverse side of the project: start with a goal and required capabilities before looking at product categories.
 
 ## Governance roots
 
