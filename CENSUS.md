@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    2 / 25
-Categories: 2 / 8
+Devices:    3 / 25
+Categories: 3 / 8
 ```
 
 This counter is intentionally conservative. A candidate does not count merely because it looks interesting.
@@ -29,6 +29,7 @@ A device counts when it has:
 |---|---|---|---|---|---|---|
 | 1 | Sony ILCE-6000 / alpha 6000 | Mirrorless camera | Custom Android/PlayMemories APK execution; working DoomCam implementation | COMMUNITY_VERIFIED | No | `devices/sony/ilce-6000.yaml` |
 | 2 | TP-Link Archer C7 v5 | Wi-Fi router | Full OpenWrt Linux userspace with root administration/package management and documented U-Boot/TFTP recovery | COMMUNITY_VERIFIED | No | `devices/tp-link/archer-c7-v5.yaml` |
+| 3 | Kobo Clara HD / N249 | E-reader | Exact-model KOReader native-app execution plus documented NickelMenu script/process launching and official manual reset path | COMMUNITY_VERIFIED | No | `devices/kobo/clara-hd-n249.yaml` |
 
 ## Category coverage
 
@@ -40,7 +41,7 @@ A device counts when it has:
 - [ ] Media / TV / signage hardware
 - [ ] NAS / storage appliance
 - [ ] Robot / autonomous appliance
-- [ ] E-reader / e-ink device
+- [x] E-reader / e-ink device
 - [ ] Printer / office appliance
 - [ ] Console / handheld gaming device
 - [ ] Thin client / POS / kiosk
@@ -56,14 +57,14 @@ These are research targets, **not capability claims**.
 
 1. One OpenIPC-supported IP camera with an exact SoC/model mapping.
 2. One old Android phone with unlock/recovery and offline operation.
-3. One Kobo e-reader with a documented local execution path.
-4. One Valetudo-supported robot vacuum with exact rooting/recovery evidence.
-5. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
-6. One Synology/QNAP-class NAS with supported container execution.
-7. One Android TV box or digital-signage device with clean local runtime.
-8. One discarded thin client / POS terminal with conventional Linux support.
-9. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
-10. One non-safety vehicle/infotainment computer with a documented application execution path.
+3. One Valetudo-supported robot vacuum with exact rooting/recovery evidence.
+4. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
+5. One Synology/QNAP-class NAS with supported container execution.
+6. One Android TV box or digital-signage device with clean local runtime.
+7. One discarded thin client / POS terminal with conventional Linux support.
+8. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
+9. One non-safety vehicle/infotainment computer with a documented application execution path.
+10. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
 
 ## What the first milestone must prove
 
