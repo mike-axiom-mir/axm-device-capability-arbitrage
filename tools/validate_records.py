@@ -26,6 +26,32 @@ TRUTH_STATES = {
     "CONTRADICTED",
 }
 
+RECOVERY_IMPACT_VALUES = {
+    "preserved",
+    "erased",
+    "partially_reset",
+    "must_recreate",
+    "unknown",
+    "not_applicable",
+}
+
+REQUIRED_RECOVERY_PATH = {
+    "id",
+    "from_state",
+    "target_state",
+    "method",
+    "availability",
+    "state",
+    "data_impact",
+    "source_claim_ids",
+}
+
+REQUIRED_RECOVERY_IMPACT = {
+    "system_configuration",
+    "user_data",
+    "application_state",
+}
+
 REQUIRED_DEVICE_TOP_LEVEL = {
     "schema_version",
     "record_id",
@@ -68,10 +94,71 @@ def require_keys(data: dict[str, Any], keys: set[str], context: str) -> None:
         raise ValidationError(f"{context} missing required keys: {', '.join(missing)}")
 
 
+def require_nonempty_string(value: Any, context: str) -> None:
+    if not isinstance(value, str) or not value.strip():
+        raise ValidationError(f"{context} must be a non-empty string")
+
+
 def validate_truth_state(value: Any, context: str) -> None:
     if value not in TRUTH_STATES:
         allowed = ", ".join(sorted(TRUTH_STATES))
         raise ValidationError(f"{context} has invalid truth state {value!r}; allowed: {allowed}")
+
+
+def validate_recovery_paths(recovery: dict[str, Any], claim_ids: set[str]) -> None:
+    paths = recovery.get("paths")
+    if paths is None:
+        return
+    if not isinstance(paths, list) or not paths:
+        raise ValidationError("recovery.paths must be a non-empty list when present")
+
+    seen_path_ids: set[str] = set()
+
+    for index, path in enumerate(paths):
+        context = f"recovery.paths[{index}]"
+        if not isinstance(path, dict):
+            raise ValidationError(f"{context} must be a mapping")
+        require_keys(path, REQUIRED_RECOVERY_PATH, context)
+
+        path_id = path["id"]
+        require_nonempty_string(path_id, f"{context}.id")
+        if path_id in seen_path_ids:
+            raise ValidationError(f"duplicate recovery path id: {path_id}")
+        seen_path_ids.add(path_id)
+
+        for key in ("from_state", "target_state", "method"):
+            require_nonempty_string(path[key], f"{context}.{key}")
+
+        availability = path["availability"]
+        if availability not in (True, False, "unknown"):
+            raise ValidationError(
+                f"{context}.availability must be true, false, or 'unknown'"
+            )
+
+        validate_truth_state(path["state"], f"{context}.state")
+
+        impact = path["data_impact"]
+        if not isinstance(impact, dict):
+            raise ValidationError(f"{context}.data_impact must be a mapping")
+        require_keys(impact, REQUIRED_RECOVERY_IMPACT, f"{context}.data_impact")
+        for key in REQUIRED_RECOVERY_IMPACT:
+            value = impact[key]
+            if value not in RECOVERY_IMPACT_VALUES:
+                allowed = ", ".join(sorted(RECOVERY_IMPACT_VALUES))
+                raise ValidationError(
+                    f"{context}.data_impact.{key} has invalid value {value!r}; "
+                    f"allowed: {allowed}"
+                )
+
+        source_claim_ids = path["source_claim_ids"]
+        if not isinstance(source_claim_ids, list) or not source_claim_ids:
+            raise ValidationError(f"{context}.source_claim_ids must be a non-empty list")
+        for claim_id in source_claim_ids:
+            require_nonempty_string(claim_id, f"{context}.source_claim_ids[]")
+            if claim_id not in claim_ids:
+                raise ValidationError(
+                    f"{context}.source_claim_ids references unknown evidence claim {claim_id!r}"
+                )
 
 
 def validate_device(path: Path, seen_ids: set[str]) -> None:
@@ -79,8 +166,7 @@ def validate_device(path: Path, seen_ids: set[str]) -> None:
     require_keys(data, REQUIRED_DEVICE_TOP_LEVEL, "device record")
 
     record_id = data["record_id"]
-    if not isinstance(record_id, str) or not record_id.strip():
-        raise ValidationError("record_id must be a non-empty string")
+    require_nonempty_string(record_id, "record_id")
     if record_id in seen_ids:
         raise ValidationError(f"duplicate record_id: {record_id}")
     seen_ids.add(record_id)
@@ -132,13 +218,25 @@ def validate_device(path: Path, seen_ids: set[str]) -> None:
     claims = evidence.get("claims", [])
     if not isinstance(claims, list):
         raise ValidationError("evidence.claims must be a list")
+
+    claim_ids: set[str] = set()
     for index, claim in enumerate(claims):
         if not isinstance(claim, dict):
             raise ValidationError(f"evidence.claims[{index}] must be a mapping")
         for key in ("id", "state", "source"):
             if key not in claim:
                 raise ValidationError(f"evidence.claims[{index}] missing {key}")
+
+        claim_id = claim["id"]
+        require_nonempty_string(claim_id, f"evidence.claims[{index}].id")
+        if claim_id in claim_ids:
+            raise ValidationError(f"duplicate evidence claim id: {claim_id}")
+        claim_ids.add(claim_id)
+
         validate_truth_state(claim["state"], f"evidence.claims[{index}].state")
+        require_nonempty_string(claim["source"], f"evidence.claims[{index}].source")
+
+    validate_recovery_paths(recovery, claim_ids)
 
 
 def validate_contract(path: Path, seen_ids: set[str]) -> None:
@@ -146,8 +244,7 @@ def validate_contract(path: Path, seen_ids: set[str]) -> None:
     require_keys(data, REQUIRED_CONTRACT_TOP_LEVEL, "capability contract")
 
     contract_id = data["contract_id"]
-    if not isinstance(contract_id, str) or not contract_id.strip():
-        raise ValidationError("contract_id must be a non-empty string")
+    require_nonempty_string(contract_id, "contract_id")
     if contract_id in seen_ids:
         raise ValidationError(f"duplicate contract_id: {contract_id}")
     seen_ids.add(contract_id)
