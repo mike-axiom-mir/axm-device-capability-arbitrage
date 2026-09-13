@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    3 / 25
-Categories: 3 / 8
+Devices:    4 / 25
+Categories: 4 / 8
 ```
 
 This counter is intentionally conservative. A candidate does not count merely because it looks interesting.
@@ -30,6 +30,7 @@ A device counts when it has:
 | 1 | Sony ILCE-6000 / alpha 6000 | Mirrorless camera | Custom Android/PlayMemories APK execution; working DoomCam implementation | COMMUNITY_VERIFIED | No | `devices/sony/ilce-6000.yaml` |
 | 2 | TP-Link Archer C7 v5 | Wi-Fi router | Full OpenWrt Linux userspace with root administration/package management and documented U-Boot/TFTP recovery | COMMUNITY_VERIFIED | No | `devices/tp-link/archer-c7-v5.yaml` |
 | 3 | Kobo Clara HD / N249 | E-reader | Exact-model KOReader native-app execution plus documented NickelMenu script/process launching and official manual reset path | COMMUNITY_VERIFIED | No | `devices/kobo/clara-hd-n249.yaml` |
+| 4 | Roborock S5 | Robot vacuum | Valetudo-supported OTA rooting, root SSH execution and local-only control; stock recovery differs materially from post-root recovery | COMMUNITY_VERIFIED | No | `devices/roborock/s5.yaml` |
 
 ## Category coverage
 
@@ -40,7 +41,7 @@ A device counts when it has:
 - [ ] Smart-home / microcontroller appliance
 - [ ] Media / TV / signage hardware
 - [ ] NAS / storage appliance
-- [ ] Robot / autonomous appliance
+- [x] Robot / autonomous appliance
 - [x] E-reader / e-ink device
 - [ ] Printer / office appliance
 - [ ] Console / handheld gaming device
@@ -57,14 +58,26 @@ These are research targets, **not capability claims**.
 
 1. One OpenIPC-supported IP camera with an exact SoC/model mapping.
 2. One old Android phone with unlock/recovery and offline operation.
-3. One Valetudo-supported robot vacuum with exact rooting/recovery evidence.
-4. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
-5. One Synology/QNAP-class NAS with supported container execution.
-6. One Android TV box or digital-signage device with clean local runtime.
-7. One discarded thin client / POS terminal with conventional Linux support.
-8. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
-9. One non-safety vehicle/infotainment computer with a documented application execution path.
-10. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
+3. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
+4. One Synology/QNAP-class NAS with supported container execution.
+5. One Android TV box or digital-signage device with clean local runtime.
+6. One discarded thin client / POS terminal with conventional Linux support.
+7. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
+8. One non-safety vehicle/infotainment computer with a documented application execution path.
+9. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
+10. One additional mobile/robotic appliance only if it exposes a materially different recovery, sensor or actuator pattern from the S5.
+
+## Schema pressure discovered so far
+
+The fourth record exposes a recovery-model problem worth preserving:
+
+```text
+stock device recovery != post-modification recovery
+```
+
+For the Roborock S5, manufacturer factory reset is documented for the stock state, while Valetudo documents the rooted/install state as not returnable to stock. A single `factory_reset: true` field would therefore overstate recoverability after modification.
+
+Future records should preserve the device state in which a recovery path applies whenever persistent modification changes reversibility.
 
 ## What the first milestone must prove
 
