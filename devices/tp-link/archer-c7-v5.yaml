@@ -1,0 +1,194 @@
+schema_version: "0.1"
+record_id: tp-link-archer-c7-v5
+
+identity:
+  manufacturer: TP-Link
+  model: Archer C7 AC1750
+  common_name: Archer C7 v5
+  marketed_category: wifi_router
+  hardware_revision: v5
+
+compute:
+  soc: Qualcomm Atheros QCA9563
+  architecture: mips_24kc
+  cpu_cores: 1
+  clock_mhz: 750
+
+memory:
+  ram_mb: 128
+  internal_persistent_storage_mb: 16
+  flash_type: SPI
+  removable_storage:
+    present: false
+  external_storage_interfaces:
+    - USB_2_0
+
+execution:
+  surfaces:
+    - type: linux_userspace
+      environment: OpenWrt
+      version: "supported by current OpenWrt release line at check date"
+      custom_code: true
+      privilege: root
+      access_method: "OpenWrt firmware installation"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "OpenWrt provides release and snapshot images for Archer C7 v5."
+        - "OpenWrt exposes a writable Linux environment with package management."
+    - type: package_manager
+      environment: OpenWrt
+      custom_code: true
+      privilege: root
+      access_method: "OpenWrt package repositories"
+      state: DOCUMENTED
+    - type: shell
+      environment: OpenWrt
+      custom_code: true
+      privilege: root
+      access_method: SSH
+      state: DOCUMENTED
+    - type: uart
+      environment: bootloader_or_linux
+      custom_code: unknown
+      privilege: unknown
+      access_method: "3.3 V serial pads/holes on PCB"
+      state: DOCUMENTED
+
+connectivity:
+  ethernet:
+    present: true
+    ports_1gbit: 5
+  wifi:
+    present: true
+    bands:
+      - 2.4_GHz_bgn
+      - 5_GHz_anac
+    radios:
+      - Qualcomm Atheros QCA9563
+      - Qualcomm Atheros QCA9880
+  bluetooth: false
+  usb:
+    present: true
+    version: "2.0"
+    ports: 1
+  serial:
+    present: true
+    voltage: "3.3 V"
+    parameters: "115200 8N1"
+  gpio: unknown
+
+inputs:
+  controls:
+    - reset_button
+    - wps_button
+  sensors: []
+
+outputs:
+  leds:
+    count: 10
+  usb_host: true
+  relays: []
+  motors: []
+
+power:
+  supply:
+    voltage_vdc: 12
+    rated_current_a: 1.5
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: high_by_product_design
+  note: "12 V / 1.5 A is the supply rating, not measured consumption."
+
+boot:
+  bootloader: U-Boot
+  unattended_boot: true
+  auto_start_custom_code: supported_via_linux_services
+  secure_boot: unknown
+  boot_from_removable_media: false
+  bootloader_access: documented_via_tftp_recovery
+
+recovery:
+  factory_reset: unknown
+  official_restore: documented
+  rescue_partition: unknown
+  removable_media_recovery: false
+  usb_recovery: false
+  tftp_recovery: true
+  serial_recovery: possible_but_not_required_for_normal_recovery
+  bootloader_recovery: true
+  known_brick_risk: unknown
+  recovery_state: COMMUNITY_VERIFIED
+  notes:
+    - "OpenWrt documents TP-Link/U-Boot TFTP recovery for the exact v5 hardware."
+    - "Recovery uses a specifically named image served from a TFTP server."
+
+locality:
+  state: fully_local
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: false
+  local_network_operation: true
+  offline_operation: true
+
+ economics_placeholder: null
+
+economics:
+  market_region: unknown
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  setup_minutes: unknown
+  special_tools: []
+  replacement_availability: unknown
+  market_data_state: not_collected
+
+roles:
+  - role: local_registry
+    confidence: medium
+    reason: "128 MB RAM, writable Linux/OpenWrt, persistent flash and local networking fit small state/index workloads; exact application footprint still needs testing."
+  - role: mesh_relay
+    confidence: high
+    reason: "Networking is the native hardware role and OpenWrt provides full local control."
+  - role: heartbeat_watchdog
+    confidence: medium
+    reason: "Always-on router form factor and local Linux execution are a strong fit; long-term workload testing remains outstanding."
+  - role: deterministic_worker
+    confidence: medium
+    reason: "General Linux userspace execution is available, but CPU/RAM limits must be matched to the worker."
+  - role: storage_node
+    confidence: low
+    reason: "Only 16 MB internal flash; USB storage can extend capacity but adds hardware and cost."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-13"
+  claims:
+    - id: exact_openwrt_hardware_support
+      state: COMMUNITY_VERIFIED
+      source: "https://openwrt.org/toh/hwdata/tp-link/tp-link_archer_c7_v5"
+      proves:
+        - "QCA9563 750 MHz single-core platform"
+        - "128 MB RAM and 16 MB flash"
+        - "mips_24kc package architecture"
+        - "5 Gigabit Ethernet ports, dual-band Wi-Fi, USB 2.0 and serial"
+        - "current OpenWrt images exist for the exact v5 target"
+        - "TFTP recovery is documented"
+    - id: openwrt_general_execution_surface
+      state: DOCUMENTED
+      source: "https://openwrt.org/"
+      proves:
+        - "OpenWrt is Linux for embedded devices"
+        - "writable filesystem and package management are core platform properties"
+    - id: exact_recovery_path
+      state: COMMUNITY_VERIFIED
+      source: "https://openwrt.org/toh/tp-link/archer_c7"
+      proves:
+        - "Archer C7 v5 installation/restore can use TP-Link TFTP recovery"
+
+notes:
+  - "This record is useful because a consumer router becomes a general local Linux node once evaluated by execution surface rather than product label."
+  - "No used-market price or locally measured power data has been collected yet."
