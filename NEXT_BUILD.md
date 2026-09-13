@@ -1,6 +1,6 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Six census records now exercise six materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, and a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 now exposes configuration identity as a separate problem because one marketed model spans multiple eMMC and wireless configurations. A small structural validator and GitHub Actions workflow protect the machine-readable records without freezing the research schema too early.
+**Current state:** Initial foundation is in place. Seven census records now exercise seven materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, and a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem because one marketed model spans multiple eMMC and wireless configurations; the Fire TV AFTKA now shows that real custom application execution must remain distinct from administrator/root authority. A small structural validator and GitHub Actions workflow protect the machine-readable records without freezing the research schema too early.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -63,22 +63,48 @@ Market research and matching must therefore preserve observed unit configuration
 
 A later schema extension may need a more general variant/configuration representation, but do not freeze that shape until more devices pressure it.
 
+### Execution-authority rule learned from Fire TV AFTKA
+
+A documented custom-code path is not automatically an administrator-owned operating system.
+
+For Fire TV Stick 4K Max 1st Gen (`AFTKA`), Amazon documents:
+
+```text
+user enables developer options
+  -> user authorizes ADB connection
+  -> custom APK can be sideloaded and launched
+```
+
+That proves a real application execution surface. It does **not** prove:
+
+```text
+root
+bootloader access
+cold-boot custom-app restart
+fully offline provisioning/runtime
+low-level restore media
+```
+
+Future matching must preserve sandbox/application-level capability without silently upgrading it to general Linux/root capability.
+
+The Fire TV therefore does not enter the registry comparison merely because it has 2 GB RAM and networking. A candidate must satisfy the contract, not resemble a computer on paper.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-Next records should maximize schema pressure rather than collect more routers, NAS boxes, robot vacuums or conventional thin clients.
+Next records should maximize schema pressure rather than collect more routers, NAS boxes, robot vacuums, conventional thin clients or Android media sticks.
 
 Recommended next categories:
 
 1. exact OpenIPC IP camera/model;
 2. old Android phone with documented unlock/recovery;
 3. ESP8266/ESP32 consumer appliance;
-4. TV/signage box;
-5. printer/MFP with an application or embedded Linux/Android execution layer;
-6. console/handheld gaming device with a supported homebrew/Linux path;
-7. industrial/commercial surplus hardware with non-PC market positioning;
-8. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems.
+4. printer/MFP with an application or embedded Linux/Android execution layer;
+5. console/handheld gaming device with a supported homebrew/Linux path;
+6. industrial/commercial surplus hardware with non-PC market positioning;
+7. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+8. oddball appliance where a different execution/recovery/locality pattern challenges the current schema.
 
-Each new class should expose something the existing six records do not.
+Each new class should expose something the existing seven records do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -171,6 +197,16 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - enumerate actual S5 Valetudo capabilities rather than inheriting every generic integration feature;
 - treat permanent loss of stock state as setup/recovery cost rather than hiding it.
 
+### F. Fire TV Stick 4K Max 1st Gen / AFTKA
+
+- if an owned unit becomes available, preserve its exact build model and Fire OS version before testing;
+- locally verify ADB authorization, APK sideload and removal without assuming root;
+- test whether a deliberately local APK works with WAN disconnected after stock provisioning;
+- test cold power loss -> Fire OS -> application/service lifecycle rather than assuming auto-start;
+- measure wall power at boot, idle, local-app active and media-active states;
+- verify factory reset on noncritical state and document exactly what application data survives, if anything;
+- collect a dated NL/EU used-market sample only after exact-generation identity can be distinguished from 2nd Gen listings.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -182,13 +218,14 @@ Do not expand the census blindly if:
 - product category begins acting as an implicit capability claim;
 - recovery claims stop identifying which device state they apply to;
 - recovery claims hide configuration/data destruction behind a single positive boolean;
-- a model-family record silently assigns optional or higher-spec unit variants to every physical device.
+- a model-family record silently assigns optional or higher-spec unit variants to every physical device;
+- an application/developer execution surface is silently promoted to root or unrestricted operating-system authority.
 
 When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification or silent best-variant inheritance.  
-**Agency / non-domination:** owned/authorized hardware only.  
-**Continuity:** evidence, variant caveats and recovery live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware.
+**Truth:** no fake verification, silent best-variant inheritance or privilege inflation.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible.  
+**Continuity:** evidence, variant caveats, execution boundaries and recovery live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware or promoting a device into a workload it has not yet earned.
