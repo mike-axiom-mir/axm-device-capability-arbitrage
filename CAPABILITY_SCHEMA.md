@@ -251,6 +251,8 @@ Unattended boot matters for infrastructure roles and should not be inferred from
 
 ## 12. Recovery
 
+A flat summary remains allowed for early records:
+
 ```yaml
 recovery:
   factory_reset: unknown
@@ -264,6 +266,35 @@ recovery:
   known_brick_risk: unknown
   recovery_state: UNRESEARCHED
 ```
+
+However, evidence from the Roborock S5 and Synology DS220+ showed that a single positive recovery flag can hide two different facts:
+
+- a path may exist from one device state but not another;
+- two valid paths may preserve very different amounts of configuration, user data, or application state.
+
+For records where that distinction matters, add structured `recovery.paths` entries:
+
+```yaml
+recovery:
+  recovery_state: DOCUMENTED
+  paths:
+    - id: mode_2_dsm_reinstall
+      from_state: operating_dsm
+      target_state: reinstalled_dsm
+      method: physical_reset_mode_2
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: preserved
+        application_state: unknown
+      source_claim_ids:
+        - official_reset_and_dsm_reinstall
+```
+
+Structured paths are an additive v0.1 extension. Existing scalar recovery fields may remain as summaries while evidence is migrated gradually.
+
+Path rules and the provisional data-impact vocabulary live in `RECOVERY_PATH_MODEL.md`. The validator checks path IDs, truth states, availability, data-impact values, and evidence-claim references when `recovery.paths` is present.
 
 Recovery is part of capability quality, not an appendix.
 
@@ -336,12 +367,11 @@ evidence:
   claims:
     - id: custom_apk_execution
       state: COMMUNITY_VERIFIED
-      sources:
-        - url: https://example.org/source
-          type: working_source_code
-          checked_at: "2026-09-13"
+      source: https://example.org/source
       note: exact scope of claim
 ```
+
+Claim IDs should be unique within a device record. Structured recovery paths may reference them through `source_claim_ids` so recovery semantics remain traceable to their evidence.
 
 Each evidence item should state what it proves. A source supporting Wi-Fi presence must not be used as evidence of arbitrary network socket access from custom code.
 
@@ -373,7 +403,9 @@ This avoids turning missing research into false certainty.
 
 ## 19. Versioning
 
-Schema changes that alter meaning should bump `schema_version`.
+Schema changes that alter the meaning of existing fields should bump `schema_version`.
+
+Additive optional fields may be introduced inside the same early schema version when they preserve the meaning of existing fields and older records remain valid. Such extensions must be documented and mechanically validated where practical.
 
 Device records should not be silently rewritten to fit a new schema. Migration should preserve old evidence and note transformed fields.
 
