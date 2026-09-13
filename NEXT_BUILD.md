@@ -1,24 +1,23 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Two census records now exercise two very different execution surfaces: a consumer camera with a custom Android application path and a Wi-Fi router with replaceable Linux/OpenWrt firmware.
+**Current state:** Initial foundation is in place. Two census records now exercise two very different execution surfaces: a consumer camera with a custom Android application path and a Wi-Fi router with replaceable Linux/OpenWrt firmware. A small structural validator and GitHub Actions workflow now protect the machine-readable records without freezing the research schema too early.
 
-## Priority 1 — Make the records mechanically checkable
+## Completed foundation step — Mechanical record checks
 
-Build the smallest useful validation layer for the v0.1 device schema.
+Implemented:
 
-Target:
+- YAML parsing for device and capability-contract records;
+- required identity/evidence fields;
+- allowed truth-state validation;
+- explicit economics state;
+- duplicate record/contract ID detection;
+- execution-surface structure checks;
+- recovery/evidence state checks;
+- GitHub Actions validation on pushes to `main` and pull requests.
 
-- YAML parses cleanly;
-- required identity/evidence fields exist;
-- truth-state values are from the allowed set;
-- economics state cannot silently disappear;
-- unknown values remain legal;
-- evidence source URLs are preserved;
-- no scoring requires fields that are still unknown.
+The validator deliberately does **not** reject unknown capability values or enforce a large rigid schema. New hardware classes still need room to challenge v0.1.
 
-Do **not** over-freeze the schema before more device classes challenge it.
-
-## Priority 2 — Expand across genuinely different hardware
+## Priority 1 — Expand across genuinely different hardware
 
 Next records should maximize schema pressure rather than collect many similar routers.
 
@@ -35,7 +34,7 @@ Recommended next categories:
 
 Each new class should expose something the existing two records do not.
 
-## Priority 3 — Run the first actual arbitrage comparison
+## Priority 2 — Run the first actual arbitrage comparison
 
 The hypothesis is not proven by building a database.
 
@@ -55,6 +54,12 @@ Required comparison state:
 - workload fit.
 
 Only then ask whether the non-obvious device is actually cheaper/better.
+
+## Priority 3 — Add scoring only after comparison data exists
+
+Do not invent a universal device score yet.
+
+Once several real records contain cost, recovery and workload evidence, introduce only the smallest scoring model needed to answer a concrete capability contract. Unknowns must remain visible and must not be converted into neutral-looking numeric values.
 
 ## Near-term experiments
 
