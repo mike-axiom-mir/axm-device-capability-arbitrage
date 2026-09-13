@@ -130,8 +130,6 @@ locality:
   local_network_operation: true
   offline_operation: true
 
- economics_placeholder: null
-
 economics:
   market_region: unknown
   checked_at: null
