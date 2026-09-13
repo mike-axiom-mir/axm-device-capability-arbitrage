@@ -5,9 +5,11 @@
 Current grounded count:
 
 ```text
-Devices:    7 / 25
-Categories: 7 / 8
+Devices:    8 / 25
+Categories: 8 / 8
 ```
+
+The category-breadth threshold is now met. The milestone is **not** complete: seventeen additional evidence-backed device records are still required, and the first real arbitrage comparison still needs comparable cost/power/provisioning evidence.
 
 This counter is intentionally conservative. A candidate does not count merely because it looks interesting.
 
@@ -34,12 +36,13 @@ A device counts when it has:
 | 5 | Synology DiskStation DS220+ | NAS / storage appliance | Manufacturer-supported Container Manager path on exact model; 2 GB RAM, SATA persistence and documented reset/reinstall paths | DOCUMENTED | No | `devices/synology/ds220-plus.yaml` |
 | 6 | Dell Wyse 3040 Thin Client | Thin client / endpoint | Exact-model Debian 12 installation plus community OpenWrt execution; UEFI USB/PXE boot, AC Recovery and manufacturer sub-4-W power claim | COMMUNITY_VERIFIED | No | `devices/dell/wyse-3040.yaml` |
 | 7 | Amazon Fire TV Stick 4K Max 1st Gen / AFTKA | Media / TV / signage hardware | Manufacturer-documented Fire OS 7 APK sideload/launch path through opt-in ADB; application execution without evidence of root or unattended service startup | DOCUMENTED | No | `devices/amazon/fire-tv-stick-4k-max-1st-gen-aftka.yaml` |
+| 8 | Wyze Cam v2 | IP camera | Exact Thingino T20X/JXF22 and T20X/JXF23 replacement-firmware targets; community-reproduced root shell plus local RTSP/ONVIF/Web UI services | COMMUNITY_VERIFIED | No | `devices/wyze/cam-v2.yaml` |
 
 ## Category coverage
 
 - [x] Consumer camera
 - [x] Router / access point
-- [ ] IP camera / NVR
+- [x] IP camera / NVR
 - [ ] Phone / tablet / handheld terminal
 - [ ] Smart-home / microcontroller appliance
 - [x] Media / TV / signage hardware
@@ -53,20 +56,20 @@ A device counts when it has:
 - [ ] Vehicle infotainment / non-safety computer
 - [ ] Other / unknown category
 
-Only eight categories are required for Milestone 01, but the search should not stop there.
+Eight categories satisfy the breadth half of Milestone 01, but breadth should keep increasing when a new category pressures the schema in a useful way.
 
 ## High-value next research queue
 
 These are research targets, **not capability claims**.
 
-1. One OpenIPC-supported IP camera with an exact SoC/model mapping.
-2. One old Android phone with unlock/recovery and offline operation.
-3. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
-4. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
-5. One non-safety vehicle/infotainment computer with a documented application execution path.
-6. One console/handheld gaming device with a supported homebrew or Linux execution surface.
-7. One industrial/commercial surplus device with conventional local execution but non-PC market positioning.
-8. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
+1. One old Android phone with documented unlock/recovery and offline operation.
+2. One ESP8266/ESP32 consumer appliance with replaceable local firmware.
+3. One printer/MFP that supports applications or an embedded Linux/Android execution layer.
+4. One console/handheld gaming device with a supported homebrew or Linux execution surface.
+5. One industrial/commercial surplus device with conventional local execution but non-PC market positioning.
+6. One non-safety vehicle/infotainment computer only where the application boundary is clearly separated from safety-critical systems.
+7. One oddball appliance or retired commercial device where the execution surface is materially more useful than the marketed category suggests.
+8. A second state-dependent-locality device only if it genuinely tests whether `LOCALITY_STATE_MODEL.md` generalizes beyond Wyze Cam v2.
 9. One additional media/signage box only if it exposes a materially different execution/recovery/locality pattern from the AFTKA Fire TV record.
 10. One additional thin client only if it exposes a materially different execution/recovery/power pattern from the Wyse 3040.
 
@@ -111,7 +114,9 @@ exact marketed model != exact physical configuration
 
 Dell documents Wyse 3040 units with both 8 GB and 16 GB eMMC and optional WLAN/Bluetooth under the same marketed model. A second-hand listing saying only `Wyse 3040` therefore does not prove which storage/wireless configuration is being sold.
 
-Future market and matching work should preserve variant-sensitive state rather than silently assigning the most capable known configuration to every unit. Where a capability contract depends on a variant, the candidate should remain conditional until the actual unit configuration is observed.
+Wyze Cam v2 reinforces the same principle from another hardware class: current Thingino support distinguishes T20X/JXF22/RTL8189FTV and T20X/JXF23/RTL8189FTV builds. The marketed model alone is not enough to choose replacement firmware safely.
+
+Future market and matching work should preserve variant-sensitive state rather than silently assigning the most capable or most convenient known configuration to every unit. Where a capability contract depends on a variant, the candidate should remain conditional until the actual unit configuration is observed.
 
 ### Developer execution vs operating-system authority
 
@@ -125,6 +130,20 @@ Amazon documents an opt-in ADB path for sideloading and launching custom APKs on
 
 Future matching must preserve this distinction. A device can be useful as a sandboxed/application runtime without inheriting the capabilities of a general root Linux host.
 
+### Locality by persistent device state
+
+The eighth record exposes a locality-model problem:
+
+```text
+same physical hardware != one permanent cloud/locality state
+```
+
+For Wyze Cam v2, stock firmware is designed around an internet-connected Wyze app experience, while configured microSD recording can continue offline. The same physical camera with Thingino replacement firmware exposes local RTSP, ONVIF, Web UI and root SSH without a vendor-cloud runtime requirement.
+
+A single device-level `fully_local` or `cloud_required` label would therefore misdescribe at least one persistent firmware state.
+
+The provisional extension is documented in `LOCALITY_STATE_MODEL.md`. The Wyze record preserves structured `locality.states` with evidence links. Mechanical validation is intentionally deferred until a second strong device shows whether the shape generalizes cleanly; do not auto-migrate existing records from assumption.
+
 ## First comparison set is now structurally complete
 
 The low-power registry experiment still has three evidence-backed candidates from three marketed categories:
@@ -136,6 +155,8 @@ Dell Wyse 3040            -> thin client / conventional Debian
 ```
 
 The Fire TV record is **not** silently added to that comparison merely because it has 2 GB RAM and Wi-Fi. Its unattended-start behavior, power profile, offline runtime and application lifecycle are still unknown.
+
+The Wyze Cam v2 is also **not** added merely because Thingino exposes a root shell. RAM, flash headroom, power, cold-boot behavior and the opportunity cost of consuming an IP camera remain unmeasured.
 
 This does **not** mean the comparison is complete. Used-market snapshots, common workload measurements, provisioning friction and power/restart evidence still need to be collected before ranking the three current candidates.
 
