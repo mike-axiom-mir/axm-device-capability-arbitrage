@@ -1,0 +1,218 @@
+schema_version: "0.1"
+record_id: sony-ilce-6000
+
+identity:
+  manufacturer: Sony
+  model: ILCE-6000
+  common_name: Sony alpha 6000
+  marketed_category: mirrorless_camera
+  hardware_revision: unknown
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  note: "Do not infer exact SoC/RAM from neighboring Sony models without model-specific evidence."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  application_private_storage:
+    size: "few hundred KB reported by DoomCam project"
+    state: COMMUNITY_VERIFIED
+  removable_storage:
+    present: true
+    types:
+      - Memory Stick PRO Duo
+      - Memory Stick PRO-HG Duo
+      - SD
+      - SDHC
+      - SDXC
+
+execution:
+  surfaces:
+    - type: android_apk
+      environment: Android
+      version: "2.3.7"
+      custom_code: true
+      privilege: application_user
+      access_method: "PlayMemories Camera App installed through Sony-PMCA-RE"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "DoomCam is a working custom APK tested on the alpha 6000."
+        - "DoomCam uses native code through the Android application environment."
+    - type: adb
+      environment: Android
+      version: "2.3.7"
+      custom_code: true
+      privilege: unknown
+      access_method: "OpenMemories: Tweak"
+      state: DOCUMENTED
+      notes:
+        - "Sony-PMCA-RE documentation states OpenMemories: Tweak can start adb for code execution/debugging."
+    - type: telnet
+      environment: camera_system
+      version: unknown
+      custom_code: true
+      privilege: unknown
+      access_method: "OpenMemories: Tweak"
+      state: DOCUMENTED
+
+connectivity:
+  ethernet: false
+  wifi:
+    present: true
+    custom_code_socket_access: unknown
+  bluetooth: false
+  nfc:
+    present: true
+  usb:
+    present: true
+    modes:
+      - mass_storage
+      - MTP
+      - PC_remote
+  hdmi:
+    present: true
+    connector: micro_Type_D
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  sensors:
+    - type: image_sensor
+      accessible_to_custom_code: unknown
+    - type: built_in_stereo_microphone
+      accessible_to_custom_code: unknown
+  controls:
+    - shutter
+    - control_wheel
+    - dpad
+    - top_dial
+    - AEL
+    - C1
+    - Fn
+    - menu
+    - trash
+  custom_control_access:
+    state: COMMUNITY_VERIFIED
+    note: "DoomCam maps multiple physical camera controls to game input."
+
+outputs:
+  display:
+    present: true
+    panel_resolution: "640x480 reported by DoomCam"
+    custom_rendering_verified: true
+    state: COMMUNITY_VERIFIED
+  speaker:
+    present: true
+    type: built_in_monaural
+    custom_audio_verified: false
+  leds: unknown
+  motors: unknown
+
+power:
+  battery:
+    present: true
+    model: NP-FW50
+  external_power:
+    present: true
+    method: "supported AC adapter listed by Sony"
+  idle_watts: unknown
+  active_watts: unknown
+  always_on_suitability: unknown
+  thermal_notes: unknown
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+
+recovery:
+  factory_reset: unknown
+  official_restore: unknown
+  rescue_partition: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  serial_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: UNRESEARCHED
+  notes:
+    - "Sony-PMCA-RE explicitly warns that its reverse-engineered operations may harm hardware."
+    - "DoomCam reports occasional camera reboots during development, especially with Wi-Fi left on."
+
+locality:
+  state: local_after_provisioning
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_custom_app_runtime: false
+  local_network_operation: true
+  offline_custom_app_operation: true
+  note: "DoomCam launches from the camera and reads game data from removable storage after installation."
+
+economics:
+  market_region: unknown
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  setup_minutes: unknown
+  replacement_availability: unknown
+  market_data_state: not_collected
+
+roles:
+  - role: sensor_collector
+    confidence: medium
+    reason: "Rich imaging hardware plus verified custom application execution, but sensor API access still needs direct evidence."
+  - role: human_machine_field_interface
+    confidence: medium
+    reason: "Display and physical controls are verified usable by custom code."
+  - role: offline_data_courier
+    confidence: medium
+    reason: "Removable storage plus local custom-code execution is demonstrated."
+  - role: always_on_infrastructure_node
+    confidence: low
+    reason: "Power, unattended boot, thermal behavior and long-term reliability are not yet established."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-13"
+  claims:
+    - id: doom_runs_as_custom_camera_app
+      state: COMMUNITY_VERIFIED
+      source: "https://github.com/EfelerGibi/A6000-DOOM"
+      proves:
+        - "custom APK execution on a tested Sony alpha 6000"
+        - "native game code can render to the camera display"
+        - "multiple camera body controls can be consumed as application input"
+        - "removable-card data can be read by the application"
+      does_not_prove:
+        - "root privilege"
+        - "support on every Sony camera"
+        - "unattended boot"
+        - "24/7 suitability"
+    - id: pmca_custom_android_apps
+      state: DOCUMENTED
+      source: "https://github.com/ma1co/Sony-PMCA-RE"
+      proves:
+        - "supported PlayMemories cameras can install custom Android apps"
+        - "OpenMemories: Tweak can expose adb/telnet execution paths"
+      does_not_prove:
+        - "identical privileges across all models"
+    - id: sony_official_interfaces
+      state: DOCUMENTED
+      source: "https://www.sony.com/electronics/support/e-mount-body-ilce-6000-series/ilce-6000/specifications"
+      proves:
+        - "Wi-Fi and NFC are present"
+        - "Multi/Micro USB and PC mass-storage/MTP/remote modes are supported"
+        - "downloadable camera apps were an official product capability"
+
+notes:
+  - "This is the first census record and intentionally preserves large unknown areas instead of filling them from assumptions."
+  - "The key AXM evidence is the execution surface, not the fact that Doom is visually displayed."
