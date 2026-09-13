@@ -1,0 +1,246 @@
+schema_version: "0.1"
+record_id: synology-ds220-plus
+
+identity:
+  manufacturer: Synology
+  model: DS220+
+  common_name: Synology DiskStation DS220+
+  marketed_category: nas
+  hardware_revision: unknown
+  lifecycle:
+    product_availability: discontinued
+    dsm_update_support: full
+    technical_support: limited
+    state: DOCUMENTED
+
+compute:
+  soc: Intel Celeron J4025
+  architecture: intel_64
+  cpu_cores: 2
+  cpu_threads: 2
+  clock_mhz:
+    base: 2000
+    burst: 2900
+  notes:
+    - "Synology identifies the DS220+ CPU as Intel Celeron J4025; Intel documents Intel 64 / 64-bit instruction-set support for that processor."
+
+memory:
+  ram_mb: 2048
+  ram_type: DDR4_non_ECC
+  max_supported_ram_mb: 6144
+  internal_persistent_storage_mb: not_applicable_without_installed_drives
+  drive_bays:
+    count: 2
+    interfaces:
+      - SATA
+    supported_form_factors:
+      - "3.5-inch HDD"
+      - "2.5-inch HDD/SSD"
+    hot_swap: true
+  notes:
+    - "The chassis is sold without drives in the cited specification; durable state capacity therefore depends on installed storage rather than an assumed bundled disk."
+
+execution:
+  surfaces:
+    - type: container
+      environment: Synology_DSM_Container_Manager
+      version: "24.0.2-1606 or another compatible release for DS220+; 24.0.2-1630 is explicitly excluded"
+      custom_code: true
+      privilege: sandboxed
+      access_method: "Synology Package Center / Container Manager"
+      state: DOCUMENTED
+      notes:
+        - "Synology documents Container Manager as a runtime for downloading and running container images and Compose-style projects."
+        - "Synology's May 2026 compatibility notice explicitly lists DS220+ among models excluded from Container Manager 24.0.2-1630 and directs affected models to 24.0.2-1606 or another compatible version."
+        - "This establishes an exact-model supported container path while also preserving the fact that newest-package compatibility is not guaranteed."
+
+connectivity:
+  ethernet:
+    present: true
+    ports_1gbit: 2
+  wifi: false
+  bluetooth: false
+  usb:
+    present: true
+    ports: 2
+    version: "USB 3.2 Gen 1 / USB 3.0 class"
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  controls:
+    - power_button
+    - copy_button
+    - reset_button
+  sensors: unknown
+
+outputs:
+  leds:
+    present: true
+    custom_control_access: unknown
+  fan:
+    present: true
+    size_mm: 92
+    custom_control_access: unknown
+  display:
+    present: false
+  motors: []
+  relays: []
+
+power:
+  external_power:
+    present: true
+    adapter_watts: 60
+  manufacturer_measured:
+    access_watts: 14.69
+    hdd_hibernation_watts: 4.41
+    test_condition: "fully loaded with Western Digital 1TB WD10EFRX hard drives per Synology product specification"
+    state: DOCUMENTED
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: high_by_product_design
+  notes:
+    - "The 14.69 W and 4.41 W figures are manufacturer test results for a specified drive configuration, not AXM local measurements and not a universal idle/load profile."
+
+boot:
+  unattended_boot: configurable_via_power_recovery
+  power_recovery: true
+  wake_on_lan_wan: true
+  scheduled_power_on_off: true
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  state: DOCUMENTED
+  notes:
+    - "Synology product specifications document Power Recovery, Wake on LAN/WAN and scheduled power on/off."
+    - "Container auto-restart after every class of power loss has not been verified in this repo."
+
+recovery:
+  factory_reset: documented_destructive_path
+  official_restore: documented_dsm_reinstall_path
+  mode_1_admin_network_reset: documented
+  mode_2_dsm_reinstall:
+    available: true
+    system_configuration_cleared: true
+    stored_data_affected: false
+    state: DOCUMENTED
+  erase_all_data_factory_reset:
+    available: true
+    stored_data_erased: true
+    state: DOCUMENTED
+  rescue_partition: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  serial_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  notes:
+    - "Synology's current reset documentation distinguishes a DSM reinstallation path that clears system configuration while preserving stored data from a factory-reset path that erases user data."
+    - "A generic recovery=true flag would hide materially different data impact."
+
+locality:
+  state: local_after_provisioning
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: unknown
+  notes:
+    - "DSM and Container Manager expose local NAS/container functionality, but this record has not yet proven a completely internet-independent first-time provisioning/update path."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools: []
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "Synology currently marks DS220+ as discontinued, so used/refurbished supply and drive cost need to be treated separately in future total-useful-cost work."
+
+roles:
+  - role: local_container_host
+    confidence: high
+    reason: "Exact-model manufacturer documentation supports a compatible Container Manager release, and the platform has 2 GB RAM expandable to 6 GB plus persistent SATA storage."
+  - role: storage_archive
+    confidence: high
+    reason: "Two hot-swappable SATA bays and native NAS software make durable local storage the device's intended strength; drive redundancy and backup policy remain deployment-specific."
+  - role: local_registry
+    confidence: medium
+    reason: "Container execution, 2 GB RAM, dual Gigabit Ethernet and persistent storage fit small registry/state workloads, but used price, container autostart behavior and fully offline provisioning still need evidence."
+  - role: always_on_infrastructure_node
+    confidence: medium
+    reason: "NAS form factor plus documented power recovery/WOL/scheduling and manufacturer power measurements are promising, but AXM has not locally tested restart behavior or long-duration workload stability."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-13"
+  claims:
+    - id: exact_model_hardware_and_power
+      state: DOCUMENTED
+      source: "https://www.synology.com/nl-nl/store/Refurbished%20DS220%2B"
+      proves:
+        - "DS220+ uses Intel Celeron J4025"
+        - "2 GB DDR4 memory, expandable to 6 GB"
+        - "two SATA drive bays, two Gigabit Ethernet ports and two USB 3-class ports"
+        - "Power Recovery, Wake on LAN/WAN and scheduled power on/off are supported"
+        - "manufacturer reports 14.69 W access and 4.41 W HDD-hibernation consumption under its stated drive test configuration"
+      does_not_prove:
+        - "AXM local power measurements"
+        - "container workload power"
+        - "container autostart after every power-loss scenario"
+    - id: exact_model_container_manager_compatibility
+      state: DOCUMENTED
+      source: "https://kb.synology.com/en-af/DSM/tutorial/Why_is_Container_Manager_1630_not_available_on_my_Synology_NAS"
+      proves:
+        - "DS220+ is an affected model for Container Manager 24.0.2-1630"
+        - "Synology directs affected models to 24.0.2-1606 or another compatible version"
+      does_not_prove:
+        - "latest Container Manager releases will remain compatible indefinitely"
+        - "every third-party image supports DS220+"
+    - id: container_runtime_capability
+      state: DOCUMENTED
+      source: "https://www.synology.com/nl-nl/dsm/feature/docker"
+      proves:
+        - "Synology Container Manager can download and run container images"
+        - "Container Manager supports multi-container projects using Compose files"
+      does_not_prove:
+        - "DS220+ is compatible with every image or Compose feature"
+    - id: cpu_64_bit_capability
+      state: DOCUMENTED
+      source: "https://www.intel.com/content/www/us/en/products/sku/197307/intel-celeron-processor-j4025-4m-cache-up-to-2-90-ghz/specifications.html"
+      proves:
+        - "Intel Celeron J4025 supports Intel 64 / 64-bit instruction set"
+        - "processor has two cores / two threads and 2.0 GHz base / 2.9 GHz burst frequency"
+    - id: official_reset_and_dsm_reinstall
+      state: DOCUMENTED
+      source: "https://kb.synology.com/DSM/tutorial/How_to_reset_my_Synology_NAS_7"
+      proves:
+        - "Mode 1 reset exists for administrator/network settings"
+        - "Mode 2 can clear system configuration and reinstall DSM"
+        - "Synology states stored data is not affected by the reset process, while recommending backup"
+      does_not_prove:
+        - "all application/container state survives Mode 2"
+        - "recovery from low-level hardware or bootloader corruption"
+    - id: lifecycle_status
+      state: DOCUMENTED
+      source: "https://www.synology.com/en-us/products/status?status=all"
+      proves:
+        - "DS220+ product availability is discontinued"
+        - "DSM Update support is currently Full"
+        - "technical support is currently Limited"
+
+notes:
+  - "This is the first NAS/storage-appliance record and the first census record with a manufacturer-supported container execution surface."
+  - "It also adds a recovery distinction different from the Roborock case: DSM reinstallation may preserve stored data, while a separate factory-reset path erases it. Recovery quality therefore needs both target state and data-impact semantics."
+  - "No local container test, used-market sample, drive-cost model or AXM power measurement has been performed."
+  - "The DS220+ is a plausible candidate for the existing low-power local registry contract, but the repo should not mark it a contract winner until market cost, storage cost, fully offline provisioning and restart behavior are grounded."
