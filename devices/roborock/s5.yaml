@@ -1,0 +1,247 @@
+schema_version: "0.1"
+record_id: roborock-s5
+
+identity:
+  manufacturer: Beijing Roborock Technology Co., Ltd.
+  model: S5
+  common_name: Roborock S5
+  marketed_category: robot_vacuum
+  hardware_revision: unknown
+  aliases:
+    - "Xiaomi Mi Roborock S502-00"
+
+compute:
+  soc: unknown
+  architecture: armv7_compatible
+  cpu_cores: unknown
+  clock_mhz: unknown
+  notes:
+    - "Valetudo publishes an armv7 binary for the Roborock S5, which establishes an ARMv7-compatible userspace target but does not identify the exact SoC."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  removable_storage:
+    present: unknown
+
+execution:
+  surfaces:
+    - type: replaceable_firmware
+      environment: "vendor Linux system with rooted firmware image"
+      version: unknown
+      custom_code: true
+      privilege: root
+      access_method: "Valetudo/Dustbuilder OTA rooting path for Roborock S5"
+      state: COMMUNITY_VERIFIED
+      modification_class: 3
+      notes:
+        - "Valetudo lists Roborock S5 as supported and identifies OTA as its rooting method."
+        - "The Roborock OTA guide uses the official update mechanism to transfer a customized rooted firmware image."
+        - "Rooting feasibility depends on the unit's recovery/firmware state; the upstream guide documents local-OTA restrictions on newer recovery firmware."
+    - type: ssh
+      environment: "rooted robot Linux userspace"
+      version: unknown
+      custom_code: true
+      privilege: root
+      access_method: "SSH after successful rooting"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "Valetudo's S5 upgrade/install documentation explicitly uses SSH on rooted S5-class robots."
+        - "This record does not claim that SSH is available on an unmodified stock S5."
+
+connectivity:
+  ethernet: unknown
+  wifi:
+    present: true
+    bands: "2.4 GHz class; exact protocol not recorded here"
+    custom_code_socket_access: true
+    state: COMMUNITY_VERIFIED
+  bluetooth: unknown
+  usb: unknown
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  controls:
+    - power_button
+    - recharge_button
+    - spot_clean_button
+    - reset_button
+  navigation_sensors:
+    present: true
+    exact_sensor_set: unknown
+    raw_custom_code_access: unknown
+  telemetry:
+    valetudo_robot_state: community_verified
+    exact_s5_capability_set: unknown
+
+outputs:
+  mobility:
+    present: true
+    custom_control_state: COMMUNITY_VERIFIED
+    note: "Valetudo exposes basic robot operation such as start, stop, pause and return-home through local integrations; exact optional capabilities remain model/firmware dependent."
+  cleaning_actuators:
+    present: true
+    custom_control_state: COMMUNITY_VERIFIED
+  speaker:
+    present: true
+    custom_audio_access: unknown
+  display:
+    present: false
+
+power:
+  battery:
+    present: true
+    chemistry: lithium_ion
+    nominal_voltage_v: 14.4
+    capacity_mah: 5200
+    source_state: DOCUMENTED
+  external_power:
+    present: true
+    method: charging_dock
+  rated_power_watts: 58
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  notes:
+    - "58 W is a manufacturer rated-power figure, not a measured idle or typical active draw."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: true
+  auto_start_state: COMMUNITY_VERIFIED
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "Valetudo's installation flow configures its binary to autostart after reboot; cold-start behavior after full battery/power loss remains unverified here."
+
+recovery:
+  factory_reset: documented_stock_path
+  official_restore: documented_stock_path
+  stock_factory_reset_restores_original_firmware: true
+  post_modification_stock_reversion: unavailable_per_valetudo_documentation
+  modification_reversibility: irreversible_to_stock_per_upstream
+  same_modified_state_reprovisioning: documented
+  rescue_partition: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  serial_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  notes:
+    - "Roborock documents a factory reset that returns a stock S5 to its original factory firmware."
+    - "Valetudo separately states that rooting/installing Valetudo is a permanent change and that reverting to stock is not available."
+    - "These statements apply to different device states and must not be collapsed into a single reversible=true claim."
+
+locality:
+  state: fully_local
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: false
+  local_network_operation: true
+  offline_operation: true
+  notes:
+    - "Valetudo is explicitly designed as a local-only cloud replacement."
+    - "Its FAQ states that normal operation can work without internet; optional NTP and user-triggered update checks are the documented internet contacts."
+    - "The vendor app no longer works after Valetudo replaces vendor-cloud connectivity."
+
+economics:
+  market_region: unknown
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - laptop
+  replacement_availability: unknown
+  market_data_state: not_collected
+
+roles:
+  - role: local_robot_actuator_bridge
+    confidence: high
+    reason: "Supported Valetudo installation provides local control of the robot while removing vendor-cloud dependency."
+  - role: local_robot_telemetry_source
+    confidence: medium
+    reason: "Valetudo exposes robot state and optional map/integration data locally, but the exact S5 capability set has not been locally enumerated in this repo."
+  - role: rooted_mobile_edge_node
+    confidence: medium
+    reason: "Root SSH and persistent local execution are community-verified, but CPU, RAM, storage headroom, thermal behavior and workload interference are not yet characterized."
+  - role: always_on_registry
+    confidence: low
+    reason: "Autostart of Valetudo is documented, but unattended cold boot, power draw, duty-cycle effects and the cost of sacrificing a mobile appliance remain unmeasured."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-13"
+  claims:
+    - id: exact_model_and_supported_root_path
+      state: COMMUNITY_VERIFIED
+      source: "https://valetudo.cloud/pages/general/supported-robots/"
+      proves:
+        - "Roborock S5 is explicitly supported by Valetudo"
+        - "the model is also sold as Xiaomi Mi Roborock S502-00"
+        - "Valetudo publishes an armv7 binary target for this model"
+        - "OTA is the listed rooting method"
+      does_not_prove:
+        - "every individual S5 firmware/recovery state is OTA-rootable without preparation"
+        - "exact SoC or RAM"
+    - id: rooted_firmware_and_ssh_execution
+      state: COMMUNITY_VERIFIED
+      source: "https://valetudo.cloud/pages/installation/roborock/"
+      proves:
+        - "Roborock rooting can use the official OTA mechanism to transfer a customized rooted firmware image"
+        - "post-root installation uses SSH and configures Valetudo to autostart"
+        - "OTA rooting has recovery-firmware/version caveats"
+      does_not_prove:
+        - "stock S5 exposes SSH"
+        - "rooting is reversible"
+    - id: local_only_operation
+      state: DOCUMENTED
+      source: "https://valetudo.cloud/pages/faq/"
+      proves:
+        - "Valetudo can operate without an internet connection"
+        - "documented internet contacts are optional/configurable NTP and user-triggered updater checks"
+    - id: local_control_integration
+      state: DOCUMENTED
+      source: "https://valetudo.cloud/pages/integrations/mqtt/"
+      proves:
+        - "Valetudo exposes local MQTT control and telemetry interfaces including basic start/stop/pause/home operations"
+      does_not_prove:
+        - "every optional MQTT capability is present on S5"
+    - id: stock_factory_reset
+      state: DOCUMENTED
+      source: "https://support.roborock.com/hc/en-us/articles/360035072251-How-do-I-factory-reset-my-Roborock-S5"
+      proves:
+        - "Roborock documents a factory-reset path for S5"
+        - "the reset returns stock firmware to the original factory version"
+      does_not_prove:
+        - "a Valetudo-rooted S5 can be returned to stock"
+    - id: post_modification_irreversibility
+      state: DOCUMENTED
+      source: "https://valetudo.cloud/pages/general/why-not-valetudo/"
+      proves:
+        - "Valetudo documents the rooting/install change as permanent"
+        - "Valetudo states that reverting to stock is not available"
+    - id: manufacturer_power_and_battery
+      state: DOCUMENTED
+      source: "https://support.roborock.com/hc/es/article_attachments/360053353012"
+      proves:
+        - "S5 manufacturer/model identity"
+        - "14.4 V / 5200 mAh lithium-ion battery"
+        - "58 W rated power"
+      does_not_prove:
+        - "idle power"
+        - "typical cleaning power"
+        - "always-on node efficiency"
+
+notes:
+  - "This record intentionally treats recovery as state-dependent: stock reset exists, while post-Valetudo return-to-stock is documented as unavailable."
+  - "The robot category pressures the schema because useful compute is physically coupled to mobile actuators, a battery, navigation state and an original appliance function."
+  - "No local rooting, power measurement, market-price collection or long-duration non-vacuum workload test has been performed by AXM."
+  - "Any modification/deployment should be limited to owned or explicitly authorized hardware and should preserve visible operator control over mobile actuators."
