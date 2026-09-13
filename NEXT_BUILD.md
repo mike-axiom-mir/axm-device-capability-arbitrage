@@ -1,6 +1,6 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Two census records now exercise two very different execution surfaces: a consumer camera with a custom Android application path and a Wi-Fi router with replaceable Linux/OpenWrt firmware. A small structural validator and GitHub Actions workflow now protect the machine-readable records without freezing the research schema too early.
+**Current state:** Initial foundation is in place. Four census records now exercise four materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, and a mobile robot with rooted Linux/SSH plus local-only control. The S5 also exposed an important recovery distinction: a stock-device factory reset does not necessarily describe recovery after persistent modification. A small structural validator and GitHub Actions workflow protect the machine-readable records without freezing the research schema too early.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -19,20 +19,37 @@ The validator deliberately does **not** reject unknown capability values or enfo
 
 ## Priority 1 — Expand across genuinely different hardware
 
-Next records should maximize schema pressure rather than collect many similar routers.
+Next records should maximize schema pressure rather than collect many similar routers or robot vacuums.
 
 Recommended next categories:
 
 1. exact OpenIPC IP camera/model;
 2. old Android phone with documented unlock/recovery;
-3. Kobo e-reader;
-4. Valetudo-supported robot vacuum;
-5. ESP8266/ESP32 consumer appliance;
-6. container-capable NAS;
-7. TV/signage box;
-8. thin client / POS terminal.
+3. ESP8266/ESP32 consumer appliance;
+4. container-capable NAS;
+5. TV/signage box;
+6. thin client / POS terminal;
+7. printer/MFP with an application or embedded Linux/Android execution layer;
+8. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems.
 
-Each new class should expose something the existing two records do not.
+Each new class should expose something the existing four records do not.
+
+### Recovery-state rule learned from the S5
+
+When a persistent modification changes what recovery paths remain available, record recovery by **device state** rather than treating `factory_reset` as a global property.
+
+Example pattern:
+
+```text
+stock state
+  -> official factory reset may restore stock firmware
+
+modified state
+  -> return-to-stock may be unavailable
+  -> same modified state may still be reprovisionable
+```
+
+Do not let a valid stock recovery claim imply reversibility after modification.
 
 ## Priority 2 — Run the first actual arbitrage comparison
 
@@ -54,6 +71,8 @@ Required comparison state:
 - workload fit.
 
 Only then ask whether the non-obvious device is actually cheaper/better.
+
+The Roborock S5 should not be assumed to be a good registry node merely because root SSH exists. Its irreversibility, mobile-actuator coupling and original appliance value are real costs that may make it a poor arbitrage choice despite technical capability.
 
 ## Priority 3 — Add scoring only after comparison data exists
 
@@ -80,6 +99,14 @@ Once several real records contain cost, recovery and workload evidence, introduc
 - collect used-price snapshot;
 - decide which non-camera roles are actually rational rather than merely possible.
 
+### C. Roborock S5
+
+- collect an NL/EU used-price sample;
+- collect credible idle-on-dock / charging / cleaning power data or measure locally;
+- verify exact production/recovery firmware before any local modification test;
+- enumerate actual S5 Valetudo capabilities rather than inheriting every generic integration feature;
+- treat permanent loss of stock state as setup/recovery cost rather than hiding it.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -88,7 +115,8 @@ Do not expand the census blindly if:
 - evidence quality is too weak to compare devices;
 - cost data cannot be time/region scoped;
 - a scoring system starts hiding unknowns;
-- product category begins acting as an implicit capability claim.
+- product category begins acting as an implicit capability claim;
+- recovery claims stop identifying which device state they apply to.
 
 When one of those occurs, repair the model before adding volume.
 
