@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    10 / 25
-Categories: 10 distinct / 8 required
+Devices:    11 / 25
+Categories: 11 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -39,6 +39,7 @@ A device counts when it has:
 | 8 | Wyze Cam v2 | IP camera | Thingino replacement firmware with exact JXF22/JXF23 targets, root shell evidence and local RTSP/ONVIF/WebUI/SSH | COMMUNITY_VERIFIED | No | `devices/wyze/cam-v2.yaml` |
 | 9 | SONOFF BASICR2 | Smart-home / microcontroller appliance | Exact-device Tasmota replacement-firmware path on ESP8285; stock eWeLink LAN control vs local Tasmota WebUI/MQTT | COMMUNITY_VERIFIED | No | `devices/sonoff/basicr2.yaml` |
 | 10 | Google Pixel 3a / `sargo` | Smartphone / handheld | Current Ubuntu Touch replacement OS with native apps/shell; custom-OS capability gated by bootloader-unlockable acquisition variant | COMMUNITY_VERIFIED | No | `devices/google/pixel-3a-sargo.yaml` |
+| 11 | Canon imageRUNNER ADVANCE C3530i | Printer / office MFP | Manufacturer-supported MEAP application runtime via administrator SMS install; `.jar` application + license-aware admission without shell/root claim | DOCUMENTED | No | `devices/canon/imagerunner-advance-c3530i.yaml` |
 
 ## Category coverage
 
@@ -51,7 +52,7 @@ A device counts when it has:
 - [x] NAS / storage appliance
 - [x] Robot / autonomous appliance
 - [x] E-reader / e-ink device
-- [ ] Printer / office appliance
+- [x] Printer / office appliance
 - [ ] Console / handheld gaming device
 - [x] Thin client / POS / kiosk
 - [ ] Industrial / commercial surplus
@@ -64,16 +65,16 @@ Only eight categories are required for Milestone 01. New records should now opti
 
 These are research targets, **not capability claims**.
 
-1. One printer/MFP with a documented application, script, plugin or embedded-Linux execution surface.
-2. One console/handheld with a maintained exact-model homebrew path and recovery evidence.
-3. One industrial/commercial surplus computer, controller or panel with conventional local execution.
-4. One non-safety vehicle/infotainment computer with a documented application execution path.
-5. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
-6. One oddball appliance whose machine capability is clearly under-described by its market category.
-7. One device with a state-dependent locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
-8. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
+1. One console/handheld with a maintained exact-model homebrew path and recovery evidence.
+2. One industrial/commercial surplus computer, controller or panel with conventional local execution.
+3. One non-safety vehicle/infotainment computer with a documented application execution path.
+4. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
+5. One oddball appliance whose machine capability is clearly under-described by its market category.
+6. One device with a state-dependent locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+7. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
+8. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
 
-The old-Android-phone slot is no longer a queue item: Pixel 3a now fills it with an exact `sargo` replacement-OS path plus a carrier/bootloader capability gate.
+The printer/MFP slot is no longer a queue item: Canon C3530i now fills it with an exact-model manufacturer-supported MEAP application path whose administrator and license admission controls remain explicit.
 
 ## Schema pressure learned so far
 
@@ -191,6 +192,29 @@ A market listing with carrier/origin unknown therefore must not inherit the cust
 
 One pressure case is enough to record the lesson but not enough to freeze a universal new variant schema.
 
+### 9. An application runtime can be admission-controlled
+
+Canon C3530i adds another execution distinction:
+
+```text
+MEAP runtime exists
+  -> administrator logs into SMS
+  -> compatible MEAP application package is selected
+  -> applicable license/admission conditions are satisfied
+  -> application can be installed and started
+
+does not prove
+
+arbitrary unsigned JAR execution
+shell
+root
+generic Linux ownership
+```
+
+The record therefore stores `admission_controls` on the execution surface while keeping unrestricted application admission unknown. A platform can provide real programmable capability while the usable supply of applications still depends on licensing, compatibility and administrator authority.
+
+This is one pressure case, so the repository records the lesson without freezing a universal admission-control schema yet.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -247,6 +271,8 @@ The SONOFF BASICR2 is not added to this comparison merely because it runs replac
 
 The Pixel 3a is also not added merely because it has 4 GB RAM and a Linux-phone OS. Unattended boot/service lifecycle, battery wear, charging behavior, wall power and acquisition-variant unlockability are not yet comparable with the infrastructure candidates.
 
+The C3530i is not added merely because it has 3 GB RAM and an embedded application runtime. MEAP admission/licensing, workload compatibility, transport/mechanical cost, restart behavior and comparable power evidence are not established; Canon's approximately 44.1 W standby claim already makes the low-power contract a poor fit to assume without a workload-specific reason.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -261,6 +287,7 @@ The milestone should answer:
 6. Can persistent firmware/software state be represented without flattening recovery or locality into false global booleans?
 7. Can dated market observations remain configuration-aware without turning asking prices into permanent device truth?
 8. Can acquisition variants that gate the execution surface stay distinct instead of being silently merged into one model-level capability claim?
+9. Can a real but administrator/license-gated application runtime remain distinct from unrestricted general-purpose execution?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

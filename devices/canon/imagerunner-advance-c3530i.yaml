@@ -1,0 +1,261 @@
+schema_version: "0.1"
+record_id: canon-imagerunner-advance-c3530i
+
+identity:
+  manufacturer: Canon
+  model: imageRUNNER ADVANCE C3530i
+  common_name: Canon imageRUNNER ADVANCE C3530i
+  marketed_category: printer_mfp_office_appliance
+  hardware_revision: unknown
+  release_period: unknown
+  note: "This record is for the original C3530i, not the C3530i II or C3530i III."
+
+compute:
+  soc: "Canon Dual Custom Processor (Shared)"
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  notes:
+    - "Canon's product page names the imaging processor but does not establish a general-purpose CPU architecture for this record."
+
+memory:
+  ram_mb: 3072
+  ram_type: unknown
+  internal_persistent_storage_mb: unknown
+  internal_storage:
+    type: hdd
+    marketed_capacity: "250 GB"
+  application_storage:
+    meap_max_use: "approximately 4 GB"
+  removable_storage:
+    present: true
+    types:
+      - usb
+  notes:
+    - "The 250 GB value is Canon's marketed HDD capacity; this record does not silently convert it into binary MiB."
+    - "Canon documents approximately 4 GB as the maximum hard-disk space MEAP applications can use."
+
+execution:
+  surfaces:
+    - type: manufacturer_app
+      environment: Canon_MEAP
+      custom_code: true
+      privilege: unknown
+      access_method: "administrator Remote UI -> SMS (Service Management Service) -> Install MEAP Application"
+      state: DOCUMENTED
+      admission_controls:
+        administrator_required: true
+        application_package: "MEAP application file with .jar extension"
+        license_file: "documented installation flow uses .lic; provider/application-specific exceptions exist"
+        license_acquisition: "may require a License Access Number plus machine serial number through Canon LMS, or a provider-supplied license"
+        arbitrary_unsigned_jar_execution: unknown
+      notes:
+        - "Canon documents MEAP as an embedded application framework and documents installing, starting, stopping, upgrading and uninstalling MEAP applications."
+        - "The documented path is administrator-managed and license-aware. It does not establish shell, root, arbitrary unsigned Java/JAR execution, or a generic Linux userspace."
+        - "Canon documents a maximum of 19 installed MEAP applications."
+
+connectivity:
+  ethernet:
+    present: true
+    modes:
+      - 1000Base-T
+      - 100Base-TX
+      - 10Base-T
+  wifi:
+    present: true
+    modes:
+      - IEEE_802.11b
+      - IEEE_802.11g
+      - IEEE_802.11n
+  usb:
+    present: true
+    modes:
+      - USB_2.0_host
+      - USB_3.0_host
+      - USB_2.0_device
+  network_storage_services:
+    advanced_box_protocols:
+      - SMB
+      - WebDAV
+  bluetooth: unknown
+  serial: optional
+  gpio: unknown
+
+inputs:
+  scanner:
+    present: true
+    accessible_to_custom_code: unknown
+  controls:
+    - touch_panel
+  document_input:
+    print: true
+    copy: true
+    scan: true
+    send: true
+
+outputs:
+  display:
+    present: true
+    type: "10.1-inch TFT LCD WSVGA color touch panel"
+    custom_rendering_verified: unknown
+  printer:
+    present: true
+    custom_output_from_meap: unknown
+  speaker: unknown
+  motors: unknown
+
+power:
+  source:
+    battery: false
+    external_power: true
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  manufacturer_operating_mode_claims:
+    standby_watts: 44.1
+    sleep_watts: 0.8
+    typical_electricity_consumption: "1.2 kWh TEC rating"
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "Standby and sleep figures are manufacturer operating-mode claims, not AXM measurements and not a substitute for the common registry workload power protocol."
+    - "Canon's page also prints a maximum figure with inconsistent unit text; this record intentionally does not reuse it as a watt measurement."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "The MEAP installer can select Install and Start, but that does not prove application autostart after hard power loss."
+
+recovery:
+  factory_reset: true
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: initialize_all_data_settings
+      from_state: operating_stock_firmware
+      target_state: factory_default_settings
+      method: "administrator Initialize All Data/Settings"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: erased
+      source_claim_ids:
+        - canon_initialize_all_data_settings
+      notes:
+        - "Canon states that remaining HDD data is overwritten and the machine restarts after initialization."
+        - "Canon tells administrators to back up MEAP license files and data stored by MEAP applications before initialization."
+        - "This is a destructive data/settings reset. It is not evidence of a firmware reflash or recovery from corrupted firmware."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: unknown
+  notes:
+    - "Remote UI/SMS and SMB/WebDAV establish local-network surfaces, but per-application MEAP licensing/runtime dependencies vary."
+    - "Canon's documented license acquisition may use its LMS or a provider-supplied license; this record does not call the platform fully local."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - administrator_credentials
+    - networked_computer_for_remote_ui_sms
+    - compatible_meap_application_and_license
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU used-market sample was collected in this activation."
+    - "Licensing and application availability may be acquisition friction and must not be treated as zero-cost merely because the runtime exists."
+
+roles:
+  - role: document_workflow_edge
+    confidence: high
+    reason: "The exact model is an MFP with documented MEAP application execution, local network interfaces, scan/print functions and persistent storage."
+  - role: document_ingestion_gateway
+    confidence: medium
+    reason: "Scanner, network services and an embedded application framework exist, but exact MEAP API access for a chosen ingestion workflow still needs application-level evidence."
+  - role: general_edge_compute
+    confidence: low
+    reason: "MEAP is real embedded execution, but administrator/license admission controls, unknown generic runtime authority, high manufacturer standby power and no local test make general compute value unproven."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: canon_c3530i_hardware_spec
+      state: DOCUMENTED
+      source: "https://www.cla.canon.com/en/p/imagerunner-advance-c3530i"
+      proves:
+        - "Exact model is a color laser multifunction device with print, copy, scan, send and store functions"
+        - "Canon lists Dual Custom Processor (Shared), 3.0 GB RAM and a standard 250 GB HDD"
+        - "Gigabit Ethernet, 802.11b/g/n Wi-Fi and USB host/device interfaces are listed"
+        - "Canon lists standby at approximately 44.1 W and sleep at approximately 0.8 W"
+      does_not_prove:
+        - "general-purpose CPU architecture"
+        - "MEAP application compatibility for any arbitrary application"
+        - "AXM wall-power measurement"
+        - "unattended application restart"
+    - id: canon_c3530i_meap_framework
+      state: DOCUMENTED
+      source: "https://oip.manual.canon/USRMA-1814-zz-CS-3500-enUS/contents/devu-apdx-mp.html"
+      proves:
+        - "MEAP is an embedded application framework on the exact C3530i manual family"
+        - "MEAP applications are installed and managed through SMS from the Remote UI"
+        - "administrator login is required to install a MEAP application"
+      does_not_prove:
+        - "root or shell access"
+        - "arbitrary unsigned application execution"
+    - id: canon_c3530i_meap_installation
+      state: DOCUMENTED
+      source: "https://oip.manual.canon/USRMA-1814-zz-CS-3500-enUS/contents/devu-apdx-mp-inst.html"
+      proves:
+        - "Canon documents MEAP application files with .jar extension and license files with .lic extension"
+        - "the install flow can Install and Start or Only Install"
+        - "license acquisition can use a License Access Number plus machine serial number, while provider-specific licensing exceptions are documented"
+        - "up to 19 MEAP applications can be installed"
+        - "MEAP applications can use approximately 4 GB of hard-disk space"
+      does_not_prove:
+        - "that any arbitrary JAR can be installed"
+        - "that a compatible license remains obtainable for every third-party MEAP application"
+        - "that a MEAP application autostarts after hard power loss"
+    - id: canon_initialize_all_data_settings
+      state: DOCUMENTED
+      source: "https://oip.manual.canon/USRMA-1816-zz-CS-3500-enUV/contents/devu-mcn_mng-hdd_data-initializ.html"
+      proves:
+        - "administrator-accessible Initialize All Data/Settings returns settings to factory defaults"
+        - "remaining hard-disk data is overwritten and the machine restarts after initialization"
+        - "Canon explicitly calls out backing up MEAP license files and MEAP application data before initialization"
+      does_not_prove:
+        - "official firmware reinstall or reflash"
+        - "recovery from corrupted firmware, failed storage, or hardware damage"
+        - "preservation of user, application or configuration state"
+
+notes:
+  - "This is the first printer/office-appliance census record."
+  - "The main schema lesson is admission-controlled application execution: a real embedded application runtime can still depend on administrator authority, compatible packaging and licensing."
+  - "This record stores those admission controls on the execution surface but does not freeze a universal admission-control schema after one pressure case."
+  - "No AXM local installation, compatible MEAP application test, market sample, power measurement, boot/restart test or firmware-recovery test has been performed."
