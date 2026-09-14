@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains fourteen grounded records across fourteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, and industrial IoT gateway. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 11 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains fifteen grounded records across fifteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, and smart TV/display appliance. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 10 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; and Siemens IOT2050 Advanced now shows that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; and LG OLED55C1PUB now shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -272,9 +272,28 @@ The same record also preserves a current ProductCERT constraint: `SSA-834709` sa
 
 This is one industrial pressure case. Preserve it, but do not freeze a universal FS/security-state schema until independent devices demand it.
 
+### Developer-session lease rule learned from LG OLED55C1PUB
+
+A manufacturer-supported custom-application path can still depend on renewable vendor session state.
+
+```text
+LG Developer Mode active
+  + valid developer session
+  -> package/install/launch custom .ipk app
+
+session expires + TV reboots
+  OR TV reboots ten times while offline
+  -> Developer Mode is disabled
+  -> Developer Mode-installed apps are uninstalled
+```
+
+This is not the same as the Steam Deck update-persistence case. On the LG path, the documented developer admission state itself is time/session-gated and can remove developer-installed applications. Matching must therefore keep application authority, vendor-session continuity, runtime locality and indefinite deployment durability separate.
+
+This is one pressure case. Preserve it in the record/evidence packet, but do not freeze a universal execution-lease schema until independent hardware reproduces the pattern.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 14 distinct categories. Do not pad the remaining 11 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 15 distinct categories. Do not pad the remaining 10 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
@@ -285,11 +304,14 @@ Recommended next categories/patterns:
 5. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
 6. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
 7. a second industrial device only if it independently tests functional-status identity, software-maintenance state, or industrial recovery rather than merely repeating general Linux execution;
-8. an oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating root access.
+8. a second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes;
+9. an oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating root access.
 
 The industrial/commercial-surplus slot is now filled by Siemens SIMATIC IOT2050 Advanced. Its value is not merely that it runs Linux; the exact article number still spans FS-dependent USB capability, and current ProductCERT evidence makes acquired software/security state a separate deployment fact.
 
-Each new record should expose something the existing fourteen do not.
+The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not merely custom app execution; the manufacturer documents developer-session expiry/disable behavior that can remove Developer Mode-installed applications.
+
+Each new record should expose something the existing fifteen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -507,6 +529,19 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market cohort with article number, FS, power-supply inclusion and observed software state attached where listings disclose them;
 - do not connect experiment workloads to production or safety-critical equipment merely because industrial interfaces are present.
 
+### N. LG OLED55C1PUB
+
+- on an owned/authorized exact model, preserve region suffix, firmware/webOS version, account state and installed-app state before enabling Developer Mode;
+- reproduce the official Developer Mode workflow, install/launch one harmless `.ipk` test application, and preserve a local experiment receipt;
+- record the visible remaining session time and renewal behavior without presenting the developer lease as permanent capability;
+- test a deliberately local application with WAN unavailable while Developer Mode is still valid, keeping app runtime locality separate from session-renewal dependency;
+- test normal restart and cold-power-loss -> webOS -> chosen app/service lifecycle rather than assuming autostart;
+- measure whole-device wall power in standby, panel-on idle and custom-app-active states rather than reusing LG's `<0.5 W` standby claim;
+- if intentionally testing session expiry/disable behavior, use only noncritical developer-app state and record whether the documented uninstall behavior occurs; do not risk unrelated owner data merely to reproduce a known vendor condition;
+- test Reset to Initial Settings only on noncritical owned state and preserve exact account/app/data impact; do not call it firmware recovery;
+- collect a dated NL/EU used-market cohort only if a real display/signage contract needs it, preserving burn-in/dead-pixel condition, stand/remote inclusion, exact region and transport/collection cost;
+- do not add the TV to the low-power registry comparison until active power, RAM/storage headroom, autostart, developer-session durability and display opportunity cost are comparable.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -527,6 +562,7 @@ Do not expand the census blindly if:
 - replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored;
 - privileged host access is silently promoted to safe actuator control or cheap general-purpose infrastructure;
 - execution privilege is silently promoted to update-stable deployment state;
+- a time/session/account-gated developer surface is treated as indefinitely durable merely because custom applications can be installed successfully;
 - a known security-maintenance condition is ignored because the hardware model is otherwise well documented;
 - listing asking prices are silently promoted to transaction prices or permanent device values;
 - private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size;
@@ -536,7 +572,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
 **Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators and industrial process connections remain visibly user/operator-controlled.  
-**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence boundaries, software/security state, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains and cheap listings must be weighed against installation, recovery, update durability, opportunity cost, electricity, physical/industrial safety and interference with the device's primary useful role.
+**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease boundaries, software/security state, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, renewable developer access and cheap listings must be weighed against installation, recovery, update/session durability, opportunity cost, electricity, physical/industrial safety and interference with the device's primary useful role.
