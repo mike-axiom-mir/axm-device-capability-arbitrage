@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains thirteen grounded records across thirteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, and handheld gaming PC/console. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 12 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains fourteen grounded records across fourteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, and industrial IoT gateway. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 11 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; and Steam Deck LCD 256 GB now shows that execution privilege must remain separate from persistence across vendor OS updates.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; and Siemens IOT2050 Advanced now shows that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -251,22 +251,45 @@ Matching must therefore keep **execution authority** and **update persistence** 
 
 This is one pressure case. Preserve it in the device record, but do not freeze a universal schema extension until independent hardware or operating-system evidence repeats the pattern.
 
+### Functional-status identity rule learned from Siemens IOT2050 Advanced
+
+An exact manufacturer article/order number can still be too broad to determine every hardware capability.
+
+For Siemens IOT2050 Advanced article `6ES7647-0BA00-1YA2`, the manufacturer documents:
+
+```text
+FS01-FS03
+  -> 2 x USB 2.0 Type A
+
+FS04
+  -> 1 x USB 3.0 Type A
+  -> 1 x USB 2.0 Type A
+```
+
+Future market observations and local experiment receipts must therefore preserve the physical unit's observed functional status whenever the capability depends on it. Exact article identity is necessary here, but still not always sufficient.
+
+The same record also preserves a current ProductCERT constraint: `SSA-834709` says exact-product Industrial OS deployments below V4.3.4.1 with Node-RED installed are affected by CVE-2026-58115 and should be updated. Do not infer software/security fitness from the product label or use a vulnerability as an execution path when documented local Linux/root execution already exists.
+
+This is one industrial pressure case. Preserve it, but do not freeze a universal FS/security-state schema until independent devices demand it.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 13 distinct categories. Do not pad the remaining 12 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 14 distinct categories. Do not pad the remaining 11 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
-1. industrial/commercial surplus hardware with non-PC market positioning and conventional local execution;
-2. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
-3. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
-4. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
-5. a second admission-controlled application platform only if it independently tests the Canon lesson;
-6. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
-7. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
+1. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+2. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
+3. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
+4. a second admission-controlled application platform only if it independently tests the Canon lesson;
+5. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
+6. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
+7. a second industrial device only if it independently tests functional-status identity, software-maintenance state, or industrial recovery rather than merely repeating general Linux execution;
 8. an oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating root access.
 
-Each new record should expose something the existing thirteen do not.
+The industrial/commercial-surplus slot is now filled by Siemens SIMATIC IOT2050 Advanced. Its value is not merely that it runs Linux; the exact article number still spans FS-dependent USB capability, and current ProductCERT evidence makes acquired software/security state a separate deployment fact.
+
+Each new record should expose something the existing fourteen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -470,6 +493,20 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market cohort with battery condition and storage configuration attached where listings disclose them;
 - do not add it to the low-power registry comparison until power, autostart, acquisition cost, battery/charging behavior and opportunity cost are comparable.
 
+### M. Siemens SIMATIC IOT2050 Advanced / 6ES7647-0BA00-1YA2
+
+- on an owned/authorized unit, record the exact manufacturer functional status (`FS`) before assuming USB capability;
+- record firmware, Industrial OS/image state, Node-RED presence and current security-patch state before network deployment;
+- if an affected Industrial OS + Node-RED state is present, follow Siemens ProductCERT remediation and update to V4.3.4.1 or later before treating the unit as deployment-ready;
+- preserve eMMC health/free-space evidence and power-supply identity;
+- reproduce the manufacturer-documented external-image boot, root SSH/UART and apt path and preserve a local experiment receipt;
+- run the common registry workload only after the unit state is recorded, then measure CPU/RAM/storage footprint and whole-device DC/wall power rather than substituting the manual's 12 W typical-basic-device figure;
+- test normal restart and repeated hard-power-loss -> Linux -> chosen service lifecycle;
+- test the firmware-V1.3.1+ USER-button external-media escape on noncritical state and keep it distinct from recovery from bootloader/SPI corruption;
+- if re-imaging eMMC, treat the target system/application state as destructive and preserve exact image/hash/source;
+- collect a dated NL/EU used-market cohort with article number, FS, power-supply inclusion and observed software state attached where listings disclose them;
+- do not connect experiment workloads to production or safety-critical equipment merely because industrial interfaces are present.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -482,6 +519,7 @@ Do not expand the census blindly if:
 - recovery claims stop identifying which device state they apply to;
 - recovery claims hide configuration/data destruction behind a single positive boolean;
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
+- an exact manufacturer article/order number silently assigns a higher functional-status capability to every physical unit;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
 - an acquisition variant that gates execution is silently merged into the model-level capability claim;
 - an admission-controlled application platform is treated as freely admitting arbitrary applications;
@@ -489,6 +527,7 @@ Do not expand the census blindly if:
 - replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored;
 - privileged host access is silently promoted to safe actuator control or cheap general-purpose infrastructure;
 - execution privilege is silently promoted to update-stable deployment state;
+- a known security-maintenance condition is ignored because the hardware model is otherwise well documented;
 - listing asking prices are silently promoted to transaction prices or permanent device values;
 - private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size;
 - CI or template workload execution is described as physical-device verification.
@@ -497,7 +536,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
-**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators remain visibly user-controlled.  
-**Continuity:** evidence, variant caveats, execution/admission/update-persistence boundaries, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains and cheap listings must be weighed against installation, recovery, update durability, opportunity cost, electricity, physical safety and interference with the device's primary useful role.
+**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators and industrial process connections remain visibly user/operator-controlled.  
+**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence boundaries, software/security state, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains and cheap listings must be weighed against installation, recovery, update durability, opportunity cost, electricity, physical/industrial safety and interference with the device's primary useful role.

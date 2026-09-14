@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    13 / 25
-Categories: 13 distinct / 8 required
+Devices:    14 / 25
+Categories: 14 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -42,6 +42,7 @@ A device counts when it has:
 | 11 | Canon imageRUNNER ADVANCE C3530i | Printer / office MFP | Manufacturer-supported MEAP application runtime via administrator SMS install; `.jar` application + license-aware admission without shell/root claim | DOCUMENTED | No | `devices/canon/imagerunner-advance-c3530i.yaml` |
 | 12 | Creality K1 | 3D printer / manufacturing appliance | Manufacturer-documented opt-in root SSH on stock Creality OS, plus firmware rollback and official low-level recovery tooling | DOCUMENTED | No | `devices/creality/k1.yaml` |
 | 13 | Valve Steam Deck LCD 256 GB | Handheld gaming PC / console | Manufacturer-supported SteamOS/KDE/Flatpak execution, explicit sudo elevation, BIOS/multi-boot/microSD boot, and official recovery; privilege kept separate from update persistence | DOCUMENTED | No | `devices/valve/steam-deck-lcd-256gb.yaml` |
+| 14 | Siemens SIMATIC IOT2050 Advanced / 6ES7647-0BA00-1YA2 | Industrial IoT gateway / commercial surplus | Manufacturer-documented Debian-based root SSH/UART + apt execution, external-media boot and U-Boot; exact article number still spans FS-dependent USB capability | DOCUMENTED | No | `devices/siemens/simatic-iot2050-advanced-6es7647-0ba00-1ya2.yaml` |
 
 ## Category coverage
 
@@ -58,7 +59,7 @@ A device counts when it has:
 - [x] 3D printer / manufacturing appliance
 - [x] Console / handheld gaming device
 - [x] Thin client / POS / kiosk
-- [ ] Industrial / commercial surplus
+- [x] Industrial / commercial surplus
 - [ ] Vehicle infotainment / non-safety computer
 - [ ] Other / unknown category
 
@@ -68,14 +69,16 @@ Only eight categories are required for Milestone 01. New records should now opti
 
 These are research targets, **not capability claims**.
 
-1. One industrial/commercial surplus computer, controller or panel with conventional local execution.
-2. One non-safety vehicle/infotainment computer with a documented application execution path.
-3. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
-4. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
-5. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
-6. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
-7. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
-8. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
+1. One non-safety vehicle/infotainment computer with a documented application execution path and a boundary that clearly excludes safety-critical vehicle systems.
+2. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
+3. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+4. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
+5. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
+6. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
+7. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
+8. One oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating general Linux/root access.
+
+The industrial/commercial-surplus slot is no longer a queue item: Siemens SIMATIC IOT2050 Advanced fills it with manufacturer-supported local Linux execution, external-media boot/recovery controls, industrial interfaces, and a new exact-article-versus-functional-status identity pressure case.
 
 The console/handheld slot is no longer a queue item: Steam Deck LCD 256 GB fills it with manufacturer-supported Linux application execution, explicit privileged elevation, multi-boot, removable-media boot, and official recovery.
 
@@ -193,7 +196,7 @@ Verizon unit
   -> replacement-OS path is unavailable
 ```
 
-A market listing with carrier/origin unknown therefore must not inherit the custom-OS capability merely from the `Pixel 3a` name. Future market collection should preserve the capability gate or leave it unknown rather than merging locked and unlockable supply.
+A market listing with carrier/origin unknown therefore must not inherit the custom-OS capability merely from the model name. Future market collection should preserve the capability gate or leave it unknown rather than merging locked and unlockable supply.
 
 One pressure case is enough to record the lesson but not enough to freeze a universal new variant schema.
 
@@ -260,6 +263,27 @@ Therefore a matcher must not turn `root` or `sudo` into an implicit claim that d
 
 The record uses an additive `update_persistence` note on its execution surfaces. One pressure case is enough to preserve the lesson but not enough to freeze a universal schema field.
 
+### 12. Exact manufacturer article number can still span functional-status revisions
+
+Siemens SIMATIC IOT2050 Advanced adds an industrial identity case stronger than a generic family name:
+
+```text
+same exact article: 6ES7647-0BA00-1YA2
+
+FS01-FS03
+  -> 2 x USB 2.0 Type A
+
+FS04
+  -> 1 x USB 3.0 Type A
+  -> 1 x USB 2.0 Type A
+```
+
+Therefore an exact order number is not always the final hardware-identity boundary. Market observations and local experiment receipts should preserve the observed manufacturer functional status when a capability differs by FS.
+
+The same device also has current software-maintenance pressure: Siemens ProductCERT advisory `SSA-834709` says exact-product Industrial OS deployments below V4.3.4.1 with Node-RED installed are affected by a critical authentication flaw and recommends updating affected deployments. Security-patch state is therefore an acquisition/deployment fact, not something to infer from the model name.
+
+One industrial device is enough to preserve these facts in the record and evidence packet, but not enough to freeze a universal functional-status or security-maintenance schema extension yet.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -322,6 +346,8 @@ The Creality K1 is not added merely because it exposes manufacturer-documented r
 
 The Steam Deck LCD 256 GB is not added merely because it has 16 GB RAM, x86 Linux and documented sudo. Whole-device wall power, battery/charging behavior, service autostart, hard-power-loss recovery, update-stable service deployment, used-unit cost and handheld opportunity cost are not comparable with the current infrastructure candidates.
 
+The Siemens IOT2050 Advanced is not added merely because it has manufacturer-documented root Linux execution, two Gigabit Ethernet ports and external-media recovery. Its exact functional status, used acquisition cost, power-supply inclusion, measured registry-workload power, eMMC health, software/security state, service autostart and hard-power-loss behavior are not yet comparable with the three current candidates. The manual's 12 W typical basic-device figure remains manufacturer context, not a common-workload wall-power measurement.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -339,6 +365,7 @@ The milestone should answer:
 9. Can a real but administrator/license-gated application runtime remain distinct from unrestricted general-purpose execution?
 10. Can privileged host execution remain distinct from physical-actuator suitability and total-useful-cost fit?
 11. Can execution privilege remain distinct from the persistence of installed state across vendor OS updates?
+12. Can exact manufacturer order numbers remain revision-aware when a functional-status change alters real capability?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

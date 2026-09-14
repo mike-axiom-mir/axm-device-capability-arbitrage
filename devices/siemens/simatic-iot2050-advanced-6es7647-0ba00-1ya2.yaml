@@ -1,0 +1,321 @@
+schema_version: "0.1"
+record_id: siemens-simatic-iot2050-advanced-6es7647-0ba00-1ya2
+
+identity:
+  manufacturer: Siemens
+  model: SIMATIC IOT2050 Advanced
+  common_name: SIMATIC IOT2050 Advanced
+  marketed_category: industrial_iot_gateway
+  order_number: "6ES7647-0BA00-1YA2"
+  hardware_revision: unknown
+  release_period: unknown
+  configuration_scope:
+    order_number: "6ES7647-0BA00-1YA2"
+    functional_status: unknown
+    note: "Siemens documents different USB capability for the same order number across functional status FS01-FS03 versus FS04. A physical unit must not inherit FS04 USB 3.0 capability unless its functional status is observed."
+
+compute:
+  soc: "TI SoC AM6548 HS"
+  architecture: unknown
+  cpu_cores: 4
+  clock_mhz: 1000
+  accelerator:
+    gpu: unknown
+    npu: unknown
+    dsp: unknown
+  notes:
+    - "The exact Siemens configuration plan identifies the Advanced article as an AM6548 HS quad-core device. CPU architecture is left unknown here rather than inferred from SoC family knowledge."
+
+memory:
+  ram_mb: 2048
+  ram_type: DDR4
+  internal_persistent_storage_mb: unknown
+  internal_storage:
+    manufacturer_capacity: "16 GB"
+    type: eMMC
+  removable_storage:
+    present: true
+    types:
+      - microSD
+  notes:
+    - "Manufacturer decimal eMMC capacity is preserved as 16 GB instead of silently converting it to MiB."
+    - "Usable free space and eMMC wear on a used unit are not established."
+
+execution:
+  surfaces:
+    - type: shell
+      environment: siemens_example_image_debian_based_linux
+      version: unknown
+      custom_code: true
+      privilege: root
+      access_method: "Boot Siemens example image from microSD/USB; connect by SSH or UART; manufacturer instructions document root login"
+      state: DOCUMENTED
+      notes:
+        - "This evidence covers Siemens' documented Debian-based example-image workflow. It does not silently assert the same root-login defaults for every SIMATIC Industrial OS release."
+        - "No AXM local SSH or UART login was performed."
+    - type: package_manager
+      environment: siemens_example_image_debian_based_linux
+      version: apt
+      custom_code: true
+      privilege: root
+      access_method: "Manufacturer example-image instructions document apt update/install/purge from the root shell"
+      state: DOCUMENTED
+      notes:
+        - "Package availability still depends on configured repositories or preserved local package media."
+    - type: bootloader
+      environment: U-Boot
+      version: unknown
+      custom_code: true
+      privilege: bootloader
+      access_method: "UART console can enter the U-Boot shell and alter boot target/order"
+      state: DOCUMENTED
+      notes:
+        - "Bootloader access is a boot-selection/recovery surface. It is not evidence that a corrupted bootloader can itself be recovered through UART."
+
+connectivity:
+  ethernet:
+    present: true
+    ports: 2
+    speed: gigabit
+    connector: RJ45
+  wifi:
+    present: unknown
+    notes:
+      - "No integrated Wi-Fi capability is claimed. Expansion interfaces exist, but installed wireless hardware on a used unit is not assumed."
+  bluetooth: unknown
+  usb:
+    present: true
+    type_a_ports: 2
+    observed_functional_status: unknown
+    functional_status_variants:
+      FS01_to_FS03:
+        - "2 x USB 2.0 Type A"
+      FS04:
+        - "1 x USB 3.0 Type A"
+        - "1 x USB 2.0 Type A"
+  serial:
+    present: true
+    software_switchable_modes:
+      - RS232
+      - RS422
+      - RS485
+  gpio:
+    present: true
+    interface: Arduino_shield_interface
+    accessible_to_custom_code: unknown
+  notes:
+    - "The same exact Advanced order number spans materially different USB capability by functional status."
+
+inputs:
+  sensors: []
+  microphones: []
+  controls:
+    - RESET_button
+    - USER_button
+  notes:
+    - "Industrial field devices may be attached through Ethernet, serial, USB or expansion interfaces, but no attached sensor/process capability is inherited by this gateway record."
+
+outputs:
+  display:
+    present: false
+    custom_rendering_verified: false
+  displayport:
+    present: true
+    custom_rendering_verified: unknown
+  speaker:
+    present: false
+  leds: present
+  motors: []
+  relays: []
+  notes:
+    - "DisplayPort presence is manufacturer-documented. Custom rendering from an AXM workload was not locally tested."
+
+power:
+  source:
+    battery: false
+    external_power: true
+    rtc_backup_battery: true
+  supply:
+    nominal: "12-24 V DC"
+    documented_input_range: "9-36 V DC"
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  manufacturer_typical_basic_device_watts: 12
+  manufacturer_max_power_watts: 24
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "The operating manual lists 12 W as typical basic-device power at rated 24 V in the IOT2050 technical data and 24 W as maximum power. These are manufacturer figures, not AXM wall-power measurements and not measurements under the common registry workload."
+    - "Power-supply conversion losses, expansion cards, attached USB devices and field interfaces can change input consumption."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: "supported_configuration_unknown"
+  boot_from_removable_media: true
+  bootloader_access: true
+  notes:
+    - "Siemens documents booting example images from microSD/USB and U-Boot boot-target selection."
+    - "Cold-power-loss -> Linux -> arbitrary service autostart has not been locally verified."
+
+recovery:
+  factory_reset: unknown
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: true
+  usb_recovery: true
+  uart_recovery: true
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: external_media_escape_v131_plus
+      from_state: "firmware_v1_3_1_or_later_with_bootloader_operational"
+      target_state: "boot_from_external_microSD_or_USB_without_eMMC_boot"
+      method: "Hold USER during power-on/reset until the documented status indication; firmware V1.3.1+ skips eMMC and boots external media only"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: preserved
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - siemens_external_boot_and_uboot
+      notes:
+        - "This path is version-gated by Siemens to firmware V1.3.1 or later."
+        - "Skipping eMMC does not prove recovery if U-Boot/SPI firmware itself is damaged."
+    - id: reimage_emmc_from_external_example_image
+      from_state: "bootable_external_example_image"
+      target_state: "siemens_example_image_written_to_internal_eMMC"
+      method: "Boot the documented external example image and use Siemens' block-image workflow to write the image to internal eMMC"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: unknown
+        application_state: erased
+      source_claim_ids:
+        - siemens_debian_root_execution
+      notes:
+        - "The workflow overwrites the target eMMC system image; user data stored elsewhere is not generalized as erased or preserved."
+        - "This is not claimed to restore a licensed factory Industrial OS state."
+
+locality:
+  state: local_after_provisioning
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: partial
+  notes:
+    - "Siemens documents local external-media boot, local SSH/UART administration and local execution. A vendor cloud is not required for those runtime controls."
+    - "Obtaining images/packages and any optional cloud integration are separate questions; the record does not claim fully offline provisioning of every software state."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - "microSD or USB mass-storage medium for the documented external-image/recovery workflow"
+    - "UART/serial access hardware only if bootloader-console work is required"
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No NL/EU used-market cohort was collected in this activation."
+    - "Power-supply inclusion, functional status, eMMC wear and current software state may materially affect used-unit value and must stay attached to future observations."
+
+roles:
+  - role: industrial_edge_linux_gateway
+    confidence: high
+    reason: "Manufacturer documentation establishes an industrial gateway with local Gigabit Ethernet/serial interfaces plus a Debian-based root shell/package-manager execution path."
+  - role: local_data_gateway
+    confidence: high
+    reason: "Two Gigabit Ethernet ports, switchable serial interfaces and general local Linux execution are manufacturer-documented."
+  - role: recoverable_experiment_host
+    confidence: medium
+    reason: "External-media boot, eMMC re-imaging and U-Boot access are documented, but AXM has not reproduced recovery on a physical unit."
+  - role: low_power_registry_node
+    confidence: low
+    reason: "General Linux execution and Ethernet exist, but acquisition price, comparable wall power, service autostart, hard-power-loss recovery, functional-status identity and opportunity cost are not evidence-ready for the current registry comparison."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: siemens_exact_advanced_hardware
+      state: DOCUMENTED
+      source: "https://support.industry.siemens.com/cs/attachments/109963259/iot2050_operating_instructions_en_en-US.pdf"
+      additional_sources:
+        - "https://www.siemens.com/en-gb/content/sce-educational-institutions/iot2000/"
+      proves:
+        - "SIMATIC IOT2050 Advanced order number 6ES7647-0BA00-1YA2 uses TI SoC AM6548 HS quad core, 2 GB DDR4 RAM and 16 GB eMMC"
+        - "The platform provides microSD, two Gigabit Ethernet ports, serial interfaces and expansion interfaces"
+        - "The exact Advanced order number spans FS01-FS03 with two USB 2.0 Type-A ports and FS04 with one USB 3.0 plus one USB 2.0 Type-A port"
+      does_not_prove:
+        - "functional status of an arbitrary used unit"
+        - "usable free eMMC capacity or flash wear"
+        - "whole-device wall power under an AXM workload"
+        - "AXM local reproduction"
+    - id: siemens_debian_root_execution
+      state: DOCUMENTED
+      source: "https://support.industry.siemens.com/cs/attachments/109963259/iot2050_operating_instructions_en_en-US.pdf"
+      proves:
+        - "Siemens documents a Debian-based Linux example image for IOT2050"
+        - "The example-image workflow boots from microSD/USB and supports root login by SSH and UART"
+        - "The documented root environment uses apt for package management"
+        - "Siemens documents writing the example image from external media to the Advanced model's internal eMMC"
+      does_not_prove:
+        - "that every SIMATIC Industrial OS release exposes identical default root/SSH behavior"
+        - "that arbitrary services autostart after unexpected power loss"
+        - "that the common AXM registry workload has run on this device"
+        - "AXM local reproduction"
+    - id: siemens_external_boot_and_uboot
+      state: DOCUMENTED
+      source: "https://support.industry.siemens.com/cs/attachments/109963259/iot2050_operating_instructions_en_en-US.pdf"
+      proves:
+        - "Siemens documents U-Boot console access through UART and changing boot target/order"
+        - "For firmware V1.3.1 or later, holding USER during power-on/reset can skip eMMC and boot external media only"
+      does_not_prove:
+        - "recovery from corrupted U-Boot/SPI firmware"
+        - "data preservation after an eMMC re-image"
+        - "AXM local recovery reproduction"
+    - id: siemens_manual_power
+      state: DOCUMENTED
+      source: "https://support.industry.siemens.com/cs/attachments/109974073/iot2050_operating_instructions_en_en-US.pdf"
+      proves:
+        - "The IOT2050 technical data lists 12 W typical basic-device power at rated 24 V and 24 W maximum power"
+      does_not_prove:
+        - "idle wall power"
+        - "power under the AXM registry workload"
+        - "external power-supply conversion losses"
+        - "locally measured consumption"
+    - id: siemens_current_security_advisory
+      state: DOCUMENTED
+      source: "https://cert-portal.siemens.com/productcert/html/ssa-834709.html"
+      proves:
+        - "Siemens ProductCERT advisory SSA-834709 dated 2026-08-11 names exact product 6ES7647-0BA00-1YA2"
+        - "Industrial OS versions below V4.3.4.1 with Node-RED installed are affected by CVE-2026-58115"
+        - "Siemens recommends updating affected deployments to V4.3.4.1 or later"
+      does_not_prove:
+        - "that an arbitrary acquired unit has Node-RED installed"
+        - "that an arbitrary acquired unit is vulnerable or already patched"
+        - "a legitimate execution path for AXM use"
+        - "AXM local security verification"
+
+notes:
+  - "This is the first industrial/commercial-surplus class record in the census."
+  - "Its main schema pressure is that even an exact manufacturer order number can span functional-status hardware revisions with materially different interface capability. Acquisition evidence must preserve FS when it matters."
+  - "A current Siemens security advisory also makes software-maintenance state part of deployment fitness: an acquired unit's actual Industrial OS/Node-RED state must be observed and patched rather than inferred from a model listing."
+  - "The security advisory is recorded only as a maintenance constraint; the vulnerability is not treated as an execution surface."
+  - "Industrial connectivity does not grant permission or safety fitness to control attached production or safety-critical equipment. This record covers the gateway's documented local compute/interfaces, not authority over external processes."
+  - "The manufacturer 12 W typical figure and 24 W maximum are not converted into measured idle/active power."
+  - "No AXM local execution, recovery, power, market-price, firmware, functional-status, eMMC-health, or hard-power-loss test has been performed."
