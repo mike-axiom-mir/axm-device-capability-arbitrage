@@ -1,6 +1,6 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Seven census records now exercise seven materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, and a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem because one marketed model spans multiple eMMC and wireless configurations; the Fire TV AFTKA now shows that real custom application execution must remain distinct from administrator/root authority. A small structural validator and GitHub Actions workflow protect the machine-readable records without freezing the research schema too early.
+**Current state:** Initial foundation is in place. Eight census records now exercise eight materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership, and an IP camera with exact Thingino replacement-firmware targets, root SSH and local RTSP/ONVIF services. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem because one marketed model spans multiple eMMC and wireless configurations; the Fire TV AFTKA showed that real custom application execution must remain distinct from administrator/root authority; and the Wyze Cam v2 now shows that locality itself can change with persistent firmware state. The 8-category breadth threshold is reached, but Milestone 01 still requires 17 more evidence-backed devices and a real arbitrage result. A small structural validator and GitHub Actions workflow protect the stable machine-readable core without freezing the research schema too early.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -17,6 +17,8 @@ Implemented:
 - GitHub Actions validation on pushes to `main` and pull requests.
 
 The validator deliberately does **not** reject unknown capability values or enforce a large rigid schema. New hardware classes still need room to challenge v0.1.
+
+`LOCALITY_STATE_MODEL.md` is now a provisional evidence-driven extension. It is intentionally not mechanically frozen yet because Wyze Cam v2 is the first strong pressure case. Require a second independent device before deciding whether that shape should become part of the validator contract.
 
 ## Priority 1 — Run the first actual arbitrage comparison
 
@@ -47,7 +49,7 @@ Required comparison state:
 
 Only then ask whether the non-obvious device is actually cheaper/better.
 
-### Configuration-identity rule learned from the Wyse 3040
+### Configuration-identity rule learned from Wyse 3040 and reinforced by Wyze Cam v2
 
 A product model can remain exact while still spanning materially different unit configurations.
 
@@ -59,7 +61,15 @@ same marketed model
   -> optional WLAN/Bluetooth
 ```
 
-Market research and matching must therefore preserve observed unit configuration when it matters. A listing containing only a model name must not inherit the best-known storage/radio variant silently.
+For Wyze Cam v2, current Thingino support distinguishes:
+
+```text
+same marketed model
+  -> T20X + JXF22 + RTL8189FTV
+  -> T20X + JXF23 + RTL8189FTV
+```
+
+Market research, installation and matching must therefore preserve observed unit configuration when it matters. A listing containing only a model name must not inherit the best-known storage/radio/sensor variant silently, and replacement firmware must not be selected from the marketed name alone when hardware variants require separate targets.
 
 A later schema extension may need a more general variant/configuration representation, but do not freeze that shape until more devices pressure it.
 
@@ -89,22 +99,42 @@ Future matching must preserve sandbox/application-level capability without silen
 
 The Fire TV therefore does not enter the registry comparison merely because it has 2 GB RAM and networking. A candidate must satisfy the contract, not resemble a computer on paper.
 
+### Locality-state rule learned from Wyze Cam v2
+
+Locality is not always a permanent hardware property.
+
+For the same Wyze Cam v2:
+
+```text
+stock Wyze firmware
+  -> internet-centred app/live/settings behavior
+  -> configured microSD recording can continue offline
+
+Thingino firmware
+  -> local RTSP / ONVIF / Web UI / root SSH
+  -> vendor cloud is not required for normal local runtime
+```
+
+A flat device-level `fully_local` or `cloud_required` label would erase one of those truths.
+
+Use `LOCALITY_STATE_MODEL.md` when persistent device state materially changes cloud/local behavior. Do not auto-migrate old records. Wait for direct evidence of the other states and require a second independent pressure case before freezing the shape into the validator.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-Next records should maximize schema pressure rather than collect more routers, NAS boxes, robot vacuums, conventional thin clients or Android media sticks.
+The category-breadth threshold is now met at 8 / 8. Do not interpret that as permission to pad the remaining 17 records with near-duplicates. New records should still maximize schema pressure, evidence diversity, or comparison value.
 
-Recommended next categories:
+Recommended next categories/patterns:
 
-1. exact OpenIPC IP camera/model;
-2. old Android phone with documented unlock/recovery;
-3. ESP8266/ESP32 consumer appliance;
-4. printer/MFP with an application or embedded Linux/Android execution layer;
-5. console/handheld gaming device with a supported homebrew/Linux path;
-6. industrial/commercial surplus hardware with non-PC market positioning;
-7. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+1. old Android phone with documented unlock/recovery and offline operation;
+2. ESP8266/ESP32 consumer appliance with replaceable local firmware;
+3. printer/MFP with an application or embedded Linux/Android execution layer;
+4. console/handheld gaming device with a supported homebrew/Linux path;
+5. industrial/commercial surplus hardware with non-PC market positioning;
+6. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+7. a second state-dependent-locality device if it can test whether `LOCALITY_STATE_MODEL.md` generalizes;
 8. oddball appliance where a different execution/recovery/locality pattern challenges the current schema.
 
-Each new class should expose something the existing seven records do not.
+Each new class should expose something the existing eight records do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -195,7 +225,8 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect credible idle-on-dock / charging / cleaning power data or measure locally;
 - verify exact production/recovery firmware before any local modification test;
 - enumerate actual S5 Valetudo capabilities rather than inheriting every generic integration feature;
-- treat permanent loss of stock state as setup/recovery cost rather than hiding it.
+- treat permanent loss of stock state as setup/recovery cost rather than hiding it;
+- only add stock-vs-Valetudo `locality.states` if direct stock-locality evidence is collected rather than inferred.
 
 ### F. Fire TV Stick 4K Max 1st Gen / AFTKA
 
@@ -206,6 +237,17 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - measure wall power at boot, idle, local-app active and media-active states;
 - verify factory reset on noncritical state and document exactly what application data survives, if anything;
 - collect a dated NL/EU used-market sample only after exact-generation identity can be distinguished from 2nd Gen listings.
+
+### G. Wyze Cam v2
+
+- identify JXF22 vs JXF23 on a physical owned unit before selecting replacement firmware;
+- preserve stock firmware/version before modification;
+- reproduce Thingino installation using the least invasive supported method for that exact unit;
+- measure wall power in stock idle, Thingino idle and active RTSP states;
+- test cold power loss -> Thingino -> Wi-Fi -> RTSP/ONVIF/SSH repeatedly;
+- test the official stock `demo.bin` flash on noncritical stock state separately from researching a Thingino-to-stock transition;
+- collect a dated NL/EU used-market sample with sensor-variant ambiguity recorded rather than guessed;
+- do not treat root SSH as proof that the camera is a rational general-purpose registry node until RAM/flash headroom and opportunity cost are known.
 
 ## Stop conditions
 
@@ -219,13 +261,14 @@ Do not expand the census blindly if:
 - recovery claims stop identifying which device state they apply to;
 - recovery claims hide configuration/data destruction behind a single positive boolean;
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
-- an application/developer execution surface is silently promoted to root or unrestricted operating-system authority.
+- an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
+- a single locality label hides materially different stock/replacement-firmware cloud behavior.
 
 When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant inheritance or privilege inflation.  
-**Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible.  
-**Continuity:** evidence, variant caveats, execution boundaries and recovery live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware or promoting a device into a workload it has not yet earned.
+**Truth:** no fake verification, silent best-variant inheritance, privilege inflation or cloud/locality flattening.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible, and cameras add explicit privacy/recording consent concerns.  
+**Continuity:** evidence, variant caveats, execution boundaries, locality states and recovery live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware or promoting a device into a workload it has not yet earned; replacement firmware gains must be weighed against installation and recovery cost.
