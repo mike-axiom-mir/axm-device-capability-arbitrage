@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Validate repository-local artifacts referenced by capability comparisons.
 
-This gate protects link integrity and contract/date coherence between comparison
-records and their market/workload artifacts. It does not judge external source
-quality or turn an artifact reference into physical-device verification.
+This gate protects link integrity, contract/date coherence, and ranking-ready market
+candidate coverage between comparison records and their market/workload artifacts.
+It does not judge external source quality or turn an artifact reference into
+physical-device verification.
 """
 from __future__ import annotations
 
@@ -76,18 +77,73 @@ def repo_artifact_path(value: Any, *, root_dir: str, context: str) -> tuple[Path
     return resolved, text
 
 
+def comparison_candidate_sets(
+    candidates: Any,
+    *,
+    comparison_id: str,
+) -> tuple[set[str], set[str]]:
+    if not isinstance(candidates, list) or not candidates:
+        raise ValidationError(f"{comparison_id}.candidates must be a non-empty list")
+
+    all_ids: set[str] = set()
+    rankable_ids: set[str] = set()
+    for index, candidate in enumerate(candidates):
+        context = f"{comparison_id}.candidates[{index}]"
+        if not isinstance(candidate, dict):
+            raise ValidationError(f"{context} must be a mapping")
+        record_id = require_string(candidate.get("record_id"), f"{context}.record_id")
+        if record_id in all_ids:
+            raise ValidationError(
+                f"{comparison_id}.candidates repeats record_id {record_id!r}"
+            )
+        all_ids.add(record_id)
+
+        # The deeper comparison validator owns eligibility semantics. Here we use
+        # only the explicit terminal ineligible state so ranking-ready market
+        # coverage is not demanded for a candidate the comparison already excludes.
+        eligibility = candidate.get("hard_requirement_eligibility")
+        if eligibility != "ineligible":
+            rankable_ids.add(record_id)
+
+    return all_ids, rankable_ids
+
+
+def snapshot_candidate_ids(
+    snapshot: dict[str, Any],
+    *,
+    rel: str,
+) -> set[str]:
+    candidates = snapshot.get("candidates")
+    if not isinstance(candidates, list) or not candidates:
+        raise ValidationError(f"{rel}.candidates must be a non-empty list")
+
+    candidate_ids: set[str] = set()
+    for index, candidate in enumerate(candidates):
+        context = f"{rel}.candidates[{index}]"
+        if not isinstance(candidate, dict):
+            raise ValidationError(f"{context} must be a mapping")
+        record_id = require_string(candidate.get("record_id"), f"{context}.record_id")
+        if record_id in candidate_ids:
+            raise ValidationError(f"{rel}.candidates repeats record_id {record_id!r}")
+        candidate_ids.add(record_id)
+    return candidate_ids
+
+
 def validate_market_refs(
     refs: Any,
     *,
     comparison_id: str,
     contract_id: str,
     comparison_date: date,
-) -> int:
+    comparison_candidate_ids: set[str],
+) -> tuple[int, set[str]]:
     if not isinstance(refs, list) or not refs:
         raise ValidationError(f"{comparison_id}.market_snapshot_refs must be a non-empty list")
 
     seen_paths: set[str] = set()
     seen_snapshot_ids: set[str] = set()
+    covered_candidate_ids: set[str] = set()
+
     for index, raw_ref in enumerate(refs):
         context = f"{comparison_id}.market_snapshot_refs[{index}]"
         path, rel = repo_artifact_path(raw_ref, root_dir="market_snapshots", context=context)
@@ -116,7 +172,16 @@ def validate_market_refs(
                 f"{comparison_id} checked_at predates linked market snapshot {rel}"
             )
 
-    return len(seen_paths)
+        snapshot_ids = snapshot_candidate_ids(snapshot, rel=rel)
+        overlap = snapshot_ids & comparison_candidate_ids
+        if not overlap:
+            raise ValidationError(
+                f"{comparison_id} links {rel}, but that snapshot covers none of "
+                "the comparison candidates"
+            )
+        covered_candidate_ids.update(overlap)
+
+    return len(seen_paths), covered_candidate_ids
 
 
 def validate_workload_ref(
@@ -138,13 +203,18 @@ def validate_workload_ref(
     return workload_id
 
 
-def validate_comparison(path: Path) -> tuple[str, int, bool]:
+def validate_comparison(path: Path) -> tuple[str, int, bool, int, int]:
     rel = path.relative_to(ROOT).as_posix()
     data = load_yaml(path)
     comparison_id = require_string(data.get("comparison_id"), f"{rel}.comparison_id")
     contract_id = require_string(data.get("contract_id"), f"{rel}.contract_id")
     comparison_date = canonical_date(data.get("checked_at"), f"{rel}.checked_at")
     status = require_string(data.get("status"), f"{rel}.status")
+
+    comparison_ids, rankable_ids = comparison_candidate_sets(
+        data.get("candidates"),
+        comparison_id=comparison_id,
+    )
 
     market_refs = data.get("market_snapshot_refs")
     workload_ref = data.get("workload_ref")
@@ -158,13 +228,24 @@ def validate_comparison(path: Path) -> tuple[str, int, bool]:
             raise ValidationError(f"{comparison_id} is {status!r} but has no workload_ref")
 
     market_count = 0
+    covered_ids: set[str] = set()
     if market_refs is not None:
-        market_count = validate_market_refs(
+        market_count, covered_ids = validate_market_refs(
             market_refs,
             comparison_id=comparison_id,
             contract_id=contract_id,
             comparison_date=comparison_date,
+            comparison_candidate_ids=comparison_ids,
         )
+
+    if status in RANKING_READY_STATES:
+        missing_rankable = sorted(rankable_ids - covered_ids)
+        if missing_rankable:
+            raise ValidationError(
+                f"{comparison_id} is {status!r} but linked market snapshots do not "
+                "cover rankable candidate(s): "
+                + ", ".join(missing_rankable)
+            )
 
     has_workload = workload_ref is not None
     if has_workload:
@@ -174,7 +255,13 @@ def validate_comparison(path: Path) -> tuple[str, int, bool]:
             contract_id=contract_id,
         )
 
-    return comparison_id, market_count, has_workload
+    return (
+        comparison_id,
+        market_count,
+        has_workload,
+        len(covered_ids),
+        len(rankable_ids),
+    )
 
 
 def main() -> int:
@@ -190,12 +277,21 @@ def main() -> int:
     for path in comparison_paths:
         rel = path.relative_to(ROOT)
         try:
-            comparison_id, market_count, has_workload = validate_comparison(path)
+            (
+                comparison_id,
+                market_count,
+                has_workload,
+                covered_candidate_count,
+                rankable_candidate_count,
+            ) = validate_comparison(path)
             linked_markets += market_count
             linked_workloads += int(has_workload)
             print(
                 f"PASS {rel}: {comparison_id}; "
-                f"{market_count} market snapshot ref(s); workload_ref={has_workload}"
+                f"{market_count} market snapshot ref(s); "
+                f"market candidate coverage={covered_candidate_count}/"
+                f"{rankable_candidate_count} rankable; "
+                f"workload_ref={has_workload}"
             )
         except (ValidationError, OSError) as exc:
             errors.append(f"FAIL {rel}: {exc}")
@@ -214,7 +310,8 @@ def main() -> int:
 
     print(
         "All present comparison artifact references resolve inside the repository, "
-        "match the comparison contract, and preserve date coherence."
+        "match the comparison contract/date boundary, and ranking-ready comparisons "
+        "have market coverage for every non-ineligible candidate."
     )
     return 0
 
