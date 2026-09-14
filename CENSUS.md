@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    11 / 25
-Categories: 11 distinct / 8 required
+Devices:    12 / 25
+Categories: 12 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -40,6 +40,7 @@ A device counts when it has:
 | 9 | SONOFF BASICR2 | Smart-home / microcontroller appliance | Exact-device Tasmota replacement-firmware path on ESP8285; stock eWeLink LAN control vs local Tasmota WebUI/MQTT | COMMUNITY_VERIFIED | No | `devices/sonoff/basicr2.yaml` |
 | 10 | Google Pixel 3a / `sargo` | Smartphone / handheld | Current Ubuntu Touch replacement OS with native apps/shell; custom-OS capability gated by bootloader-unlockable acquisition variant | COMMUNITY_VERIFIED | No | `devices/google/pixel-3a-sargo.yaml` |
 | 11 | Canon imageRUNNER ADVANCE C3530i | Printer / office MFP | Manufacturer-supported MEAP application runtime via administrator SMS install; `.jar` application + license-aware admission without shell/root claim | DOCUMENTED | No | `devices/canon/imagerunner-advance-c3530i.yaml` |
+| 12 | Creality K1 | 3D printer / manufacturing appliance | Manufacturer-documented opt-in root SSH on stock Creality OS, plus firmware rollback and official low-level recovery tooling | DOCUMENTED | No | `devices/creality/k1.yaml` |
 
 ## Category coverage
 
@@ -53,6 +54,7 @@ A device counts when it has:
 - [x] Robot / autonomous appliance
 - [x] E-reader / e-ink device
 - [x] Printer / office appliance
+- [x] 3D printer / manufacturing appliance
 - [ ] Console / handheld gaming device
 - [x] Thin client / POS / kiosk
 - [ ] Industrial / commercial surplus
@@ -69,12 +71,12 @@ These are research targets, **not capability claims**.
 2. One industrial/commercial surplus computer, controller or panel with conventional local execution.
 3. One non-safety vehicle/infotainment computer with a documented application execution path.
 4. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
-5. One oddball appliance whose machine capability is clearly under-described by its market category.
-6. One device with a state-dependent locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
-7. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
-8. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
+5. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+6. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
+7. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
+8. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
 
-The printer/MFP slot is no longer a queue item: Canon C3530i now fills it with an exact-model manufacturer-supported MEAP application path whose administrator and license admission controls remain explicit.
+The oddball-manufacturing-appliance slot is no longer a queue item: Creality K1 fills it with manufacturer-documented root SSH on a heated moving appliance plus documented rollback/recovery.
 
 ## Schema pressure learned so far
 
@@ -215,6 +217,27 @@ The record therefore stores `admission_controls` on the execution surface while 
 
 This is one pressure case, so the repository records the lesson without freezing a universal admission-control schema yet.
 
+### 10. Root host authority is not physical-actuator suitability
+
+Creality K1 adds the inverse pressure case:
+
+```text
+manufacturer-documented root SSH exists
+  -> authorized owner has privileged host execution
+
+does not automatically mean
+
+unrelated always-on compute is wise
+motion/heater actuation is safe to experiment with
+whole-device power is low
+custom services survive power loss
+printer opportunity cost is zero
+```
+
+The K1 is a physically consequential fabrication appliance with documented root SSH. Capability matching must therefore keep host execution authority separate from actuator use, physical safety, workload fit and total useful cost.
+
+This is one pressure case. It is enough to preserve the distinction, not enough to freeze a universal actuator-authority schema.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -273,6 +296,8 @@ The Pixel 3a is also not added merely because it has 4 GB RAM and a Linux-phone 
 
 The C3530i is not added merely because it has 3 GB RAM and an embedded application runtime. MEAP admission/licensing, workload compatibility, transport/mechanical cost, restart behavior and comparable power evidence are not established; Canon's approximately 44.1 W standby claim already makes the low-power contract a poor fit to assume without a workload-specific reason.
 
+The Creality K1 is not added merely because it exposes manufacturer-documented root SSH. RAM, comparable wall power, harmless-service restart behavior, printer opportunity cost and the wisdom of tying registry availability to a heated moving fabrication appliance are unproven.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -288,6 +313,7 @@ The milestone should answer:
 7. Can dated market observations remain configuration-aware without turning asking prices into permanent device truth?
 8. Can acquisition variants that gate the execution surface stay distinct instead of being silently merged into one model-level capability claim?
 9. Can a real but administrator/license-gated application runtime remain distinct from unrestricted general-purpose execution?
+10. Can privileged host execution remain distinct from physical-actuator suitability and total-useful-cost fit?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

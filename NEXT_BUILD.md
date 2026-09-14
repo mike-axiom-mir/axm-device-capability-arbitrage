@@ -1,6 +1,8 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Nine census records now exercise nine materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership, an IP camera with exact Thingino replacement-firmware targets/root SSH/local RTSP-ONVIF services, and a smart-home ESP8285 relay whose stock eWeLink locality differs materially from its Tasmota replacement-firmware locality. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem; the Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 first exposed state-dependent locality; and SONOFF BASICR2 independently reproduced that locality pattern in a different hardware class. The required 8-category breadth threshold is exceeded at 9 distinct categories, but Milestone 01 still requires 16 more evidence-backed devices and a real arbitrage result. Structural validation now covers recovery paths, optional state-dependent locality records, evidence-gated comparisons, and dated configuration-aware market snapshots. The first comparison now has a partial EU acquisition snapshot, but it still has no ranked winner because common workload, power, provisioning and restart evidence are not comparable yet.
+**Current state:** The foundation is in place and the census now contains twelve grounded records across twelve marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, and 3D-printer/manufacturing appliance. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 13 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; and Creality K1 now shows that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -17,13 +19,17 @@ Implemented:
 - optional structured locality-state checks with evidence-claim references;
 - evidence-gated comparison validation;
 - configuration-aware market-snapshot validation, including sample-count and descriptive-statistic arithmetic;
+- local-experiment receipt validation with authorization, artifact and local-measurement truth gates;
+- an executable common registry workload and CI smoke/restart-persistence checks;
 - GitHub Actions validation on pushes to `main` and pull requests.
 
 The validator deliberately does **not** reject unknown capability values or enforce a large rigid schema. New hardware classes still need room to challenge v0.1.
 
-`LOCALITY_STATE_MODEL.md` is now an evidence-backed optional extension. Wyze Cam v2 and SONOFF BASICR2 independently show that persistent firmware state can change cloud/local behavior. The validator enforces the minimal shape only when `locality.states` is present; it does not force old flat records to migrate.
+`LOCALITY_STATE_MODEL.md` is an evidence-backed optional extension. Wyze Cam v2 and SONOFF BASICR2 independently show that persistent firmware state can change cloud/local behavior. The validator enforces the minimal shape only when `locality.states` is present; it does not force old flat records to migrate.
 
-`MARKET_SNAPSHOT_METHOD.md` now keeps acquisition observations separate from permanent device identity. Asking/displayed listing prices, seller class, exact revision/configuration, accessory state and cohort arithmetic remain explicit; a sample median is not treated as transaction-price truth.
+`MARKET_SNAPSHOT_METHOD.md` keeps acquisition observations separate from permanent device identity. Asking/displayed listing prices, seller class, exact revision/configuration, accessory state and cohort arithmetic remain explicit; a sample median is not treated as transaction-price truth.
+
+`LOCAL_EXPERIMENT_RECEIPT_METHOD.md` now defines the path from a physical candidate test to any local-verification claim. A template or CI workload pass is not physical-device evidence.
 
 ## Priority 1 — Run the first actual arbitrage comparison
 
@@ -61,15 +67,15 @@ DS220+ bare-chassis/no-drive mixed-RAM listings
 
 This is meaningful acquisition evidence, but it is deliberately not a price verdict. Asking/displayed prices are not final transaction prices, shipping is not normalized, and required DS220+ storage remains separate.
 
-Do **not** rank the candidates yet. The most valuable comparison work has now shifted from first-pass listing collection to **common operational evidence** while keeping acquisition evidence refreshable.
+Do **not** rank the candidates yet. The common workload exists; the missing evidence is now physical candidate execution under that same workload and comparable operational measurement.
 
 Required comparison state before ranking:
 
 - refresh/expand the same-window EU market snapshot when a ranking attempt is made;
 - preserve observed configuration and accessory inclusion for listings where model variants matter;
 - count shipping, required storage and adapters separately from chassis price;
-- measured or credible power data under comparable conditions;
-- one tiny common registry workload definition and implementation;
+- run the existing common registry workload on each physical candidate and preserve footprint/results through local experiment receipts;
+- measured wall power under comparable workload conditions;
 - provisioning friction and repeat-provisioning time;
 - recovery quality and data impact;
 - hard-power-loss -> reboot -> service restart behavior;
@@ -128,7 +134,7 @@ Future matching must preserve sandbox/application-level capability without silen
 
 The Fire TV therefore does not enter the registry comparison merely because it has 2 GB RAM and networking. A candidate must satisfy the contract, not resemble a computer on paper.
 
-### Locality-state rule — now supported by two independent devices
+### Locality-state rule — supported by two independent devices
 
 Locality is not always a permanent hardware property.
 
@@ -180,22 +186,68 @@ model name
 
 The first snapshot therefore uses cohorts and keeps raw observations instead of writing one permanent `price` into each device record. Market medians are descriptive properties of that dated sample only.
 
+### Acquisition-variant rule learned from Pixel 3a
+
+An exact marketed model can still contain an acquisition variant that gates the execution surface itself.
+
+```text
+Pixel 3a, bootloader-unlockable unit
+  -> UBports Ubuntu Touch installation path exists
+
+Pixel 3a, Verizon unit
+  -> UBports says bootloader cannot be unlocked
+  -> replacement-OS path is unavailable
+```
+
+A market listing with carrier/origin unknown must not inherit replacement-OS eligibility merely from the model name. Keep the gate explicit or unknown.
+
+### Admission-control rule learned from Canon C3530i
+
+A real application runtime can exist without freely admitted arbitrary applications.
+
+```text
+MEAP runtime
+  + administrator authority
+  + compatible package
+  + applicable license/admission state
+  -> documented application execution
+```
+
+This does not prove arbitrary unsigned JAR execution, shell, root or general Linux ownership. Application availability/licensing can be real acquisition friction.
+
+### Privileged-appliance rule learned from Creality K1
+
+A manufacturer-documented root shell is strong execution evidence, but privilege and deployment suitability are different axes.
+
+```text
+Creality K1
+  -> user accepts visible root warning
+  -> manufacturer exposes root credentials
+  -> SSH root access
+
+same device
+  -> high-speed motion
+  -> heated fabrication process
+```
+
+Do not silently turn root SSH into a claim that unrelated always-on compute is cheap, low-power, restart-safe or wise. Physical safety, printer opportunity cost, memory headroom, recovery, and interference with normal fabrication remain part of total useful cost.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 9 distinct categories. Do not pad the remaining 16 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 12 distinct categories. Do not pad the remaining 13 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
-1. old Android phone with documented unlock/recovery and offline operation;
-2. printer/MFP with an application or embedded Linux/Android execution layer;
-3. console/handheld gaming device with a supported homebrew/Linux path;
-4. industrial/commercial surplus hardware with non-PC market positioning;
-5. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
-6. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
-7. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
-8. oddball appliance where a different execution/recovery/locality pattern challenges the current schema.
+1. console/handheld gaming device with a supported exact-model homebrew/Linux path and recovery evidence;
+2. industrial/commercial surplus hardware with non-PC market positioning and conventional local execution;
+3. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+4. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
+5. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
+6. a second admission-controlled application platform only if it independently tests the Canon lesson;
+7. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
+8. an oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating root access.
 
-Each new record should expose something the existing nine do not.
+Each new record should expose something the existing twelve do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -248,6 +300,20 @@ energized hardware is safe to handle casually
 
 Safe installation/inspection effort is real friction and belongs in total useful cost. Research notes should not normalize live-mains experimentation merely because a low-voltage programming interface exists.
 
+### Physical-actuator rule learned from K1
+
+Even manufacturer-sanctioned root access does not erase the physical system attached to the host.
+
+```text
+root host authority
+!=
+actuator-use permission
+!=
+good always-on infrastructure fit
+```
+
+A device record may expose root while still keeping actuator access, whole-device power, unattended service restart, opportunity cost, and safety suitability unknown. Do not hide those unknowns behind the privilege level.
+
 ## Priority 3 — Add scoring only after comparison data exists
 
 Do not invent a universal device score yet.
@@ -260,8 +326,8 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 
 - refresh/expand the current exact-v5 EU asking-price cohort before final ranking, preserving shipping and power-supply inclusion separately;
 - find credible idle/load power measurements or measure locally later;
-- define and deploy the common tiny registry workload;
-- estimate/test whether 128 MB RAM + 16 MB flash is genuinely enough;
+- run the existing common tiny registry workload and preserve a local experiment receipt;
+- test whether 128 MB RAM + 16 MB flash is genuinely enough;
 - test whether USB storage changes the result positively or only adds fragility;
 - test hard power loss -> OpenWrt -> registry service restart.
 
@@ -270,7 +336,7 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - refresh/expand the current bare-chassis/no-drive EU cohort rather than recollecting from zero;
 - price a minimal supported storage configuration so required drive cost is visible;
 - verify a currently compatible Container Manager release on owned hardware;
-- run the common tiny registry workload and measure RAM/CPU/storage footprint;
+- run the existing common tiny registry workload and measure RAM/CPU/storage footprint;
 - measure wall power with drives active, idle and hibernated and compare with Synology's manufacturer figures;
 - test power loss -> Power Recovery -> DSM -> container restart behavior;
 - test Mode 2 recovery on noncritical data and preserve which application/container state must be rebuilt.
@@ -281,7 +347,7 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - record whether each listing identifies optional WLAN/Bluetooth rather than assuming it;
 - on owned hardware, record BIOS version and actual eMMC capacity before install;
 - install Debian from preserved media and time the complete provisioning flow including the EFI/GRUB workaround;
-- run the same tiny registry workload used on Archer/DS220+;
+- run the same common registry workload used on Archer/DS220+;
 - measure wall power at boot, idle and registry-active state rather than substituting Dell's sub-4-W product claim;
 - test AC loss -> AC Recovery -> Debian -> service restart repeatedly;
 - test USB reinstall and record exactly which system/user/application state must be recreated;
@@ -339,6 +405,40 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - measure device self-consumption only using an appropriate safe mains measurement method, not an exposed energized PCB;
 - collect a dated NL/EU price sample only if actuator-node comparison becomes useful.
 
+### I. Google Pixel 3a / sargo
+
+- preserve carrier/origin and confirm the bootloader is actually unlockable before buying or testing a unit for Ubuntu Touch;
+- record exact Android/factory-image state before replacement-OS installation;
+- reproduce the UBports installation on owned/authorized hardware and preserve a local experiment receipt;
+- test WAN-disconnected local service operation after provisioning;
+- characterize charging/battery behavior, wall power and battery-health dependence before considering an always-on role;
+- test cold boot -> Ubuntu Touch -> chosen local service restart;
+- collect market observations with unlockability/carrier status attached rather than pooling unknown-origin units.
+
+### J. Canon imageRUNNER ADVANCE C3530i
+
+- find one legitimately distributable MEAP application still compatible with the original C3530i and preserve exact license terms;
+- determine whether a used unit can obtain the required license without hidden previous-owner account state;
+- on owned/authorized hardware, record firmware/controller version and existing MEAP/license state before modification;
+- install/start one noncritical MEAP application and preserve a local experiment receipt;
+- test application runtime with WAN unavailable where the application itself is designed for local use;
+- test normal restart and hard-power-loss -> boot -> MEAP application state;
+- measure whole-device wall power rather than reusing manufacturer standby/sleep claims;
+- research firmware-level restore separately from destructive `Initialize All Data/Settings`.
+
+### K. Creality K1
+
+- on an owned/authorized original K1, preserve exact hardware revision, firmware, storage state and root-warning state before modification;
+- reproduce the documented opt-in root flow and preserve a local experiment receipt;
+- measure RAM/free storage and stock idle footprint before adding services;
+- run only a harmless local service that does not command heaters or motors, then test WAN-disconnected LAN access;
+- test normal restart and repeated hard-power-loss -> Creality OS -> harmless custom-service restart without starting a print;
+- measure wall power at stock idle, service-active idle and normal printing with an appropriate meter;
+- test normal firmware rollback on noncritical state and record exactly what configuration/root-added state survives;
+- use the low-level mainboard recovery tool only on noncritical owned hardware or when recovery is actually required, preserving board/image/tool identity and data impact;
+- collect a dated NL/EU used-market sample only if a real contract makes the K1 a plausible candidate;
+- count fabrication opportunity cost instead of treating an already-owned printer as a free server.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -352,16 +452,20 @@ Do not expand the census blindly if:
 - recovery claims hide configuration/data destruction behind a single positive boolean;
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
+- an acquisition variant that gates execution is silently merged into the model-level capability claim;
+- an admission-controlled application platform is treated as freely admitting arbitrary applications;
 - a single locality label hides materially different persistent-state cloud behavior;
 - replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored;
+- privileged host access is silently promoted to safe actuator control or cheap general-purpose infrastructure;
 - listing asking prices are silently promoted to transaction prices or permanent device values;
-- private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size.
+- private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size;
+- CI or template workload execution is described as physical-device verification.
 
 When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
-**Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible; cameras add privacy/recording consent; physical actuators remain visibly user-controlled.  
-**Continuity:** evidence, variant caveats, execution boundaries, locality states, recovery, market observations and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; replacement firmware gains and cheap listings must be weighed against installation, recovery, opportunity cost, electricity and physical safety.
+**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, admission inflation, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators remain visibly user-controlled.  
+**Continuity:** evidence, variant caveats, execution/admission boundaries, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains and cheap listings must be weighed against installation, recovery, opportunity cost, electricity, physical safety and interference with the device's primary useful role.

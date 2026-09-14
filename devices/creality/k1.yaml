@@ -1,0 +1,262 @@
+schema_version: "0.1"
+record_id: creality-k1
+
+identity:
+  manufacturer: Creality
+  model: K1
+  common_name: Creality K1
+  marketed_category: 3d_printer_fdm_manufacturing_appliance
+  hardware_revision: unknown
+  release_period: unknown
+  configuration_scope:
+    note: "This record is scoped to the original K1. K1 Max, K1C, K1 SE, later hardware revisions, and similarly named K1-series devices must not inherit this record automatically."
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: 2
+  clock_mhz: 1200
+  notes:
+    - "Creality's exact K1 product page documents a dual-core 1.2 GHz CPU but does not identify the SoC or CPU architecture."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  internal_storage:
+    manufacturer_label: "8G ROM"
+  removable_storage:
+    present: true
+    types:
+      - usb_drive
+  notes:
+    - "The manufacturer markets the K1 with '8G ROM'. This record preserves that label instead of silently converting it to MiB or assuming usable free capacity."
+    - "Creality's V1.3.2.20 release notes warn that filling the 8G storage can freeze uploads and may require firmware flashing by USB cable."
+
+execution:
+  surfaces:
+    - type: ssh
+      environment: Creality_OS_stock_firmware
+      version_scope: "Manufacturer-documented on the K1/K1 Max V1.3.2.20 firmware line; current K1-series Annex still publishes a root guide."
+      custom_code: true
+      privilege: root
+      access_method: "Settings -> Root Account Information -> accept the displayed root warning -> obtain root account/password -> SSH"
+      state: DOCUMENTED
+      admission_controls:
+        explicit_user_warning_acceptance_required: true
+        root_credentials_disclosed_after_acceptance: true
+      notes:
+        - "Creality explicitly documents root-account SSH on the K1 firmware line. This is manufacturer-sanctioned privileged access, not an inferred exploit."
+        - "If the warning is not accepted, Creality states that SSH login to the root account is not allowed."
+        - "Creality warns that added services such as Moonraker may consume excessive memory and crash the system, and it does not provide technical support for root-related software."
+        - "Root privilege proves host execution authority; it does not by itself prove suitability for unrelated always-on workloads or authorize unsafe actuator experiments."
+
+connectivity:
+  ethernet: unknown
+  wifi:
+    present: true
+    local_control: documented
+  usb:
+    present: true
+    modes:
+      - usb_drive_printing
+  local_network_printing: true
+  bluetooth: unknown
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "Creality documents printing from USB drive or a data-secure LAN and Wi-Fi-based remote control/monitoring."
+    - "The exact physical transport behind every LAN workflow is not expanded into an Ethernet claim for the original K1 without stronger model-specific evidence."
+
+inputs:
+  sensors:
+    - type: g_sensor
+      present: true
+      accessible_to_custom_code: unknown
+  controls:
+    - touchscreen
+  notes:
+    - "The K1 product page documents a printhead G-sensor for resonance measurement. Root access does not automatically prove a stable public API to that sensor."
+
+outputs:
+  printer:
+    present: true
+    process: fused_deposition_modeling
+  motion_system:
+    present: true
+    custom_control_from_arbitrary_root_workload: unknown
+  hotend:
+    present: true
+    manufacturer_max_temperature_c: 300
+    custom_control_from_arbitrary_root_workload: unknown
+  cooling:
+    auxiliary_chamber_fan_watts: 18
+  notes:
+    - "The K1 is a moving, heated fabrication appliance. Manufacturer hardware presence is recorded separately from arbitrary-root-workload actuator access."
+    - "The 18 W figure applies to the documented auxiliary chamber fan, not to whole-device power consumption."
+
+power:
+  source:
+    battery: false
+    external_power: true
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  safety_class: heated_motion_appliance
+  notes:
+    - "No AXM wall-power measurement was performed."
+    - "Component heater/fan specifications are not substituted for whole-device idle or workload power."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "A root SSH path on a running printer does not establish unattended boot, arbitrary service autostart, or reliable restart after hard power loss."
+
+recovery:
+  factory_reset: unknown
+  official_restore: true
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: documented_for_normal_firmware_update
+  usb_recovery: true
+  uart_recovery: unknown
+  bootloader_recovery: documented_via_manufacturer_Ingenic_USB_boot_tool
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: stock_firmware_rollback
+      from_state: operating_supported_stock_firmware
+      target_state: earlier_supported_stock_firmware
+      method: manufacturer_firmware_rollback
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - creality_k1_root_and_rollback
+      notes:
+        - "Creality's V1.3.2.20 K1/K1 Max release documents firmware rollback and gives K1 a minimum rollback version of V1.3.1.28."
+        - "The record does not infer that rollback preserves root-added software, configuration, G-code files, or other state."
+    - id: mainboard_usb_reflash
+      from_state: firmware_failure_or_reflash_required
+      target_state: manufacturer_firmware_image_reflashed
+      method: "Creality firmware-recovery-tool via mainboard MicroUSB, boot/reset buttons, Ingenic USB BOOT DEVICE, and .ingenic image"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - creality_k1_firmware_recovery_tool
+      notes:
+        - "Creality publishes a K1-series recovery tool and English burning instructions."
+        - "The path requires physical mainboard access plus an external computer and is therefore higher-friction than normal firmware rollback."
+        - "No AXM recovery reproduction was performed, and the source does not establish preservation of user/configuration/application state."
+
+locality:
+  state: cloud_optional
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: partial
+  notes:
+    - "Creality documents USB-drive printing and data-secure LAN printing, so basic print execution is not represented as cloud-required."
+    - "Cloud/app features remain optional remote-control paths."
+    - "This does not prove that every rooted service, firmware update, or provisioning path works with WAN unavailable."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: 0
+  setup_minutes: unknown
+  special_tools:
+    - networked_computer_for_ssh_if_root_access_is_used
+    - windows_computer_and_data_capable_microusb_cable_for_low_level_recovery
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU used-market sample was collected."
+    - "Opportunity cost includes loss or disruption of a functioning fabrication appliance if it is repurposed for unrelated compute."
+
+roles:
+  - role: local_fabrication_node
+    confidence: high
+    reason: "The exact K1 is a network/USB-capable FDM printer with manufacturer-documented Creality OS and stock printing workflows."
+  - role: rooted_fabrication_controller
+    confidence: high
+    reason: "Creality documents opt-in root SSH on the K1 firmware line, giving an authorized owner privileged host access while retaining a manufacturer rollback path."
+  - role: general_edge_compute
+    confidence: low
+    reason: "Root exists, but RAM, workload footprint, unattended restart, whole-device power, remaining hardware life, and the wisdom of tying an unrelated service to a heated moving printer are unproven."
+  - role: low_power_registry_node
+    confidence: low
+    reason: "Root plus LAN capability is not enough: comparable wall power, restart behavior, memory headroom, provisioning effort, opportunity cost, and physical-safety fit are not established."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: creality_k1_product_spec
+      state: DOCUMENTED
+      source: "https://www.creality.com/products/creality-k1-3d-printer"
+      proves:
+        - "The exact K1 is an FDM 3D printer using Creality OS"
+        - "Creality lists a dual-core 1.2 GHz CPU and '8G ROM'"
+        - "K1 can print through USB drive or data-secure LAN and supports Wi-Fi remote control/monitoring"
+        - "The product contains high-speed motion, a heated hotend rated up to 300 C, a printhead G-sensor, and an 18 W auxiliary chamber fan"
+      does_not_prove:
+        - "CPU architecture or RAM capacity"
+        - "root access"
+        - "whole-device power consumption"
+        - "unattended custom-service restart"
+        - "AXM local reproduction"
+    - id: creality_k1_root_and_rollback
+      state: DOCUMENTED
+      source: "https://github.com/CrealityOfficial/K1_Series_Klipper/releases/tag/V1.3.2.20"
+      additional_sources:
+        - "https://github.com/CrealityOfficial/K1_Series_Annex"
+      proves:
+        - "Creality documents a root account and password for root access on the K1/K1 Max firmware line"
+        - "The user must accept the on-device root warning before SSH login to the root account is permitted"
+        - "Creality documents firmware rollback and states that K1 can roll back no earlier than V1.3.1.28 in that release line"
+        - "Creality warns that extra rooted services can cause excessive memory use/system crashes and that root-related software is outside its technical-support scope"
+        - "Creality's official K1-series Annex publishes a root guide and links the firmware-recovery tool"
+      does_not_prove:
+        - "that every current/future K1 firmware preserves identical root behavior"
+        - "that arbitrary packages are compatible with the stock userspace"
+        - "that root-added services survive firmware rollback"
+        - "hard-power-loss service restart"
+        - "AXM local reproduction"
+    - id: creality_k1_firmware_recovery_tool
+      state: DOCUMENTED
+      source: "https://github.com/CrealityOfficial/K1_Series_Annex/releases/tag/V1.0.0"
+      proves:
+        - "Creality publishes a K1-series firmware-recovery tool and English burning instructions"
+        - "The documented path connects a computer to the mainboard by data-capable MicroUSB"
+        - "The operator uses mainboard boot/reset buttons and the Ingenic USB BOOT DEVICE mode"
+        - "The tool loads a .ingenic image and burns the firmware"
+      does_not_prove:
+        - "preservation of configuration, user files, or root-added applications"
+        - "success on every later board revision"
+        - "that low-level recovery is as simple as normal rollback"
+        - "AXM local reproduction"
+
+notes:
+  - "This is the first 3D-printer/manufacturing-appliance census record."
+  - "Its main schema lesson is that privileged host execution and physical-actuator suitability are separate: manufacturer-documented root SSH does not make every root-level workload wise on a machine with motion and heat."
+  - "The root path is explicitly opt-in through a visible warning, preserving user agency rather than treating privileged access as hidden persistence."
+  - "No AXM root login, custom service, print, power, market, hard-power-loss, rollback, or low-level recovery test has been performed."
