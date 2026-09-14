@@ -1,0 +1,82 @@
+workload_version: "0.1"
+workload_id: low-power-local-registry-v0.1
+contract_id: low-power-local-registry-node
+status: implementation_ready_not_device_verified
+
+purpose:
+  summary: "Provide one tiny, identical local registry/heartbeat workload for cross-category device comparison."
+  internet_required: false
+  vendor_cloud_required: false
+
+implementation:
+  language: c99_posix
+  source: registry.c
+  build_command: "cc -std=c99 -O2 -Wall -Wextra -Werror registry.c -o axm-registry"
+  runtime_dependencies: []
+  default_port: 8087
+  state_format: tab_separated_key_value_lines
+  max_records: 64
+  max_key_bytes_excluding_nul: 31
+  max_value_bytes_excluding_nul: 95
+  durability_semantics: "PUT returns OK only after temp-file flush+fsync, atomic rename, and parent-directory fsync succeed."
+
+protocol:
+  transport: tcp_ipv4
+  framing: newline_terminated_ascii
+  commands:
+    - "PING -> PONG"
+    - "PUT <key> <value> -> OK"
+    - "GET <key> -> VALUE <value> | NOT_FOUND"
+    - "COUNT -> COUNT <n>"
+
+comparison_profile:
+  seed_record_count: 32
+  warmup_seconds: 300
+  measurement_seconds: 1800
+  ping_interval_seconds: 1
+  read_interval_seconds: 1
+  durable_write_interval_seconds: 60
+  client_location: separate_lan_machine
+  required_network_condition: lan_only_no_wan_dependency
+
+required_observations_per_device:
+  - build_or_install_steps_and_elapsed_time
+  - binary_or_package_size_bytes
+  - state_file_size_bytes_after_seed
+  - process_rss_or_best_available_memory_measurement
+  - cpu_usage_or_best_available_runtime_load_measurement
+  - wall_power_idle_before_workload_watts
+  - wall_power_during_measurement_watts
+  - service_autostart_configuration
+  - acknowledged_state_before_power_loss
+  - state_observed_after_reboot
+  - elapsed_time_power_restore_to_service_ready
+  - failures_or_manual_intervention
+
+restart_trial:
+  precondition: "Complete and acknowledge at least one durable PUT before power removal."
+  action: "Remove external power without graceful service shutdown, restore power, and wait for configured service autostart."
+  pass_condition: "Service becomes reachable without manual intervention and the last acknowledged durable value is readable."
+  repetitions_target: 5
+  note: "Do not claim hard-power-loss reliability from CI; this trial requires owned/authorized physical hardware."
+
+ci_verification:
+  state: REPRODUCIBLE
+  scope: "Ubuntu GitHub Actions runner only"
+  proves:
+    - source_compiles_with_host_c_compiler
+    - protocol_operations_work
+    - acknowledged_state_survives_process_restart
+  does_not_prove:
+    - archer_c7_v5_compatibility
+    - ds220_plus_compatibility
+    - wyse_3040_compatibility
+    - power_consumption
+    - hard_power_loss_integrity
+    - service_autostart
+    - cross_architecture_binary_portability
+
+truth_boundary:
+  candidate_device_runs: not_collected
+  ranked_winner: not_claimed
+  local_hardware_verification: false
