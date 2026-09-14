@@ -1,0 +1,268 @@
+schema_version: "0.1"
+record_id: lg-oled55c1pub
+
+identity:
+  manufacturer: LG
+  model: OLED55C1PUB
+  common_name: LG C1 55-inch OLED TV
+  marketed_category: smart_tv_display
+  hardware_revision: unknown
+  release_period: "2021"
+  configuration_scope:
+    exact_model: OLED55C1PUB
+    webos_generation: "6.0"
+    region_variant: unknown
+    note: "The LG product page identifies OLED55C1PUB as a 2021 webOS 6.0 model. App/store availability can vary by country, so this record does not generalize regional content-store supply from the model name alone."
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  accelerator:
+    gpu: unknown
+    npu: unknown
+    dsp: unknown
+  manufacturer_processor_label: "alpha9 Gen4 AI Processor 4K"
+  notes:
+    - "LG documents the alpha9 Gen4 processor label for the C1 platform, but the record does not infer ISA, core count, RAM, or general-purpose compute capacity from that marketing label."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  removable_storage:
+    present: false
+    types: []
+  notes:
+    - "No model-specific RAM or writable internal-storage capacity claim was collected from an authoritative source in this activation."
+
+execution:
+  surfaces:
+    - type: manufacturer_app
+      environment: webOS_TV_6_0
+      version: unknown
+      custom_code: true
+      privilege: sandboxed
+      access_method: "Install LG Developer Mode app, sign in with an LG Developer site account, enable Developer Mode, pair a same-network development host, package a webOS app as .ipk, then install/launch it with LG webOS developer tooling"
+      state: DOCUMENTED
+      admission_controls:
+        - "LG Developer site account"
+        - "Developer Mode app installed from LG Apps"
+        - "Developer Mode enabled on the TV"
+        - "network connection for Developer Mode sign-in/session management"
+      session_persistence:
+        state: vendor_session_gated
+        remaining_time_visible: true
+        renewal_requires_network: true
+        disable_effect: "Developer Mode-installed apps are uninstalled when Developer Mode is disabled"
+        documented_disable_conditions:
+          - "TV reboot after the remaining Developer Mode session time has expired"
+          - "ten TV reboots while the TV is not connected to a network"
+      notes:
+        - "LG documents actual-device testing through Developer Mode for webOS TV 3.0 and later; the exact OLED55C1PUB product page identifies this model as webOS 6.0."
+        - "The documented execution path is a developer/test application surface, not proof of root, unrestricted shell, kernel authority, bootloader access, or durable background-service autostart."
+        - "No AXM app was installed or launched on physical hardware."
+
+connectivity:
+  ethernet:
+    present: true
+    ports: 1
+    speed: unknown
+  wifi:
+    present: true
+    standard: "802.11ac"
+  bluetooth:
+    present: true
+    version: "5.0"
+  usb:
+    present: true
+    ports: 3
+    version: "2.0"
+    modes: unknown
+  serial:
+    present: true
+    interface: "RS-232C mini jack"
+    accessible_to_custom_code: unknown
+  gpio: false
+  notes:
+    - "Physical interface presence does not establish API access from a Developer Mode web app."
+
+inputs:
+  sensors: []
+  microphones:
+    - type: built_in_voice_input
+      accessible_to_custom_code: unknown
+  controls:
+    - magic_remote
+    - on_device_controls_unknown
+  notes:
+    - "LG documents voice features and the Magic Remote, but this record does not claim arbitrary microphone or remote-input API access from custom apps."
+
+outputs:
+  display:
+    present: true
+    type: OLED
+    resolution: "3840x2160"
+    custom_rendering_verified: false
+  speaker:
+    present: true
+    custom_audio_verified: false
+  leds: unknown
+  motors: []
+  relays: []
+  notes:
+    - "Developer Mode app installation establishes a route to launch webOS applications on the display, but AXM has not locally verified rendering/audio behavior for a custom app."
+
+power:
+  source:
+    battery: false
+    external_power: true
+  supply: "120 V AC, 50/60 Hz on the cited regional product page"
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  manufacturer_standby_claim_watts_lt: 0.5
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "LG's product page states emergency/standby consumption below 0.5 W. This is a manufacturer standby claim, not measured idle power with the panel/app active and not common-workload evidence."
+    - "Whole-device power under a custom webOS app remains unknown."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "Developer Mode documentation does not establish cold-boot autostart for a custom Developer Mode app."
+    - "Developer Mode itself is session-gated and can be disabled after documented conditions."
+
+recovery:
+  factory_reset: true
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: webos6_reset_to_initial_settings
+      from_state: operating_webos_6
+      target_state: initial_setup_state
+      method: "Use LG Reset to Initial Settings / factory reset flow"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: erased
+      source_claim_ids:
+        - lg_webos6_factory_reset
+      notes:
+        - "LG says factory reset removes installed apps, personal/account settings, and saved data."
+        - "This is a settings/data reset path, not evidence of low-level firmware reflash or recovery from a non-booting mainboard."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: true
+  local_network_operation: unknown
+  offline_operation: unknown
+  notes:
+    - "The Developer Mode path requires an LG Developer account sign-in and network connectivity for session management."
+    - "LG documents the development host connecting to the TV on the same network, but that does not prove a deployed custom app is fully offline-capable or independent of the Developer Mode session lifecycle."
+    - "Do not collapse provisioning/account dependency and the runtime network needs of a particular app into one locality claim."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - "LG Developer site account"
+    - "development computer on the same network"
+    - "current LG webOS development tooling"
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No NL/EU used-market cohort was collected in this activation."
+    - "Panel condition, burn-in/dead-pixel state, exact region, remote inclusion, stand, firmware/webOS state, and physical size can materially affect useful acquisition cost."
+
+roles:
+  - role: interactive_local_dashboard_display
+    confidence: high
+    reason: "LG documents custom webOS application installation and launch through Developer Mode on webOS TV 3.0+; OLED55C1PUB is documented as webOS 6.0 with network connectivity and a 4K display."
+  - role: prototype_signage_or_status_surface
+    confidence: medium
+    reason: "Custom application rendering is a documented platform capability, but Developer Mode is time/session-gated and production distribution has different admission rules."
+  - role: always_on_registry_node
+    confidence: low
+    reason: "General background-service persistence, developer-session durability, cold-boot autostart, active power, storage/RAM headroom, recovery from boot failure, and opportunity cost are not evidence-ready."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: lg_oled55c1pub_exact_model
+      state: DOCUMENTED
+      source: "https://www.lg.com/cac/tv-y-barras-de-sonido/lg-oled55c1pub"
+      proves:
+        - "OLED55C1PUB is a 2021 LG OLED television model using webOS 6.0"
+        - "The cited model page documents alpha9 Gen4 4K processing, 3840x2160 OLED display, 802.11ac Wi-Fi, Bluetooth 5.0, three USB 2.0 ports, one Ethernet input, and an RS-232C mini-jack"
+        - "The cited regional product page states standby/emergency power below 0.5 W"
+      does_not_prove:
+        - "RAM or general-purpose CPU architecture/core count"
+        - "custom-app access to every physical interface"
+        - "whole-device active or idle wall power"
+        - "custom app autostart or durable background service behavior"
+        - "AXM local reproduction"
+    - id: lg_developer_mode_webapp_execution
+      state: DOCUMENTED
+      source: "https://webostv.developer.lge.com/develop/getting-started/developer-mode-app"
+      additional_sources:
+        - "https://webostv.developer.lge.com/develop/getting-started/build-your-first-web-app"
+        - "https://webostv.developer.lge.com/develop/tools/cli-dev-guide"
+      proves:
+        - "LG provides a Developer Mode app for actual webOS TVs; its developer documentation says actual-device testing via Developer Mode is available from webOS TV 3.0"
+        - "Developer Mode requires an LG Developer site account and network-connected TV"
+        - "LG documents packaging a webOS application into an .ipk, installing it to a TV, and launching it with developer tooling"
+        - "Developer Mode has a remaining session time and LG documents that the session can be extended while still active"
+        - "LG documents Developer Mode disabling after a reboot when session time has expired and after ten reboots while offline; Developer Mode-installed apps are uninstalled when Developer Mode is disabled"
+      does_not_prove:
+        - "root or unrestricted shell authority"
+        - "bootloader access"
+        - "production-store admission"
+        - "cold-boot application autostart"
+        - "fully offline provisioning or indefinite offline persistence"
+        - "AXM local reproduction"
+    - id: lg_webos6_factory_reset
+      state: DOCUMENTED
+      source: "https://www.lg.com/us/support/help-library/how-do-i-factory-reset-my-lg-tv-if-it-keeps-freezing-or-showing-errors-CT10000030-20155311398606"
+      additional_sources:
+        - "https://www.lg.com/us/support/help-library/lg-tv-how-to-reset-my-lg-smart-tv--1441914092672"
+      proves:
+        - "LG documents Reset to Initial Settings for 2021 webOS 6.0 televisions"
+        - "LG says a full reset removes installed apps and personal/account settings and returns the TV to initial settings"
+      does_not_prove:
+        - "firmware reflash"
+        - "recovery from a non-booting or hardware-failed television"
+        - "preservation of Developer Mode applications"
+        - "AXM local recovery reproduction"
+
+notes:
+  - "This record intentionally treats Developer Mode as a real but leased execution surface: arbitrary webOS test apps can be installed and launched, yet the vendor-controlled developer session can expire and its apps are then removed."
+  - "This is a new continuity/economics pressure case distinct from Steam Deck update persistence: here the execution surface itself is tied to a renewable developer session/account rather than only to OS update behavior."
+  - "A developer account or SSH-key setup does not imply root. The record stays at sandboxed application authority."
+  - "The LG standby figure is not converted into active/idle workload power."
+  - "No AXM local app installation, power, market, boot, session-expiry, factory-reset, or recovery test has been performed."

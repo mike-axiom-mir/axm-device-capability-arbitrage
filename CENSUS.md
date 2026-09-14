@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    14 / 25
-Categories: 14 distinct / 8 required
+Devices:    15 / 25
+Categories: 15 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -43,6 +43,7 @@ A device counts when it has:
 | 12 | Creality K1 | 3D printer / manufacturing appliance | Manufacturer-documented opt-in root SSH on stock Creality OS, plus firmware rollback and official low-level recovery tooling | DOCUMENTED | No | `devices/creality/k1.yaml` |
 | 13 | Valve Steam Deck LCD 256 GB | Handheld gaming PC / console | Manufacturer-supported SteamOS/KDE/Flatpak execution, explicit sudo elevation, BIOS/multi-boot/microSD boot, and official recovery; privilege kept separate from update persistence | DOCUMENTED | No | `devices/valve/steam-deck-lcd-256gb.yaml` |
 | 14 | Siemens SIMATIC IOT2050 Advanced / 6ES7647-0BA00-1YA2 | Industrial IoT gateway / commercial surplus | Manufacturer-documented Debian-based root SSH/UART + apt execution, external-media boot and U-Boot; exact article number still spans FS-dependent USB capability | DOCUMENTED | No | `devices/siemens/simatic-iot2050-advanced-6es7647-0ba00-1ya2.yaml` |
+| 15 | LG OLED55C1PUB / C1 55-inch OLED | Smart TV / display appliance | Manufacturer-supported webOS Developer Mode `.ipk` execution; sandboxed app authority whose renewable developer session can expire and remove Developer Mode-installed apps | DOCUMENTED | No | `devices/lg/oled55c1pub.yaml` |
 
 ## Category coverage
 
@@ -52,6 +53,7 @@ A device counts when it has:
 - [x] Phone / tablet / handheld terminal
 - [x] Smart-home / microcontroller appliance
 - [x] Media / TV / signage hardware
+- [x] Smart TV / display appliance
 - [x] NAS / storage appliance
 - [x] Robot / autonomous appliance
 - [x] E-reader / e-ink device
@@ -76,13 +78,16 @@ These are research targets, **not capability claims**.
 5. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
 6. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
 7. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
-8. One oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating general Linux/root access.
+8. One second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes.
+9. One oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating general Linux/root access.
 
 The industrial/commercial-surplus slot is no longer a queue item: Siemens SIMATIC IOT2050 Advanced fills it with manufacturer-supported local Linux execution, external-media boot/recovery controls, industrial interfaces, and a new exact-article-versus-functional-status identity pressure case.
 
 The console/handheld slot is no longer a queue item: Steam Deck LCD 256 GB fills it with manufacturer-supported Linux application execution, explicit privileged elevation, multi-boot, removable-media boot, and official recovery.
 
 The oddball-manufacturing-appliance slot is no longer a queue item: Creality K1 fills it with manufacturer-documented root SSH on a heated moving appliance plus documented rollback/recovery.
+
+The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not just that webOS can run custom applications: LG documents a renewable Developer Mode session whose expiry/disable state removes apps installed through Developer Mode, making execution durability a separate capability question.
 
 ## Schema pressure learned so far
 
@@ -284,6 +289,25 @@ The same device also has current software-maintenance pressure: Siemens ProductC
 
 One industrial device is enough to preserve these facts in the record and evidence packet, but not enough to freeze a universal functional-status or security-maintenance schema extension yet.
 
+### 13. Developer execution can be leased by vendor session state
+
+LG OLED55C1PUB adds a continuity distinction that is separate from both application privilege and update persistence:
+
+```text
+webOS Developer Mode active
+  + valid LG Developer session
+  -> custom .ipk applications can be installed and launched
+
+session time expires + TV reboots
+  OR TV reboots ten times while offline
+  -> Developer Mode is disabled
+  -> apps installed through Developer Mode are uninstalled
+```
+
+Therefore `custom_code: true` must not silently become a claim of indefinitely durable deployment. Account/session admission, execution authority, runtime locality, cold-boot behavior and deployment persistence are separate questions.
+
+This is one pressure case. The repo preserves the lesson in the device/evidence record but does not freeze a universal execution-lease schema until an independent platform reproduces the pattern.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -348,6 +372,8 @@ The Steam Deck LCD 256 GB is not added merely because it has 16 GB RAM, x86 Linu
 
 The Siemens IOT2050 Advanced is not added merely because it has manufacturer-documented root Linux execution, two Gigabit Ethernet ports and external-media recovery. Its exact functional status, used acquisition cost, power-supply inclusion, measured registry-workload power, eMMC health, software/security state, service autostart and hard-power-loss behavior are not yet comparable with the three current candidates. The manual's 12 W typical basic-device figure remains manufacturer context, not a common-workload wall-power measurement.
 
+The LG OLED55C1PUB is not added merely because it can run custom webOS applications and has Ethernet/Wi-Fi. The documented Developer Mode path is renewable-session-gated, RAM/storage headroom is unknown, cold-boot app/service autostart is unproven, active wall power is unmeasured, and tying infrastructure availability to a large display has significant opportunity cost.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -366,6 +392,7 @@ The milestone should answer:
 10. Can privileged host execution remain distinct from physical-actuator suitability and total-useful-cost fit?
 11. Can execution privilege remain distinct from the persistence of installed state across vendor OS updates?
 12. Can exact manufacturer order numbers remain revision-aware when a functional-status change alters real capability?
+13. Can a vendor-session-gated developer surface remain distinct from indefinitely durable deployment without hiding account/network renewal dependency?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 
