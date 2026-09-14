@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains fifteen grounded records across fifteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, and smart TV/display appliance. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 10 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains sixteen grounded records across sixteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, and vehicle infotainment/non-safety computer. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 9 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; and LG OLED55C1PUB now shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; and Polestar 2 MY2026 now shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -291,27 +291,50 @@ This is not the same as the Steam Deck update-persistence case. On the LG path, 
 
 This is one pressure case. Preserve it in the record/evidence packet, but do not freeze a universal execution-lease schema until independent hardware reproduces the pattern.
 
+### Parent-system authority rule learned from Polestar 2 MY2026
+
+A documented application surface inside a safety-critical machine must be scoped to the subsystem that actually grants it.
+
+```text
+Polestar 2 MY2026
+  -> Android Automotive infotainment
+  -> car-adapted Google Play app installation
+  -> sandboxed third-party application execution
+
+does not prove
+  -> braking / steering / propulsion control
+  -> safety-system authority
+  -> CAN access
+  -> arbitrary vehicle-property read/write
+```
+
+Android documents car-specific review, driver-distraction restrictions and permission-bounded car APIs. The Polestar evidence does not grant ordinary third-party Play apps whole-vehicle authority. Matching must therefore keep **subsystem execution** and **parent-system authority** separate.
+
+This is one vehicle pressure case. Preserve the local `safety_boundary` evidence in the record, but do not freeze a universal parent-system schema until independent hardware reproduces the need.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 15 distinct categories. Do not pad the remaining 10 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 16 distinct categories. Do not pad the remaining 9 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
-1. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
-2. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
-3. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
-4. a second admission-controlled application platform only if it independently tests the Canon lesson;
-5. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
-6. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
-7. a second industrial device only if it independently tests functional-status identity, software-maintenance state, or industrial recovery rather than merely repeating general Linux execution;
-8. a second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes;
+1. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
+2. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
+3. a second admission-controlled application platform only if it independently tests the Canon lesson;
+4. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
+5. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
+6. a second industrial device only if it independently tests functional-status identity, software-maintenance state, or industrial recovery rather than merely repeating general Linux execution;
+7. a second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes;
+8. a second safety-critical-parent / non-safety-subsystem case only if it independently tests the Polestar nested-authority lesson without requiring unsafe experimentation;
 9. an oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating root access.
 
 The industrial/commercial-surplus slot is now filled by Siemens SIMATIC IOT2050 Advanced. Its value is not merely that it runs Linux; the exact article number still spans FS-dependent USB capability, and current ProductCERT evidence makes acquired software/security state a separate deployment fact.
 
 The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not merely custom app execution; the manufacturer documents developer-session expiry/disable behavior that can remove Developer Mode-installed applications.
 
-Each new record should expose something the existing fifteen do not.
+The vehicle-infotainment/non-safety slot is now represented by Polestar 2 MY2026. Its value is not merely Android Automotive app execution; the record explicitly prevents sandboxed infotainment authority from leaking into claims about braking, steering, propulsion, CAN or other safety-critical vehicle controls.
+
+Each new record should expose something the existing sixteen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -377,6 +400,18 @@ good always-on infrastructure fit
 ```
 
 A device record may expose root while still keeping actuator access, whole-device power, unattended service restart, opportunity cost, and safety suitability unknown. Do not hide those unknowns behind the privilege level.
+
+### Parent-system safety rule learned from Polestar 2
+
+A subsystem can be programmable without making the whole parent machine programmable to the same authority level.
+
+```text
+infotainment app executes
+!=
+vehicle-control permission
+```
+
+Research on vehicles or other safety-critical parent systems must remain on documented non-safety surfaces unless exact evidence establishes otherwise, and even then deployment must remain owned/authorized and safety-bounded. Do not turn generic platform APIs into exact-model actuator claims.
 
 ## Priority 3 — Add scoring only after comparison data exists
 
@@ -542,6 +577,18 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market cohort only if a real display/signage contract needs it, preserving burn-in/dead-pixel condition, stand/remote inclusion, exact region and transport/collection cost;
 - do not add the TV to the low-power registry comparison until active power, RAM/storage headroom, autostart, developer-session durability and display opportunity cost are comparable.
 
+### O. Polestar 2 model year 2026
+
+- if an owned/authorized exact-MY2026 vehicle is available, record market/trim, installed software version and account state before any application test;
+- use only the manufacturer-supported Google Play application surface; do not seek safety-critical controls or bypass vehicle security boundaries for this census goal;
+- install and run one harmless car-adapted application, preserving a local experiment receipt if a suitable app can be legitimately distributed/installed;
+- record which permissions and car-data APIs are actually exposed to that app rather than inheriting generic Android Automotive capabilities;
+- test normal app restart and centre-display restart on noncritical app state, keeping display restart distinct from firmware recovery;
+- if testing factory reset at all, do so only on a deliberately prepared noncritical vehicle profile/state and preserve exact profile/key/app-settings impact;
+- do not infer subsystem power from traction-battery capacity or charging specifications; only measure infotainment energy if a safe, meaningful method exists;
+- do not collect a used-vehicle price merely to call the embedded computer cheap: whole-vehicle acquisition, depreciation, insurance, maintenance and opportunity cost dominate unless the car is already owned for another purpose;
+- keep braking, steering, propulsion, safety systems, CAN and arbitrary vehicle-property control outside the experiment unless a future independent research question, explicit authority and appropriate safety process justify studying them.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -563,6 +610,8 @@ Do not expand the census blindly if:
 - privileged host access is silently promoted to safe actuator control or cheap general-purpose infrastructure;
 - execution privilege is silently promoted to update-stable deployment state;
 - a time/session/account-gated developer surface is treated as indefinitely durable merely because custom applications can be installed successfully;
+- subsystem execution inside a safety-critical parent machine is silently promoted to authority over the parent system or its safety-critical actuators;
+- generic platform vehicle APIs are treated as exact-model permissions without device-specific evidence;
 - a known security-maintenance condition is ignored because the hardware model is otherwise well documented;
 - listing asking prices are silently promoted to transaction prices or permanent device values;
 - private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size;
@@ -572,7 +621,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
-**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators and industrial process connections remain visibly user/operator-controlled.  
-**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease boundaries, software/security state, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, renewable developer access and cheap listings must be weighed against installation, recovery, update/session durability, opportunity cost, electricity, physical/industrial safety and interference with the device's primary useful role.
+**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, parent-system authority inflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators, industrial process connections and vehicle/safety boundaries remain visibly user/operator-controlled.  
+**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/parent-system boundaries, software/security state, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, renewable developer access and cheap listings must be weighed against installation, recovery, update/session durability, opportunity cost, electricity, physical/industrial/vehicle safety and interference with the device's primary useful role.
