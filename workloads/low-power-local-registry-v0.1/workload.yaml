@@ -60,6 +60,12 @@ restart_trial:
   repetitions_target: 5
   note: "Do not claim hard-power-loss reliability from CI; this trial requires owned/authorized physical hardware."
 
+evidence_capture:
+  method: LOCAL_EXPERIMENT_RECEIPT_METHOD.md
+  template: experiment_receipts/TEMPLATE.yaml
+  receipt_directory: experiment_receipts/
+  rule: "Physical-device results belong in evidence-linked local experiment receipts; the workload definition itself never becomes device verification."
+
 ci_verification:
   state: REPRODUCIBLE
   scope: "Ubuntu GitHub Actions runner only"

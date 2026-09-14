@@ -1,0 +1,82 @@
+receipt_version: "0.1"
+receipt_kind: template
+receipt_id: TEMPLATE
+
+device_record_id: unknown
+contract_id: low-power-local-registry-node
+workload_id: low-power-local-registry-v0.1
+performed_at: unknown
+
+authorization:
+  owned_or_authorized: unknown
+
+unit_identity:
+  local_unit_label: unknown
+  observed_manufacturer: unknown
+  observed_model: unknown
+  hardware_revision: unknown
+  device_state: unknown
+  configuration:
+    exact_variant: unknown
+    storage: unknown
+    memory: unknown
+    network_interface: unknown
+    power_supply: unknown
+    attached_peripherals: unknown
+
+software_state:
+  os_or_firmware: unknown
+  version: unknown
+  installation_method: unknown
+  source_or_image_sha256: unknown
+
+conditions:
+  network_scope: unknown
+  wan_available: unknown
+  ambient_temperature_c: unknown
+  notes: []
+
+measurement_tools:
+  wall_power:
+    instrument: unknown
+    model: unknown
+    resolution_watts: unknown
+    source_class: unknown
+  elapsed_time:
+    method: unknown
+
+provisioning:
+  first_device_minutes: unknown
+  repeat_device_minutes: unknown
+  automation_level: unknown
+  notes: []
+
+workload_run:
+  profile_matches_workload: unknown
+  build_or_install_elapsed_seconds: unknown
+  binary_or_package_size_bytes: unknown
+  state_file_size_bytes_after_seed: unknown
+  process_rss_bytes: unknown
+  cpu_usage_percent: unknown
+  wall_power_idle_watts: unknown
+  idle_measurement_seconds: unknown
+  wall_power_workload_average_watts: unknown
+  measurement_seconds: 1800
+  service_autostart_config: unknown
+  notes: []
+
+restart_trials:
+  repetitions_target: 5
+  trials: []
+
+artifacts: []
+
+result:
+  workload_execution: unknown
+  restart_reliability: unknown
+  overall_state: UNRESEARCHED
+  local_verification_claimed: false
+
+notes:
+  - "Template only. Copy to a new filename for a real owned/authorized-device experiment."
+  - "Unknowns are deliberate; never replace them with guessed zeroes or inferred passes."
