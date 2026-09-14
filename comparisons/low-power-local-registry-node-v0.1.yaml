@@ -97,8 +97,7 @@ candidates:
         status: unknown
         record_paths:
           - boot.boot_from_removable_media
-          - recovery.dual_firmware
-        note: "Removable boot is false and dual-firmware state is unknown; TFTP recovery is strong but does not satisfy this preferred field as written."
+        note: "Removable boot is false while dual-firmware state is not represented in this record; TFTP recovery is strong but does not satisfy this preferred field as written."
       - id: used_price_max_30_eur
         contract_path: preferred.economics.used_price_eur_max
         status: unknown
@@ -207,8 +206,7 @@ candidates:
         status: unknown
         record_paths:
           - recovery.removable_media_recovery
-          - recovery.dual_firmware
-        note: "Both fields remain unknown."
+        note: "Removable-media recovery is unknown and dual-firmware state is not represented in the current record."
       - id: used_price_max_30_eur
         contract_path: preferred.economics.used_price_eur_max
         status: unknown
