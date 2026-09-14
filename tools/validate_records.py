@@ -35,6 +35,15 @@ RECOVERY_IMPACT_VALUES = {
     "not_applicable",
 }
 
+LOCALITY_STATES = {
+    "fully_local",
+    "local_after_provisioning",
+    "cloud_optional",
+    "cloud_required_for_some_functions",
+    "cloud_required",
+    "unknown",
+}
+
 REQUIRED_RECOVERY_PATH = {
     "id",
     "from_state",
@@ -50,6 +59,14 @@ REQUIRED_RECOVERY_IMPACT = {
     "system_configuration",
     "user_data",
     "application_state",
+}
+
+REQUIRED_LOCALITY_STATE = {
+    "id",
+    "device_state",
+    "locality_state",
+    "state",
+    "source_claim_ids",
 }
 
 REQUIRED_DEVICE_TOP_LEVEL = {
@@ -105,6 +122,21 @@ def validate_truth_state(value: Any, context: str) -> None:
         raise ValidationError(f"{context} has invalid truth state {value!r}; allowed: {allowed}")
 
 
+def validate_claim_references(
+    values: Any,
+    claim_ids: set[str],
+    context: str,
+) -> None:
+    if not isinstance(values, list) or not values:
+        raise ValidationError(f"{context} must be a non-empty list")
+    for claim_id in values:
+        require_nonempty_string(claim_id, f"{context}[]")
+        if claim_id not in claim_ids:
+            raise ValidationError(
+                f"{context} references unknown evidence claim {claim_id!r}"
+            )
+
+
 def validate_recovery_paths(recovery: dict[str, Any], claim_ids: set[str]) -> None:
     paths = recovery.get("paths")
     if paths is None:
@@ -150,15 +182,71 @@ def validate_recovery_paths(recovery: dict[str, Any], claim_ids: set[str]) -> No
                     f"allowed: {allowed}"
                 )
 
-        source_claim_ids = path["source_claim_ids"]
-        if not isinstance(source_claim_ids, list) or not source_claim_ids:
-            raise ValidationError(f"{context}.source_claim_ids must be a non-empty list")
-        for claim_id in source_claim_ids:
-            require_nonempty_string(claim_id, f"{context}.source_claim_ids[]")
-            if claim_id not in claim_ids:
-                raise ValidationError(
-                    f"{context}.source_claim_ids references unknown evidence claim {claim_id!r}"
-                )
+        validate_claim_references(
+            path["source_claim_ids"],
+            claim_ids,
+            f"{context}.source_claim_ids",
+        )
+
+
+def validate_string_list(value: Any, context: str) -> None:
+    if not isinstance(value, list):
+        raise ValidationError(f"{context} must be a list")
+    for index, item in enumerate(value):
+        require_nonempty_string(item, f"{context}[{index}]")
+
+
+def validate_locality_states(locality: dict[str, Any], claim_ids: set[str]) -> None:
+    states = locality.get("states")
+    if states is None:
+        return
+    if locality.get("state") != "state_dependent":
+        raise ValidationError(
+            "locality.state must be 'state_dependent' when locality.states is present"
+        )
+    if not isinstance(states, list) or not states:
+        raise ValidationError("locality.states must be a non-empty list when present")
+
+    seen_state_ids: set[str] = set()
+
+    for index, entry in enumerate(states):
+        context = f"locality.states[{index}]"
+        if not isinstance(entry, dict):
+            raise ValidationError(f"{context} must be a mapping")
+        require_keys(entry, REQUIRED_LOCALITY_STATE, context)
+
+        entry_id = entry["id"]
+        require_nonempty_string(entry_id, f"{context}.id")
+        if entry_id in seen_state_ids:
+            raise ValidationError(f"duplicate locality state id: {entry_id}")
+        seen_state_ids.add(entry_id)
+
+        require_nonempty_string(entry["device_state"], f"{context}.device_state")
+
+        locality_state = entry["locality_state"]
+        if locality_state not in LOCALITY_STATES:
+            allowed = ", ".join(sorted(LOCALITY_STATES))
+            raise ValidationError(
+                f"{context}.locality_state has invalid value {locality_state!r}; "
+                f"allowed: {allowed}"
+            )
+
+        validate_truth_state(entry["state"], f"{context}.state")
+        validate_claim_references(
+            entry["source_claim_ids"],
+            claim_ids,
+            f"{context}.source_claim_ids",
+        )
+
+        for key in ("offline_capabilities", "internet_required_capabilities"):
+            if key in entry:
+                validate_string_list(entry[key], f"{context}.{key}")
+
+        if "provisioning_cloud_requirement" in entry:
+            require_nonempty_string(
+                entry["provisioning_cloud_requirement"],
+                f"{context}.provisioning_cloud_requirement",
+            )
 
 
 def validate_device(path: Path, seen_ids: set[str]) -> None:
@@ -237,6 +325,12 @@ def validate_device(path: Path, seen_ids: set[str]) -> None:
         require_nonempty_string(claim["source"], f"evidence.claims[{index}].source")
 
     validate_recovery_paths(recovery, claim_ids)
+
+    locality = data.get("locality")
+    if locality is not None:
+        if not isinstance(locality, dict):
+            raise ValidationError("locality must be a mapping when present")
+        validate_locality_states(locality, claim_ids)
 
 
 def validate_contract(path: Path, seen_ids: set[str]) -> None:
