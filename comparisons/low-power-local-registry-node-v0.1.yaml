@@ -5,6 +5,9 @@ checked_at: "2026-09-14"
 status: evidence_incomplete
 decision: no_ranked_winner
 
+market_snapshot_refs:
+  - market_snapshots/low-power-local-registry-node-eu-2026-09-14.yaml
+
 truth_rules:
   unknown_is_not_pass: true
   hard_eligibility_is_not_workload_verification: true
@@ -104,7 +107,7 @@ candidates:
         record_paths:
           - economics.used_price_eur
           - economics.market_data_state
-        note: "No dated NL/EU market snapshot has been collected."
+        note: "The first EU market snapshot contains four exact-v5 private asking observations from €20 to €40 with a sample median of €32. This is partial asking-price evidence, not a stable market value, so the <=€30 preference is not promoted to pass."
       - id: repeat_provisioning_max_30_minutes
         contract_path: preferred.economics.repeat_provisioning_minutes_max
         status: unknown
@@ -112,7 +115,7 @@ candidates:
           - economics.setup_minutes
         note: "Repeat provisioning time has not been measured."
     ranking_gaps:
-      - "dated NL/EU used-market sample"
+      - "refresh/expand the current EU asking-price cohort and count shipping/power-supply state for ranking-ready acquisition cost"
       - "common registry workload footprint"
       - "comparable wall-power measurement"
       - "repeat provisioning time"
@@ -213,7 +216,7 @@ candidates:
         record_paths:
           - economics.used_price_eur
           - economics.market_data_state
-        note: "No dated NL/EU bare-chassis market snapshot has been collected."
+        note: "The first EU market snapshot contains six bare-chassis/no-drive listings with mixed RAM configurations from €195 to €279 and a sample median of €239.50. It is descriptive asking/displayed-listing evidence, not an exhaustive transaction-price distribution."
       - id: repeat_provisioning_max_30_minutes
         contract_path: preferred.economics.repeat_provisioning_minutes_max
         status: unknown
@@ -223,7 +226,7 @@ candidates:
     ranking_gaps:
       - "prove basic local runtime without vendor-cloud dependency"
       - "count a minimal required drive configuration separately from chassis cost"
-      - "dated NL/EU bare-chassis used-market sample"
+      - "refresh/expand the bare-chassis EU market cohort and count shipping/accessory state for ranking-ready acquisition cost"
       - "common registry workload footprint"
       - "comparable wall-power measurement with the required drives installed"
       - "repeat provisioning time"
@@ -325,7 +328,7 @@ candidates:
         record_paths:
           - economics.used_price_eur
           - economics.market_data_state
-        note: "No dated NL/EU market snapshot has been collected."
+        note: "The first EU market snapshot contains four private used asks from €20 to €40 with a sample median of €29.50; two exact-config NL dealer-refurbished offers are €59 and €67. Variant/accessory cohorts remain separate, so the <=€30 preference is not promoted to pass."
       - id: repeat_provisioning_max_30_minutes
         contract_path: preferred.economics.repeat_provisioning_minutes_max
         status: unknown
@@ -333,7 +336,7 @@ candidates:
           - economics.setup_minutes
         note: "Repeat provisioning time has not been measured."
     ranking_gaps:
-      - "dated NL/EU used-market sample with 8/16-GB and adapter inclusion preserved"
+      - "refresh/expand the current EU private-used cohort with 8/16-GB eMMC and power-adapter inclusion preserved"
       - "common registry workload footprint"
       - "comparable wall-power measurement"
       - "repeat provisioning time"
@@ -345,8 +348,8 @@ decision_blockers:
     state: not_collected
     note: "The same tiny registry implementation has not been run on all three candidates."
   - id: market_snapshot
-    state: not_collected
-    note: "No same-window NL/EU used-market sample exists for all three candidates."
+    state: partial
+    note: "A dated EU snapshot now preserves exact-revision/configuration-aware asking/displayed-listing evidence for all three candidates. It does not prove final transaction prices, shipping-normalized acquisition cost, or a stable market distribution."
   - id: comparable_power
     state: not_collected
     note: "Available manufacturer figures use different conditions and cannot support a fair average-power ranking."
@@ -358,15 +361,17 @@ decision_blockers:
     note: "End-to-end hard-power-loss -> boot -> registry-service restart has not been tested across the set."
   - id: replacement_supply
     state: not_collected
-    note: "Regional replacement availability and configuration consistency are not yet sampled."
+    note: "Regional replacement availability and configuration consistency are not yet sampled beyond the first acquisition-price observations."
 
 provisional_findings:
   - "Archer C7 v5 currently satisfies every hard field in the capability contract as represented by the census record; this is record-level eligibility, not local workload verification."
   - "Wyse 3040 satisfies the hard contract once a suitable AC Recovery policy is configured; exact used-unit eMMC/WLAN configuration still matters for economics and deployment."
   - "DS220+ is not yet hard-requirement evidence-ready because its basic-runtime vendor-cloud dependency remains unknown; durable state also requires separately counted drives."
-  - "No ranked winner is defensible until common workload, market, power, provisioning and restart evidence exists."
+  - "The first EU listing snapshot shows distinct observed acquisition bands: Archer C7 v5 exact-revision private asks €20-€40 (median €32), Wyse 3040 private asks €20-€40 (median €29.50), and DS220+ bare-chassis/no-drive mixed-RAM listings €195-€279 (median €239.50). These are sample statistics, not transaction-price truth or total-useful-cost rankings."
+  - "No ranked winner is defensible until common workload, power, provisioning and restart evidence exists."
 
 notes:
   - "This is the first machine-readable Layer-C comparison in the repository."
-  - "It deliberately refuses to turn manufacturer power claims or missing price samples into numeric scores."
+  - "Market observations now live in a separate validated snapshot so listing data can change without becoming permanent device identity."
+  - "It deliberately refuses to turn manufacturer power claims, asking-price medians or missing operational evidence into numeric scores."
   - "A future comparison refresh should change statuses only when the underlying device records or directly comparable observations change."
