@@ -26,6 +26,9 @@ jobs:
       - name: Validate device and contract records
         run: python tools/validate_records.py
 
+      - name: Gate structured evidence strength
+        run: python tools/validate_structured_evidence_strength.py
+
       - name: Validate census state synchronization
         run: python tools/validate_census_state.py
 
