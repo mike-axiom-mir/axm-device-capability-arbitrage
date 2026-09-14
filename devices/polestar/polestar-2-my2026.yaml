@@ -272,9 +272,7 @@ evidence:
         - "AXM local recovery reproduction"
     - id: polestar_factory_reset_user_data
       state: DOCUMENTED
-      source: "https://www.polestar.com/uk/manual/polestar-2/2026/article/519b67d02463defac0a801510215e0ff/"
-      additional_sources:
-        - "https://www.polestar.com/uk/manual/polestar-2/2023/article/96fc5cb24f6b5dbfc0a801514786d063/"
+      source: "https://www.polestar.com/uk/manual/polestar-2/2026/article/96fc5cb24f6b5dbfc0a801514786d063/"
       proves:
         - "Polestar documents administrator privilege as required for network/factory reset and says the owner profile has administrator privilege"
         - "Polestar documents factory reset deleting profiles, user data, connected keys and personal settings, with all vehicle keys required inside the vehicle"
