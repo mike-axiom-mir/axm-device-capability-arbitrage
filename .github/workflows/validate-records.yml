@@ -50,6 +50,9 @@ jobs:
       - name: Validate local experiment receipts
         run: python tools/validate_experiment_receipts.py
 
+      - name: Validate local power measurement comparability
+        run: python tools/validate_power_measurement_comparability.py
+
       - name: Gate device local-verification promotion
         run: python tools/validate_local_verification_promotions.py
 

@@ -42,6 +42,11 @@ measurement_tools:
     model: unknown
     resolution_watts: unknown
     source_class: unknown
+    measurement_boundary: unknown
+    integration_method: unknown
+    sample_interval_seconds: unknown
+    uncertainty_statement: unknown
+    calibration_status: unknown
   elapsed_time:
     method: unknown
 
@@ -60,8 +65,10 @@ workload_run:
   cpu_usage_percent: unknown
   wall_power_idle_watts: unknown
   idle_measurement_seconds: unknown
+  idle_stabilization_seconds: unknown
   wall_power_workload_average_watts: unknown
   measurement_seconds: 1800
+  workload_stabilization_seconds: unknown
   service_autostart_config: unknown
   notes: []
 
@@ -80,3 +87,4 @@ result:
 notes:
   - "Template only. Copy to a new filename for a real owned/authorized-device experiment."
   - "Unknowns are deliberate; never replace them with guessed zeroes or inferred passes."
+  - "Numeric local power requires explicit measurement boundary, averaging method, stabilization context, tested power supply/peripherals, and durable artifact evidence."
