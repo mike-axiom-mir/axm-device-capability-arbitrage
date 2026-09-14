@@ -1,0 +1,374 @@
+comparison_version: "0.1"
+comparison_id: low-power-local-registry-node-v0.1
+contract_id: low-power-local-registry-node
+checked_at: "2026-09-14"
+status: evidence_incomplete
+decision: no_ranked_winner
+
+truth_rules:
+  unknown_is_not_pass: true
+  hard_eligibility_is_not_workload_verification: true
+  no_numeric_score_before_comparable_evidence: true
+
+candidates:
+  - record_id: tp-link-archer-c7-v5
+    hard_requirement_eligibility: hard_requirements_pass
+    hard_requirements:
+      - id: custom_code_execution
+        contract_path: required.execution.custom_code
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "OpenWrt linux_userspace is recorded with custom_code=true and root privilege."
+      - id: accepted_execution_surface
+        contract_path: required.execution.accepted_surfaces
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "linux_userspace is explicitly accepted by the contract."
+      - id: minimum_ram
+        contract_path: required.memory.ram_mb_min
+        status: pass
+        record_paths:
+          - memory.ram_mb
+        note: "128 MB recorded RAM exceeds the 64 MB minimum."
+      - id: persistent_state
+        contract_path: required.memory.persistent_state
+        status: pass
+        record_paths:
+          - memory.internal_persistent_storage_mb
+          - execution.surfaces
+        note: "16 MB internal flash plus writable OpenWrt userspace establishes persistent local state, though workload headroom is untested."
+      - id: local_networking
+        contract_path: required.connectivity.local_networking
+        status: pass
+        record_paths:
+          - connectivity.ethernet
+          - connectivity.wifi
+        note: "Ethernet and Wi-Fi are present in the exact-model record."
+      - id: unattended_boot
+        contract_path: required.boot.unattended_boot
+        status: pass
+        record_paths:
+          - boot.unattended_boot
+        note: "The device record currently marks unattended boot true for the OpenWrt router state."
+      - id: no_vendor_cloud_runtime_requirement
+        contract_path: required.locality.cloud_required
+        status: pass
+        record_paths:
+          - locality.vendor_cloud_required_for_basic_operation
+          - locality.state
+        note: "The OpenWrt state is recorded fully local with no vendor cloud required for basic operation."
+      - id: documented_recovery
+        contract_path: required.recovery.documented_recovery_path
+        status: pass
+        record_paths:
+          - recovery.recovery_state
+          - recovery.tftp_recovery
+        note: "Exact-model OpenWrt/TFTP recovery is community verified."
+    preferred_evidence:
+      - id: average_power_max_10w
+        contract_path: preferred.power.average_watts_max
+        status: unknown
+        record_paths:
+          - power.idle_watts
+          - power.active_watts
+        note: "Supply rating is not consumption; comparable wall power is unmeasured."
+      - id: ethernet
+        contract_path: preferred.networking.ethernet
+        status: pass
+        record_paths:
+          - connectivity.ethernet
+        note: "Five Gigabit Ethernet ports are recorded."
+      - id: open_firmware
+        contract_path: preferred.execution.open_firmware
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "The evaluated execution state is OpenWrt replacement firmware."
+      - id: package_manager
+        contract_path: preferred.execution.package_manager
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "A package_manager execution surface is explicitly recorded."
+      - id: removable_boot_or_dual_firmware
+        contract_path: preferred.recovery.removable_boot_or_dual_firmware
+        status: unknown
+        record_paths:
+          - boot.boot_from_removable_media
+          - recovery.dual_firmware
+        note: "Removable boot is false and dual-firmware state is unknown; TFTP recovery is strong but does not satisfy this preferred field as written."
+      - id: used_price_max_30_eur
+        contract_path: preferred.economics.used_price_eur_max
+        status: unknown
+        record_paths:
+          - economics.used_price_eur
+          - economics.market_data_state
+        note: "No dated NL/EU market snapshot has been collected."
+      - id: repeat_provisioning_max_30_minutes
+        contract_path: preferred.economics.repeat_provisioning_minutes_max
+        status: unknown
+        record_paths:
+          - economics.setup_minutes
+        note: "Repeat provisioning time has not been measured."
+    ranking_gaps:
+      - "dated NL/EU used-market sample"
+      - "common registry workload footprint"
+      - "comparable wall-power measurement"
+      - "repeat provisioning time"
+      - "hard-power-loss -> OpenWrt -> registry service restart test"
+      - "replacement availability / remaining-life evidence"
+
+  - record_id: synology-ds220-plus
+    hard_requirement_eligibility: blocked_by_unknowns
+    hard_requirements:
+      - id: custom_code_execution
+        contract_path: required.execution.custom_code
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "Container Manager is recorded as custom-code container execution."
+      - id: accepted_execution_surface
+        contract_path: required.execution.accepted_surfaces
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "container is explicitly accepted by the contract."
+      - id: minimum_ram
+        contract_path: required.memory.ram_mb_min
+        status: pass
+        record_paths:
+          - memory.ram_mb
+        note: "2048 MB recorded RAM exceeds the 64 MB minimum."
+      - id: persistent_state
+        contract_path: required.memory.persistent_state
+        status: conditional
+        record_paths:
+          - memory.internal_persistent_storage_mb
+          - memory.drive_bays
+        note: "Durable state requires installed SATA storage; drive cost/configuration must be counted separately from the chassis."
+      - id: local_networking
+        contract_path: required.connectivity.local_networking
+        status: pass
+        record_paths:
+          - connectivity.ethernet
+        note: "Two Gigabit Ethernet ports are recorded."
+      - id: unattended_boot
+        contract_path: required.boot.unattended_boot
+        status: conditional
+        record_paths:
+          - boot.unattended_boot
+          - boot.power_recovery
+        note: "Unattended restart depends on configured Power Recovery behavior."
+      - id: no_vendor_cloud_runtime_requirement
+        contract_path: required.locality.cloud_required
+        status: unknown
+        record_paths:
+          - locality.vendor_cloud_required_for_basic_operation
+          - locality.state
+        note: "Local NAS/container operation exists, but the current record still leaves vendor-cloud requirement for basic operation unknown."
+      - id: documented_recovery
+        contract_path: required.recovery.documented_recovery_path
+        status: pass
+        record_paths:
+          - recovery.recovery_state
+          - recovery.paths
+        note: "Mode 1/Mode 2 recovery paths are documented with data-impact semantics."
+    preferred_evidence:
+      - id: average_power_max_10w
+        contract_path: preferred.power.average_watts_max
+        status: unknown
+        record_paths:
+          - power.manufacturer_measured
+          - power.idle_watts
+          - power.active_watts
+        note: "Manufacturer reports 4.41 W HDD hibernation and 14.69 W access for a stated drive configuration; no comparable registry-workload average is established."
+      - id: ethernet
+        contract_path: preferred.networking.ethernet
+        status: pass
+        record_paths:
+          - connectivity.ethernet
+        note: "Dual Gigabit Ethernet is recorded."
+      - id: open_firmware
+        contract_path: preferred.execution.open_firmware
+        status: unknown
+        record_paths:
+          - execution.surfaces
+        note: "Supported container execution does not establish an open host-firmware stack."
+      - id: package_manager
+        contract_path: preferred.execution.package_manager
+        status: unknown
+        record_paths:
+          - execution.surfaces
+        note: "The current record proves Container Manager, not the contract's generic package-manager preference."
+      - id: removable_boot_or_dual_firmware
+        contract_path: preferred.recovery.removable_boot_or_dual_firmware
+        status: unknown
+        record_paths:
+          - recovery.removable_media_recovery
+          - recovery.dual_firmware
+        note: "Both fields remain unknown."
+      - id: used_price_max_30_eur
+        contract_path: preferred.economics.used_price_eur_max
+        status: unknown
+        record_paths:
+          - economics.used_price_eur
+          - economics.market_data_state
+        note: "No dated NL/EU bare-chassis market snapshot has been collected."
+      - id: repeat_provisioning_max_30_minutes
+        contract_path: preferred.economics.repeat_provisioning_minutes_max
+        status: unknown
+        record_paths:
+          - economics.setup_minutes
+        note: "Repeat provisioning time has not been measured."
+    ranking_gaps:
+      - "prove basic local runtime without vendor-cloud dependency"
+      - "count a minimal required drive configuration separately from chassis cost"
+      - "dated NL/EU bare-chassis used-market sample"
+      - "common registry workload footprint"
+      - "comparable wall-power measurement with the required drives installed"
+      - "repeat provisioning time"
+      - "hard-power-loss -> DSM -> container service restart test"
+      - "application/container-state recovery burden after DSM recovery"
+
+  - record_id: dell-wyse-3040
+    hard_requirement_eligibility: conditional
+    hard_requirements:
+      - id: custom_code_execution
+        contract_path: required.execution.custom_code
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "Exact-model Debian linux_userspace execution is community verified."
+      - id: accepted_execution_surface
+        contract_path: required.execution.accepted_surfaces
+        status: pass
+        record_paths:
+          - execution.surfaces
+        note: "linux_userspace is explicitly accepted by the contract."
+      - id: minimum_ram
+        contract_path: required.memory.ram_mb_min
+        status: pass
+        record_paths:
+          - memory.ram_mb
+        note: "2048 MB recorded RAM exceeds the 64 MB minimum."
+      - id: persistent_state
+        contract_path: required.memory.persistent_state
+        status: pass
+        record_paths:
+          - memory.internal_persistent_storage_mb
+        note: "Both documented 8 GB and 16 GB eMMC variants provide persistent state, though exact used-unit capacity must still be observed."
+      - id: local_networking
+        contract_path: required.connectivity.local_networking
+        status: pass
+        record_paths:
+          - connectivity.ethernet
+        note: "Gigabit Ethernet is present independent of the optional WLAN variant."
+      - id: unattended_boot
+        contract_path: required.boot.unattended_boot
+        status: conditional
+        record_paths:
+          - boot.unattended_boot
+          - boot.ac_recovery
+        note: "BIOS AC Recovery must be configured to a suitable PowerOn/LastState policy."
+      - id: no_vendor_cloud_runtime_requirement
+        contract_path: required.locality.cloud_required
+        status: pass
+        record_paths:
+          - locality.vendor_cloud_required_for_basic_operation
+          - locality.state
+        note: "The community Debian path is recorded as fully local with no Dell cloud required for basic runtime."
+      - id: documented_recovery
+        contract_path: required.recovery.documented_recovery_path
+        status: pass
+        record_paths:
+          - recovery.recovery_state
+          - recovery.paths
+        note: "UEFI USB Debian reinstallation plus BIOS reset paths are recorded."
+    preferred_evidence:
+      - id: average_power_max_10w
+        contract_path: preferred.power.average_watts_max
+        status: unknown
+        record_paths:
+          - power.manufacturer_claimed_consumption
+          - power.idle_watts
+          - power.active_watts
+        note: "Dell's <4 W manufacturer claim is promising but is not a comparable registry-workload measurement."
+      - id: ethernet
+        contract_path: preferred.networking.ethernet
+        status: pass
+        record_paths:
+          - connectivity.ethernet
+        note: "Gigabit Ethernet is recorded."
+      - id: open_firmware
+        contract_path: preferred.execution.open_firmware
+        status: unknown
+        record_paths:
+          - execution.surfaces
+          - boot.firmware
+        note: "Open Debian userspace does not by itself prove the contract's host-firmware preference."
+      - id: package_manager
+        contract_path: preferred.execution.package_manager
+        status: unknown
+        record_paths:
+          - execution.surfaces
+        note: "Debian normally has package management, but the current device record does not yet carry a dedicated package_manager execution claim."
+      - id: removable_boot_or_dual_firmware
+        contract_path: preferred.recovery.removable_boot_or_dual_firmware
+        status: pass
+        record_paths:
+          - recovery.removable_media_recovery
+          - recovery.usb_recovery
+        note: "UEFI USB boot/reinstall provides the removable-media side of this preference."
+      - id: used_price_max_30_eur
+        contract_path: preferred.economics.used_price_eur_max
+        status: unknown
+        record_paths:
+          - economics.used_price_eur
+          - economics.market_data_state
+        note: "No dated NL/EU market snapshot has been collected."
+      - id: repeat_provisioning_max_30_minutes
+        contract_path: preferred.economics.repeat_provisioning_minutes_max
+        status: unknown
+        record_paths:
+          - economics.setup_minutes
+        note: "Repeat provisioning time has not been measured."
+    ranking_gaps:
+      - "dated NL/EU used-market sample with 8/16-GB and adapter inclusion preserved"
+      - "common registry workload footprint"
+      - "comparable wall-power measurement"
+      - "repeat provisioning time"
+      - "hard-power-loss -> AC Recovery -> Debian -> registry service restart test"
+      - "eMMC health / remaining-life evidence"
+
+decision_blockers:
+  - id: common_workload
+    state: not_collected
+    note: "The same tiny registry implementation has not been run on all three candidates."
+  - id: market_snapshot
+    state: not_collected
+    note: "No same-window NL/EU used-market sample exists for all three candidates."
+  - id: comparable_power
+    state: not_collected
+    note: "Available manufacturer figures use different conditions and cannot support a fair average-power ranking."
+  - id: provisioning_friction
+    state: not_collected
+    note: "First/repeat provisioning time is not comparable yet."
+  - id: power_loss_recovery
+    state: not_collected
+    note: "End-to-end hard-power-loss -> boot -> registry-service restart has not been tested across the set."
+  - id: replacement_supply
+    state: not_collected
+    note: "Regional replacement availability and configuration consistency are not yet sampled."
+
+provisional_findings:
+  - "Archer C7 v5 currently satisfies every hard field in the capability contract as represented by the census record; this is record-level eligibility, not local workload verification."
+  - "Wyse 3040 satisfies the hard contract once a suitable AC Recovery policy is configured; exact used-unit eMMC/WLAN configuration still matters for economics and deployment."
+  - "DS220+ is not yet hard-requirement evidence-ready because its basic-runtime vendor-cloud dependency remains unknown; durable state also requires separately counted drives."
+  - "No ranked winner is defensible until common workload, market, power, provisioning and restart evidence exists."
+
+notes:
+  - "This is the first machine-readable Layer-C comparison in the repository."
+  - "It deliberately refuses to turn manufacturer power claims or missing price samples into numeric scores."
+  - "A future comparison refresh should change statuses only when the underlying device records or directly comparable observations change."
