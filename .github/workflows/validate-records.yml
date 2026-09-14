@@ -26,5 +26,8 @@ jobs:
       - name: Validate device and contract records
         run: python tools/validate_records.py
 
+      - name: Validate market snapshots
+        run: python tools/validate_market_snapshots.py
+
       - name: Validate evidence-gated comparisons
         run: python tools/validate_comparisons.py
