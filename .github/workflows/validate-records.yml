@@ -35,5 +35,8 @@ jobs:
       - name: Validate local experiment receipts
         run: python tools/validate_experiment_receipts.py
 
+      - name: Gate device local-verification promotion
+        run: python tools/validate_local_verification_promotions.py
+
       - name: Build and verify common registry workload
         run: make -C workloads/low-power-local-registry-v0.1 test
