@@ -39,7 +39,7 @@ Meaning:
 Eligibility is mechanically derived from hard-requirement statuses:
 
 ```text
-any fail      -> ineligible
+any fail         -> ineligible
 else any unknown -> blocked_by_unknowns
 else any conditional -> conditional
 else             -> hard_requirements_pass
@@ -95,6 +95,35 @@ For the first low-power registry comparison, ranking remains blocked until the c
 - replacement availability.
 
 Manufacturer claims may remain useful evidence, but a manufacturer power figure in one test condition must not be treated as equivalent to a measured common workload on another device.
+
+### Mechanical readiness semantics
+
+Comparison status is now mechanically tied to the blocker/gap state instead of being a free-form label.
+
+For `evidence_incomplete`:
+
+- at least one `decision_blocker` must remain unresolved;
+- every candidate that is not already `ineligible` must retain at least one explicit `ranking_gaps` entry.
+
+For `evidence_ready` or `completed`:
+
+- every candidate's `ranking_gaps` list must be empty;
+- every `decision_blocker` must have state `resolved` or `not_applicable`.
+
+The blocker vocabulary is intentionally conservative. Only `resolved` and `not_applicable` clear a blocker. Any other non-empty state — including `partial`, `not_collected`, `unknown`, or a newly invented intermediate state — remains blocking until the repository explicitly resolves it.
+
+`contradicted` is not auto-promoted or auto-demoted by these readiness rules. It exists for comparisons whose underlying evidence or premise has been invalidated and must be repaired explicitly.
+
+The comparison validator also requires the three truth rules to remain explicit and true:
+
+```yaml
+truth_rules:
+  unknown_is_not_pass: true
+  hard_eligibility_is_not_workload_verification: true
+  no_numeric_score_before_comparable_evidence: true
+```
+
+This does not prove that a blocker was resolved correctly. It prevents a comparison from being relabeled ready while its own machine-readable state still says that ranking evidence is missing.
 
 ## 7. No neutral numbers for missing evidence
 

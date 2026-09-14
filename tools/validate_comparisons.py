@@ -30,6 +30,17 @@ COMPARISON_STATES = {
 }
 UNKNOWNISH_STRINGS = {"unknown", "not_collected"}
 
+# Deliberately small semantics: only these states clear a decision blocker.
+# Any other non-empty state remains blocking until the comparison explicitly
+# resolves or marks the blocker not applicable.
+CLEARED_BLOCKER_STATES = {"resolved", "not_applicable"}
+
+REQUIRED_TRUTH_RULES = {
+    "unknown_is_not_pass",
+    "hard_eligibility_is_not_workload_verification",
+    "no_numeric_score_before_comparable_evidence",
+}
+
 
 class ValidationError(Exception):
     pass
@@ -200,8 +211,11 @@ def validate_comparison(
     require_nonempty_string(data["decision"], "decision")
 
     truth_rules = data.get("truth_rules")
-    if not isinstance(truth_rules, dict) or truth_rules.get("unknown_is_not_pass") is not True:
-        raise ValidationError("truth_rules.unknown_is_not_pass must be true")
+    if not isinstance(truth_rules, dict):
+        raise ValidationError("truth_rules must be a mapping")
+    for rule in sorted(REQUIRED_TRUTH_RULES):
+        if truth_rules.get(rule) is not True:
+            raise ValidationError(f"truth_rules.{rule} must be true")
 
     candidates = data["candidates"]
     if not isinstance(candidates, list) or not candidates:
@@ -259,14 +273,28 @@ def validate_comparison(
             )
 
         ranking_gaps = candidate["ranking_gaps"]
-        if not isinstance(ranking_gaps, list) or not ranking_gaps:
-            raise ValidationError(f"{context}.ranking_gaps must be a non-empty list")
+        if not isinstance(ranking_gaps, list):
+            raise ValidationError(f"{context}.ranking_gaps must be a list")
         for gap_index, gap in enumerate(ranking_gaps):
             require_nonempty_string(gap, f"{context}.ranking_gaps[{gap_index}]")
+
+        if status == "evidence_incomplete":
+            if eligibility != "ineligible" and not ranking_gaps:
+                raise ValidationError(
+                    f"{context}.ranking_gaps must stay non-empty while an eligible/conditional "
+                    "candidate is in an evidence_incomplete comparison"
+                )
+        elif status in {"evidence_ready", "completed"} and ranking_gaps:
+            raise ValidationError(
+                f"{context}.ranking_gaps must be empty before comparison status can be {status!r}"
+            )
 
     blockers = data["decision_blockers"]
     if not isinstance(blockers, list) or not blockers:
         raise ValidationError("decision_blockers must be a non-empty list")
+
+    seen_blocker_ids: set[str] = set()
+    unresolved_blockers: list[str] = []
     for index, blocker in enumerate(blockers):
         context = f"decision_blockers[{index}]"
         if not isinstance(blocker, dict):
@@ -274,9 +302,28 @@ def validate_comparison(
         for key in ("id", "state", "note"):
             if key not in blocker:
                 raise ValidationError(f"{context} missing required key {key}")
-        require_nonempty_string(blocker["id"], f"{context}.id")
-        require_nonempty_string(blocker["state"], f"{context}.state")
+
+        blocker_id = blocker["id"]
+        require_nonempty_string(blocker_id, f"{context}.id")
+        if blocker_id in seen_blocker_ids:
+            raise ValidationError(f"duplicate decision blocker id {blocker_id!r}")
+        seen_blocker_ids.add(blocker_id)
+
+        blocker_state = blocker["state"]
+        require_nonempty_string(blocker_state, f"{context}.state")
         require_nonempty_string(blocker["note"], f"{context}.note")
+        if blocker_state not in CLEARED_BLOCKER_STATES:
+            unresolved_blockers.append(blocker_id)
+
+    if status == "evidence_incomplete" and not unresolved_blockers:
+        raise ValidationError(
+            "evidence_incomplete comparison must retain at least one unresolved decision blocker"
+        )
+    if status in {"evidence_ready", "completed"} and unresolved_blockers:
+        raise ValidationError(
+            f"comparison status {status!r} cannot retain unresolved decision blockers: "
+            + ", ".join(unresolved_blockers)
+        )
 
     findings = data["provisional_findings"]
     if not isinstance(findings, list) or not findings:
