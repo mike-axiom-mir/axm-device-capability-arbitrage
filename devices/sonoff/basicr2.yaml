@@ -1,0 +1,303 @@
+schema_version: "0.1"
+record_id: sonoff-basicr2
+
+identity:
+  manufacturer: SONOFF
+  model: BASICR2
+  common_name: SONOFF BASICR2
+  marketed_category: smart_home_wifi_switch
+  hardware_revision: R2
+  configuration_scope:
+    note: "This record is scoped to BASICR2. BASICR3/BASICR4 and RF variants are separate devices and must not inherit this record automatically."
+
+compute:
+  soc: ESP8285
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  notes:
+    - "Tasmota's exact Sonoff Basic R2 hardware page identifies an ESP8285 SoC with integrated flash. CPU architecture/clock are not promoted here without a separate model-linked source."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: 1
+  flash_type: integrated_in_ESP8285
+  removable_storage:
+    present: false
+  notes:
+    - "The 1 MB figure is the ESP8285 integrated flash size documented on Tasmota's exact Basic R2 page; usable application/configuration capacity is smaller and remains unmeasured here."
+
+execution:
+  surfaces:
+    - type: replaceable_firmware
+      environment: Tasmota
+      version: current_supported_project_line_at_check_date
+      custom_code: true
+      privilege: bare_metal
+      access_method: "serial firmware replacement on an isolated, de-energized BASICR2 using the low-voltage programming interface"
+      state: COMMUNITY_VERIFIED
+      modification_class: 3
+      notes:
+        - "Tasmota maintains an exact Sonoff Basic R2 hardware page and documents its ESP8285/serial programming interface."
+        - "This record intentionally does not provide a live-mains flashing procedure. Mains must be disconnected before opening/programming the unit."
+        - "Replacing stock firmware changes the persistent software state and therefore changes locality/recovery semantics."
+
+connectivity:
+  ethernet: false
+  wifi:
+    present: true
+    standards:
+      - 802.11b
+      - 802.11g
+      - 802.11n
+    band: 2.4_GHz
+    custom_code_socket_access: true_under_Tasmota
+  bluetooth: unknown
+  usb: false
+  serial:
+    present: true
+    role: low_voltage_programming_interface
+    state: COMMUNITY_VERIFIED
+  gpio:
+    accessible_under_Tasmota: partially_documented
+    notes:
+      - "Tasmota maps the on-board button, relay and status LED and documents additional Basic R2 board contacts."
+
+inputs:
+  controls:
+    - pairing_manual_button
+  sensors: []
+
+outputs:
+  relay:
+    present: true
+    channels: 1
+    max_current_a: 10
+    custom_control_state: COMMUNITY_VERIFIED_under_Tasmota
+  leds:
+    present: true
+    custom_control_state: COMMUNITY_VERIFIED_under_Tasmota
+  display:
+    present: false
+  motors: []
+
+power:
+  source:
+    battery: false
+    mains: true
+  input:
+    voltage_vac: "100-240"
+    frequency_hz: "50/60"
+    max_current_a: 10
+  output:
+    voltage_vac: "100-240"
+    frequency_hz: "50/60"
+    max_load_a: 10
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  safety_class: mains_voltage_device
+  notes:
+    - "Electrical ratings are manufacturer limits, not measured self-consumption."
+    - "SONOFF's manual warns of electric-shock risk and recommends a qualified professional for installation/repair."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: true_when_Tasmota_is_installed_as_device_firmware
+  secure_boot: unknown
+  boot_from_removable_media: false
+  bootloader_access: serial_programming_mode_documented
+  notes:
+    - "Tasmota being the installed firmware means its code starts on device boot, but AXM has not locally tested repeated hard-power-loss recovery or relay-state behavior."
+
+recovery:
+  factory_reset: documented_for_stock_ewelink_state
+  official_restore: unknown
+  removable_media_recovery: false
+  usb_recovery: false
+  serial_recovery: possible_via_firmware_programming_but_stock_image_availability_not_established
+  bootloader_recovery: serial_programming_mode_documented
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: stock_factory_reset
+      from_state: stock_ewelink_firmware
+      target_state: stock_ewelink_factory_pairing_state
+      method: ewelink_delete_device_factory_reset
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: not_applicable
+        application_state: not_applicable
+      source_claim_ids:
+        - official_basicr2_manual
+      notes:
+        - "The current manufacturer manual states that deleting the device in eWeLink restores factory settings."
+        - "This path applies to stock firmware and is not evidence of restoring stock after firmware replacement."
+    - id: return_to_stock_after_tasmota
+      from_state: tasmota_firmware
+      target_state: stock_ewelink_firmware
+      method: stock_firmware_restore
+      availability: unknown
+      state: UNRESEARCHED
+      data_impact:
+        system_configuration: unknown
+        user_data: not_applicable
+        application_state: unknown
+      source_claim_ids:
+        - tasmota_exact_basicr2_support
+      notes:
+        - "The gathered Tasmota evidence proves replacement-firmware execution but does not establish an official stock image or a tested Tasmota-to-stock restore path."
+        - "Do not assume the stock factory-reset action can undo firmware replacement."
+
+locality:
+  state: state_dependent
+  vendor_cloud_required_for_basic_operation: state_dependent
+  vendor_cloud_required_for_provisioning: state_dependent
+  local_network_operation: state_dependent
+  offline_operation: state_dependent
+  states:
+    - id: stock_ewelink_firmware
+      device_state: stock_ewelink_firmware
+      locality_state: cloud_required_for_some_functions
+      state: DOCUMENTED
+      offline_capabilities:
+        - "same-LAN on/off control after successful eWeLink pairing when LAN mode is available"
+      internet_required_capabilities:
+        - "stock account/device registration and first pairing use the eWeLink app/server path"
+        - "some schedule, scene and sharing setup functions require internet according to eWeLink LAN-mode documentation"
+      provisioning_cloud_requirement: required_for_stock_ewelink_pairing
+      source_claim_ids:
+        - official_basicr2_manual
+        - stock_ewelink_lan_mode
+        - stock_ewelink_pairing_server_path
+    - id: tasmota_firmware
+      device_state: tasmota_firmware
+      locality_state: fully_local
+      state: COMMUNITY_VERIFIED
+      offline_capabilities:
+        - "local WebUI control by device IP"
+        - "local relay control and configuration through the WebUI/console"
+        - "local MQTT control when configured to a LAN broker"
+      internet_required_capabilities: []
+      provisioning_cloud_requirement: no_vendor_cloud_required_for_local_runtime
+      source_claim_ids:
+        - tasmota_exact_basicr2_support
+        - tasmota_local_web_and_mqtt
+  notes:
+    - "This is the second independent census device showing persistent-state-dependent locality after Wyze Cam v2."
+    - "Stock BASICR2 is not represented as simply cloud-only because SONOFF/eWeLink document LAN control after pairing."
+    - "Tasmota local control is not represented as proof of safe mains installation or of a known stock-recovery path."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: 0
+  setup_minutes: unknown
+  special_tools:
+    - isolated_low_voltage_serial_programmer_if_replacing_firmware
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU price sample was collected."
+    - "Safe mains installation/inspection effort must be counted as real deployment friction rather than treated as free."
+
+roles:
+  - role: local_home_automation_relay
+    confidence: high
+    reason: "The device is natively a 10 A Wi-Fi relay, and both stock LAN control and Tasmota local control are evidence-backed."
+  - role: local_mqtt_actuator
+    confidence: high
+    reason: "Tasmota exposes MQTT control that can point to a broker on the local network; no vendor cloud is needed for that runtime path."
+  - role: tiny_microcontroller_edge_node
+    confidence: low
+    reason: "Replacement firmware gives direct control of the ESP8285, but RAM/headroom, power, long-duration custom workload behavior and opportunity cost are not characterized."
+  - role: general_registry_node
+    confidence: low
+    reason: "One megabyte of flash, unknown RAM, a mains-coupled relay role and absent workload measurements make it a poor registry candidate until a specific tiny contract proves otherwise."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: official_basicr2_manual
+      state: DOCUMENTED
+      source: "https://cdn.shopify.com/s/files/1/0742/9963/8001/files/User_Manual_BASICR2_RFR2_V1.5.pdf?v=1758190956"
+      additional_sources:
+        - "https://sonoff.tech/en-eu/pages/user-manual"
+      proves:
+        - "SONOFF currently lists BASICR2 as a 10 A Wi-Fi Basic Smart Switch"
+        - "BASICR2 uses 100-240 V AC, 50/60 Hz and a 10 A maximum load"
+        - "Wi-Fi is IEEE 802.11 b/g/n at 2.4 GHz"
+        - "stock setup uses the eWeLink app and supports quick/compatible pairing"
+        - "the stock feature list includes LAN Control"
+        - "deleting the stock device in eWeLink is documented as factory reset"
+        - "the manufacturer warns of electric-shock risk and recommends qualified-professional installation/repair"
+      does_not_prove:
+        - "Tasmota compatibility"
+        - "measured self-consumption"
+        - "return to stock after replacement firmware"
+    - id: tasmota_exact_basicr2_support
+      state: COMMUNITY_VERIFIED
+      source: "https://tasmota.github.io/docs/devices/Sonoff-Basic/"
+      proves:
+        - "Tasmota documents the Sonoff Basic R2 as an ESP8285 device"
+        - "the ESP8285 has 1 MB integrated flash in this hardware revision"
+        - "the Basic R2 exposes a low-voltage serial programming interface and known button/relay/LED GPIO mappings"
+        - "replacement-firmware programming is a maintained community path for the exact device family"
+      does_not_prove:
+        - "safe work on energized mains"
+        - "official stock-firmware restore availability"
+        - "AXM local reproduction"
+    - id: tasmota_local_web_and_mqtt
+      state: DOCUMENTED
+      source: "https://tasmota.github.io/docs/WebUI/"
+      additional_sources:
+        - "https://tasmota.github.io/docs/MQTT/"
+        - "https://tasmota.github.io/docs/Getting-Started/"
+      proves:
+        - "Tasmota exposes a WebUI reached directly by the device IP on the local network"
+        - "the WebUI supports device control/configuration and a local console"
+        - "Tasmota MQTT can be configured to a broker by local address/IP"
+        - "initial Wi-Fi configuration can be performed through the device's local Tasmota access point after flashing"
+      does_not_prove:
+        - "encrypted MQTT on stock ESP8266/ESP8285 builds"
+        - "safe WAN exposure"
+        - "every optional Tasmota feature fits the Basic R2 flash/RAM envelope"
+    - id: stock_ewelink_lan_mode
+      state: DOCUMENTED
+      source: "https://help.ewelink.cc/hc/en-us/articles/360027586291--eWeLink3-5-10-LAN-feature-updated"
+      additional_sources:
+        - "https://ewelink.cc/does-my-ewelink-device-support-lan/"
+      proves:
+        - "supported eWeLink switches can remain controllable on the same LAN when public internet is unavailable"
+        - "LAN mode prioritizes local control over WAN for supported devices"
+        - "some schedules/scenes/sharing setup still requires internet"
+      does_not_prove:
+        - "fully cloud-independent stock provisioning"
+        - "all stock features work without internet"
+    - id: stock_ewelink_pairing_server_path
+      state: DOCUMENTED
+      source: "https://help.ewelink.cc/hc/en-us/articles/360052454912-Crack-the-codes-of-pairing-failure"
+      additional_sources:
+        - "https://help.ewelink.cc/hc/en-us/articles/7224516410393-Permissions-Requested-by-eWeLink"
+      proves:
+        - "eWeLink pairing includes device registration/server communication"
+        - "the eWeLink app describes registering paired devices in eWeLink app/servers"
+      does_not_prove:
+        - "public internet is required for every post-pairing on/off operation"
+
+notes:
+  - "This is the first smart-home/microcontroller-appliance census record and the second independent pressure case for locality changing with persistent firmware state."
+  - "The device contains hazardous mains voltage. No AXM local flash, mains installation, power measurement, market-price sample or recovery test has been performed."
+  - "Any physical work must be on owned/authorized hardware with mains disconnected; installation/repair should follow the manufacturer's qualified-professional warning."
+  - "This record is about capability evidence, not encouragement to open or modify energized mains equipment."
