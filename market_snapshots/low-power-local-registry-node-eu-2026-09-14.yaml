@@ -1,0 +1,338 @@
+snapshot_version: "0.1"
+snapshot_id: low-power-local-registry-node-eu-2026-09-14
+contract_id: low-power-local-registry-node
+checked_at: "2026-09-14"
+currency: EUR
+
+scope:
+  region_label: EU_used_market_sample
+  countries:
+    - DE
+    - BE
+    - AT
+    - NL
+  listing_date_start: "2026-06-27"
+  listing_date_end: "2026-09-10"
+  shipping_in_statistics: false
+  transaction_prices_proven: false
+
+method:
+  price_basis: displayed_listing_price
+  aggregation: cohort_descriptive_only
+  revision_rule: "Exact model/revision is required when the comparison record is revision-specific."
+  configuration_rule: "Material configuration differences remain attached to each observation and are not silently normalized."
+  seller_rule: "Private-used and dealer-refurbished offers remain separate cohorts."
+  sold_rule: "A marketplace label such as sold does not prove the final transaction price equaled the displayed price."
+  missing_rule: "No listing observation may be converted into a permanent market price or a ranked winner."
+
+candidates:
+  - record_id: tp-link-archer-c7-v5
+    cohorts:
+      - id: private_used_exact_v5
+        condition_scope: used_private_or_unspecified_private
+        sample_count: 4
+        descriptive_statistics:
+          low_eur: 20
+          median_eur: 32
+          high_eur: 40
+        observations:
+          - id: archer-c7-v5-de-2026-07-26-20
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-07-26"
+            checked_at: "2026-09-14"
+            price_eur: 20
+            price_type: asking
+            seller_class: private
+            model_identity: "TP-Link Archer C7 v5"
+            configuration:
+              hardware_revision: v5
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-multimedia-elektronik/tp-link-ac1750/k0c161"
+            source_scope: search_result_snapshot
+            note: "Search result explicitly names Router TP-Link AC1750 Archer C7 v5."
+          - id: archer-c7-v5-de-2026-07-26-40
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-07-26"
+            checked_at: "2026-09-14"
+            price_eur: 40
+            price_type: asking
+            seller_class: private
+            model_identity: "TP-Link Archer C7 AC1750"
+            configuration:
+              hardware_revision: v5
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-multimedia-elektronik/tp-link-archer-c7/k0c161"
+            source_scope: search_result_snapshot
+            note: "Search result description explicitly states Version C7V5."
+          - id: archer-c7-v5-de-2026-07-31-39
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-07-31"
+            checked_at: "2026-09-14"
+            price_eur: 39
+            price_type: asking
+            seller_class: private
+            model_identity: "TP-Link Archer C7 V5 AC1750 Dualband-Gigabit-WLAN-Router"
+            configuration:
+              hardware_revision: v5
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-multimedia-elektronik/tp-link-ac1750/k0c161"
+            source_scope: search_result_snapshot
+            note: "Exact V5 is present in the listing title."
+          - id: archer-c7-v5-de-2026-08-08-25
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-08-08"
+            checked_at: "2026-09-14"
+            price_eur: 25
+            price_type: asking
+            seller_class: private
+            model_identity: "TP-Link Archer C7 AC1750"
+            configuration:
+              hardware_revision: v5
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-multimedia-elektronik/tp-link-archer-c7/k0c161"
+            source_scope: search_result_snapshot
+            note: "Search result explicitly identifies Version 5.0."
+
+  - record_id: dell-wyse-3040
+    cohorts:
+      - id: private_used
+        condition_scope: used_private
+        sample_count: 4
+        descriptive_statistics:
+          low_eur: 20
+          median_eur: 29.5
+          high_eur: 40
+        observations:
+          - id: wyse-3040-de-2026-08-30-30
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-08-30"
+            checked_at: "2026-09-14"
+            price_eur: 30
+            price_type: asking
+            seller_class: private
+            model_identity: "Dell Wyse 3040"
+            configuration:
+              emmc_gb: unknown
+              ram_gb: 2
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-pcs/dell-3040/k0c228"
+            source_scope: search_result_snapshot
+            note: "Exact Wyse 3040 title; storage variant is not stated in the visible result."
+          - id: wyse-3040-de-2026-09-08-29
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-09-08"
+            checked_at: "2026-09-14"
+            price_eur: 29
+            price_type: asking
+            seller_class: private
+            model_identity: "Dell Wyse 3040 Thin Client"
+            configuration:
+              emmc_gb: unknown
+              ram_gb: 2
+              power_supply: included
+            source: "https://www.kleinanzeigen.de/s-anzeige/dell-wyse-3040-thin-client-inkl-netzteil-top-zustand/3506871809-228-6892"
+            source_scope: direct_listing
+            note: "Listing explicitly includes a matching power supply; eMMC capacity is not stated."
+          - id: wyse-3040-de-2026-09-10-20
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-09-10"
+            checked_at: "2026-09-14"
+            price_eur: 20
+            price_type: asking
+            seller_class: private
+            model_identity: "Dell Wyse 3040 N10D"
+            configuration:
+              emmc_gb: 8
+              ram_gb: 2
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-pcs/dell-3040/k0c228"
+            source_scope: search_result_snapshot
+            note: "Visible search result identifies N10D, 2 GB RAM and 8 GB storage."
+          - id: wyse-3040-de-2026-09-10-40
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-09-10"
+            checked_at: "2026-09-14"
+            price_eur: 40
+            price_type: asking
+            seller_class: private
+            model_identity: "Dell Wyse 3040"
+            configuration:
+              emmc_gb: 8
+              ram_gb: 2
+              power_supply: aftermarket_included
+            source: "https://www.kleinanzeigen.de/s-anzeige/dell-wyse-3040-8gb-emmc-2gb-ram/3508997373-228-9244"
+            source_scope: direct_listing
+            note: "Listing states 8 GB eMMC, 2 GB RAM and an aftermarket power supply."
+      - id: nl_dealer_refurbished
+        condition_scope: refurbished_dealer
+        sample_count: 2
+        descriptive_statistics:
+          low_eur: 59
+          median_eur: 63
+          high_eur: 67
+        observations:
+          - id: wyse-3040-nl-refurb-8gb-59
+            marketplace: IT_Gigant
+            country: NL
+            listed_at: unknown
+            checked_at: "2026-09-14"
+            price_eur: 59
+            price_type: retailer_offer
+            seller_class: dealer
+            model_identity: "Dell Wyse 3040"
+            configuration:
+              emmc_gb: 8
+              ram_gb: 2
+              power_supply: included
+            source: "https://www.itgigant.nl/en/computers/dell-wyse-3040-thinclient-atom-x5-z8350-2gb-8gb-flash/"
+            source_scope: direct_retailer_offer
+            note: "Refurbished unit, in stock at check date, with power cable and AC adapter."
+          - id: wyse-3040-nl-refurb-16gb-67
+            marketplace: IT_Gigant
+            country: NL
+            listed_at: unknown
+            checked_at: "2026-09-14"
+            price_eur: 67
+            price_type: retailer_offer
+            seller_class: dealer
+            model_identity: "Dell Wyse 3040"
+            configuration:
+              emmc_gb: 16
+              ram_gb: 2
+              power_supply: included
+            source: "https://www.itgigant.nl/en/computers/dell-wyse-3040-thinclient-atom-x5-z8350-2gb-16gb-flash/"
+            source_scope: direct_retailer_offer
+            note: "Refurbished unit, in stock at check date, with power cable and AC adapter."
+
+  - record_id: synology-ds220-plus
+    cohorts:
+      - id: used_bare_chassis_mixed_ram
+        condition_scope: used_private_bare_chassis_no_drives
+        sample_count: 6
+        descriptive_statistics:
+          low_eur: 195
+          median_eur: 239.5
+          high_eur: 279
+        observations:
+          - id: ds220plus-de-2026-06-27-239
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-06-27"
+            checked_at: "2026-09-14"
+            price_eur: 239
+            price_type: asking
+            seller_class: private
+            model_identity: "Synology DS220+"
+            configuration:
+              installed_ram_gb: unknown
+              drives: none
+              power_supply: included
+            source: "https://www.kleinanzeigen.de/s-anzeige/synology-ds220-nas-2-bay-ohne-festplatten/3445060601-225-2658"
+            source_scope: direct_listing
+            note: "Bare chassis with no drives; listing says power supply is included."
+          - id: ds220plus-at-2026-07-21-240
+            marketplace: Willhaben
+            country: AT
+            listed_at: "2026-07-21"
+            checked_at: "2026-09-14"
+            price_eur: 240
+            price_type: displayed_sold_listing_price
+            seller_class: private
+            model_identity: "Synology DS220+"
+            configuration:
+              installed_ram_gb: 2
+              drives: none
+              power_supply: included
+            source: "https://www.willhaben.at/iad/kaufen-und-verkaufen/d/synology-nas-ds220-ohne-festplatten-977157885/"
+            source_scope: direct_listing
+            note: "Page is marked sold at €240; that does not establish the final transaction price."
+          - id: ds220plus-de-2026-07-30-279
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-07-30"
+            checked_at: "2026-09-14"
+            price_eur: 279
+            price_type: asking
+            seller_class: private
+            model_identity: "Synology DS220+"
+            configuration:
+              installed_ram_gb: 6
+              drives: none
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-anzeige/synology-ds220-nas-2-bay-6-gb-ram-ohne-festplatten/3472177075-225-4678"
+            source_scope: direct_listing
+            note: "Bare chassis with 6 GB RAM; no drives."
+          - id: ds220plus-de-2026-08-09-249
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-08-09"
+            checked_at: "2026-09-14"
+            price_eur: 249
+            price_type: asking
+            seller_class: private
+            model_identity: "Synology DS220+"
+            configuration:
+              installed_ram_gb: 10
+              drives: none
+              power_supply: included
+            source: "https://www.kleinanzeigen.de/s-anzeige/synology-ds220-10-gb-ram-sehr-guter-zustand-inkl-netzteil/3480025595-225-3843"
+            source_scope: direct_listing
+            note: "Bare chassis with 10 GB RAM and power supply."
+          - id: ds220plus-be-2026-08-18-195
+            marketplace: Tweakers_Vraag_En_Aanbod
+            country: BE
+            listed_at: "2026-08-18"
+            checked_at: "2026-09-14"
+            price_eur: 195
+            price_type: asking
+            seller_class: private
+            model_identity: "Synology DS220+"
+            configuration:
+              installed_ram_gb: 6
+              drives: none
+              power_supply: included
+            source: "https://tweakers.net/aanbod/4197732/synology-diskstation-ds220%2B-6gb-ram-zonder-harde-schijven.html"
+            source_scope: direct_listing
+            note: "6 GB RAM, no drives; box and power supply stated as included."
+          - id: ds220plus-de-2026-08-18-220
+            marketplace: Kleinanzeigen
+            country: DE
+            listed_at: "2026-08-18"
+            checked_at: "2026-09-14"
+            price_eur: 220
+            price_type: asking
+            seller_class: private
+            model_identity: "Synology DS220+"
+            configuration:
+              installed_ram_gb: 10
+              drives: none
+              power_supply: unknown
+            source: "https://www.kleinanzeigen.de/s-anzeige/synology-nas-ds220-2-8-gb-ram-2-bay-ohne-festplatte-ovp/3487818507-225-5067"
+            source_scope: direct_listing
+            note: "2+8 GB RAM upgrade, no drives, original packaging."
+
+decision_use:
+  ranking_state: partial_market_evidence_only
+  facts_supported:
+    - "Exact-revision Archer C7 v5 private asking prices in this sample span €20-€40; the sample median is €32."
+    - "Wyse 3040 private used asking prices in this sample span €20-€40; the sample median is €29.50, while two NL dealer-refurbished exact configurations are €59 and €67."
+    - "DS220+ bare-chassis no-drive listings in this mixed-RAM sample span €195-€279; the sample median is €239.50."
+  not_supported:
+    - "final transaction-price distributions"
+    - "stable or permanent market value"
+    - "same-condition acquisition cost after shipping, adapters and required storage"
+    - "a total-useful-cost winner"
+    - "power, workload, provisioning, restart or remaining-life conclusions"
+  next_evidence:
+    - "refresh a same-window sample when ranking is attempted"
+    - "capture shipping and required accessories separately"
+    - "preserve exact Wyse eMMC variant and DS220+ RAM/drive configuration"
+    - "combine acquisition evidence only after common workload, power and restart evidence exists"
