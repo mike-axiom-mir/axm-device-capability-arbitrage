@@ -236,6 +236,8 @@ Power figures must identify whether they are:
 - locally measured;
 - estimated.
 
+Electrical supply/load ratings must not be substituted for actual device self-consumption.
+
 ## 11. Boot
 
 ```yaml
@@ -300,6 +302,8 @@ Recovery is part of capability quality, not an appendix.
 
 ## 13. Locality / cloud dependence
 
+A flat summary remains valid when the relevant persistent software state is stable or when evidence does not justify multiple states:
+
 ```yaml
 locality:
   state: unknown
@@ -309,7 +313,7 @@ locality:
   offline_operation: unknown
 ```
 
-Suggested locality states:
+Suggested per-state locality values:
 
 ```text
 fully_local
@@ -319,6 +323,57 @@ cloud_required_for_some_functions
 cloud_required
 unknown
 ```
+
+Evidence from two independent census devices now shows that locality itself can change with persistent firmware state:
+
+- Wyze Cam v2 — stock Wyze firmware vs Thingino;
+- SONOFF BASICR2 — stock eWeLink firmware vs Tasmota.
+
+When that distinction is directly evidenced, add structured `locality.states` entries:
+
+```yaml
+locality:
+  state: state_dependent
+  vendor_cloud_required_for_basic_operation: state_dependent
+  vendor_cloud_required_for_provisioning: state_dependent
+  local_network_operation: state_dependent
+  offline_operation: state_dependent
+
+  states:
+    - id: stock_firmware
+      device_state: stock_firmware
+      locality_state: cloud_required_for_some_functions
+      state: DOCUMENTED
+      offline_capabilities:
+        - local_function_after_prior_setup
+      internet_required_capabilities:
+        - cloud_managed_function
+      provisioning_cloud_requirement: required
+      source_claim_ids:
+        - stock_locality_claim
+
+    - id: replacement_firmware
+      device_state: replacement_firmware
+      locality_state: fully_local
+      state: COMMUNITY_VERIFIED
+      offline_capabilities:
+        - local_admin
+      internet_required_capabilities: []
+      provisioning_cloud_requirement: no_vendor_cloud_required_for_runtime
+      source_claim_ids:
+        - replacement_locality_claim
+```
+
+Rules:
+
+- `state_dependent` is a summary/meta-state, not a per-state locality classification;
+- per-state `locality_state` uses the bounded vocabulary above;
+- state entries link to evidence claims in the same record;
+- one surviving offline capability must not be inflated into full locality;
+- provisioning dependency and runtime dependency are separate questions;
+- replacement-firmware locality gains must not erase recovery, safety or setup cost.
+
+The extension is additive v0.1. Existing flat records remain valid and should not be auto-migrated. Full semantics live in `LOCALITY_STATE_MODEL.md`; the validator checks the minimal structure whenever `locality.states` is present.
 
 ## 14. Economics
 
@@ -343,6 +398,8 @@ economics:
 
 Never present a single marketplace listing as a stable market price.
 
+Setup friction, recovery burden, variant ambiguity, physical-safety requirements and loss of original product utility can be real economic costs even before they are reducible to euros.
+
 ## 15. Candidate roles
 
 ```yaml
@@ -363,7 +420,7 @@ Role confidence is not device truth. It is a mapping hypothesis.
 evidence:
   overall_state: COMMUNITY_VERIFIED
   locally_verified: false
-  last_checked: "2026-09-13"
+  last_checked: "2026-09-14"
   claims:
     - id: custom_apk_execution
       state: COMMUNITY_VERIFIED
@@ -371,7 +428,7 @@ evidence:
       note: exact scope of claim
 ```
 
-Claim IDs should be unique within a device record. Structured recovery paths may reference them through `source_claim_ids` so recovery semantics remain traceable to their evidence.
+Claim IDs should be unique within a device record. Structured recovery/locality state may reference them through `source_claim_ids` so state semantics remain traceable to evidence.
 
 Each evidence item should state what it proves. A source supporting Wi-Fi presence must not be used as evidence of arbitrary network socket access from custom code.
 
@@ -406,6 +463,8 @@ This avoids turning missing research into false certainty.
 Schema changes that alter the meaning of existing fields should bump `schema_version`.
 
 Additive optional fields may be introduced inside the same early schema version when they preserve the meaning of existing fields and older records remain valid. Such extensions must be documented and mechanically validated where practical.
+
+The structured recovery and locality models are additive v0.1 extensions; they make state distinctions explicit without invalidating earlier flat records.
 
 Device records should not be silently rewritten to fit a new schema. Migration should preserve old evidence and note transformed fields.
 
