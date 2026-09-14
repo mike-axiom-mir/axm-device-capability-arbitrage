@@ -31,3 +31,6 @@ jobs:
 
       - name: Validate evidence-gated comparisons
         run: python tools/validate_comparisons.py
+
+      - name: Build and verify common registry workload
+        run: make -C workloads/low-power-local-registry-v0.1 test
