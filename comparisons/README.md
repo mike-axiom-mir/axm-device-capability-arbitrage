@@ -31,14 +31,31 @@ ranked winner
 
 The Archer result is **not** a deployment recommendation or a local workload receipt. It means only that every hard field in the current capability contract has a supporting value in the current device record.
 
+## Shared workload now exists
+
+The comparison no longer lacks a common workload definition or implementation.
+
+`workloads/low-power-local-registry-v0.1/` now contains:
+
+- a bounded C99/POSIX registry service with no runtime dependencies;
+- an explicit line protocol (`PING`, `PUT`, `GET`, `COUNT`);
+- durable-ack semantics using temp-file fsync + rename + parent-directory fsync;
+- a machine-readable 32-record / 30-minute comparison profile;
+- a LAN-side benchmark driver;
+- a host-CI functional restart-persistence check.
+
+CI proves only the host implementation. It does **not** prove Archer C7 v5, DS220+, or Wyse 3040 compatibility, power use, physical hard-power-loss survival, or device service autostart. Candidate workload runs therefore remain `not_collected` and the comparison still has no ranked winner.
+
 Ranking remains blocked by missing comparable evidence for:
 
-- a common registry workload;
-- same-window NL/EU used-market snapshots;
-- comparable wall-power measurements;
+- running the shared registry workload on all three candidates and recording its footprint;
+- refreshing/normalizing acquisition cost when a ranking attempt is made, including shipping/accessories/storage;
+- comparable wall-power measurements under the shared profile;
 - provisioning / repeat-provisioning time;
-- hard-power-loss -> boot -> registry-service restart behavior;
+- hard-power-loss -> boot -> registry-service restart behavior using the shared durable heartbeat;
 - replacement availability and remaining-life evidence.
+
+A dated configuration-aware EU market snapshot already exists under `market_snapshots/`; asking/displayed prices remain sample evidence rather than transaction-price truth.
 
 ## Validation
 
@@ -52,7 +69,7 @@ Ranking remains blocked by missing comparable evidence for:
 - hard-requirement eligibility matches the individual requirement statuses;
 - ranking gaps and blockers remain explicit.
 
-CI runs comparison validation after device/contract validation.
+CI runs comparison validation after device/contract validation, then compiles and exercises the shared registry workload with `make test`.
 
 See `COMPARISON_METHOD.md` for the truth rules.
 
