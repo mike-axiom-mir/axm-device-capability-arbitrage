@@ -26,6 +26,9 @@ jobs:
       - name: Validate device and contract records
         run: python tools/validate_records.py
 
+      - name: Validate evidence claim scope
+        run: python tools/validate_evidence_claim_scope.py
+
       - name: Gate structured evidence strength
         run: python tools/validate_structured_evidence_strength.py
 
