@@ -152,6 +152,25 @@ BASICR2 adds a mains-voltage constraint. Replacement firmware can increase softw
 
 A capability bargain is not a bargain if safe deployment cost is ignored.
 
+### 7. Market observations need configuration-aware cohorts
+
+The first cross-category market snapshot showed that acquisition data has the same identity problem as capability data.
+
+```text
+Archer C7 v5
+  -> exact hardware revision required
+
+Wyse 3040
+  -> private used vs dealer refurbished
+  -> 8 GB / 16 GB eMMC and adapter inclusion matter
+
+DS220+
+  -> bare chassis must remain separate from drive bundles
+  -> RAM upgrades remain attached to observations
+```
+
+The repository now stores raw dated listing observations under `market_snapshots/` and mechanically checks sample counts plus low/median/high arithmetic. Asking/displayed listing prices remain evidence about the collected sample, not permanent device prices.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -172,15 +191,36 @@ Dell Wyse 3040
   execution: Debian/root Linux
 ```
 
-Do **not** rank them yet. Comparable evidence is still missing for:
+A first validated EU acquisition snapshot now exists at:
 
-- dated NL/EU used-market price distributions;
+`market_snapshots/low-power-local-registry-node-eu-2026-09-14.yaml`
+
+Observed descriptive cohorts in that snapshot are:
+
+```text
+Archer C7 v5 exact-revision private asks
+  €20–€40, sample median €32
+
+Dell Wyse 3040 private used asks
+  €20–€40, sample median €29.50
+
+Dell Wyse 3040 NL dealer-refurbished offers
+  €59–€67, sample median €63
+
+Synology DS220+ bare-chassis/no-drive mixed-RAM listings
+  €195–€279, sample median €239.50
+```
+
+These are **not transaction-price distributions** and do not produce a winner. Shipping, required storage/adapters, common workload behavior and operational evidence still matter.
+
+Do **not** rank the candidates yet. Comparable evidence is still missing for:
+
+- ranking-ready acquisition cost after shipping, required accessories/storage and market refresh;
 - common registry workload footprint;
 - wall power under comparable conditions;
 - provisioning time/friction;
 - hard-power-loss -> service-restart behavior;
 - recovery burden and state/data loss;
-- storage/adaptor costs;
 - replacement availability and remaining hardware life.
 
 The SONOFF BASICR2 is not added to this comparison merely because it runs replacement firmware. Its 1 MB flash, unknown RAM, mains-coupled actuator role and absent registry workload evidence make it a different contract candidate.
@@ -197,6 +237,7 @@ The milestone should answer:
 4. Do unexpected candidates remain attractive after recovery, power, friction, physical safety and opportunity cost are counted?
 5. Can another human or machine follow the evidence trail without relying on hidden chat memory?
 6. Can persistent firmware/software state be represented without flattening recovery or locality into false global booleans?
+7. Can dated market observations remain configuration-aware without turning asking prices into permanent device truth?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 
