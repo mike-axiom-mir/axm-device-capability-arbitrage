@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Gate structured recovery/locality truth states against linked evidence strength.
+"""Gate positive record/structured truth states against evidence strength.
 
-The base record validator already guarantees that source_claim_ids resolve. This
-guard adds the missing semantic rule: a structured state may not claim a stronger
-positive truth state than its cited evidence claims support.
+The base record validator guarantees that recovery/locality source_claim_ids resolve.
+This guard adds semantic strength rules: a positive device evidence summary may not
+outrun the strongest positive claim in the record, and structured recovery/locality
+states may not outrun the positive claims they explicitly cite.
 """
 
 from __future__ import annotations
@@ -69,6 +70,50 @@ def evidence_claim_states(data: dict[str, Any]) -> dict[str, str]:
             )
         states[claim_id] = state
     return states
+
+
+def strongest_positive_claim(claim_states: dict[str, str]) -> tuple[str, str] | None:
+    positive = [
+        (claim_id, state)
+        for claim_id, state in claim_states.items()
+        if state in POSITIVE_TRUTH_RANK
+    ]
+    if not positive:
+        return None
+    return max(positive, key=lambda item: POSITIVE_TRUTH_RANK[item[1]])
+
+
+def gate_overall_state(
+    data: dict[str, Any],
+    *,
+    claim_states: dict[str, str],
+) -> tuple[str, str | None]:
+    evidence = data.get("evidence")
+    if not isinstance(evidence, dict):
+        raise ValidationError("evidence must be a mapping")
+
+    overall_state = evidence.get("overall_state")
+    if overall_state in NON_PROMOTING_STATES:
+        return str(overall_state), None
+    if overall_state not in POSITIVE_TRUTH_RANK:
+        raise ValidationError(
+            f"evidence.overall_state has unsupported truth state {overall_state!r}"
+        )
+
+    strongest = strongest_positive_claim(claim_states)
+    if strongest is None:
+        raise ValidationError(
+            f"evidence.overall_state claims {overall_state} but the record contains "
+            "no positive evidence claim"
+        )
+
+    strongest_claim_id, strongest_claim_state = strongest
+    if POSITIVE_TRUTH_RANK[overall_state] > POSITIVE_TRUTH_RANK[strongest_claim_state]:
+        raise ValidationError(
+            f"evidence.overall_state claims {overall_state} but strongest positive "
+            f"claim is {strongest_claim_state} ({strongest_claim_id})"
+        )
+    return overall_state, strongest_claim_state
 
 
 def gate_entry(
@@ -146,9 +191,13 @@ def validate_collection(
     return len(entries)
 
 
-def validate_device(path: Path) -> tuple[int, int]:
+def validate_device(path: Path) -> tuple[str, str | None, int, int]:
     data = load_yaml(path)
     claim_states = evidence_claim_states(data)
+    overall_state, strongest_claim_state = gate_overall_state(
+        data,
+        claim_states=claim_states,
+    )
     recovery_count = validate_collection(
         data,
         section_name="recovery",
@@ -161,7 +210,7 @@ def validate_device(path: Path) -> tuple[int, int]:
         collection_name="states",
         claim_states=claim_states,
     )
-    return recovery_count, locality_count
+    return overall_state, strongest_claim_state, recovery_count, locality_count
 
 
 def main() -> int:
@@ -173,15 +222,25 @@ def main() -> int:
     errors: list[str] = []
     recovery_entries = 0
     locality_entries = 0
+    positive_overall_records = 0
+    non_promoting_overall_records = 0
 
     for path in device_paths:
         rel = path.relative_to(ROOT)
         try:
-            recovery_count, locality_count = validate_device(path)
+            overall_state, strongest_claim_state, recovery_count, locality_count = validate_device(path)
             recovery_entries += recovery_count
             locality_entries += locality_count
+            if strongest_claim_state is None:
+                non_promoting_overall_records += 1
+                evidence_summary = f"overall={overall_state} (non-promoting)"
+            else:
+                positive_overall_records += 1
+                evidence_summary = (
+                    f"overall={overall_state}, strongest_claim={strongest_claim_state}"
+                )
             print(
-                f"PASS {rel}: "
+                f"PASS {rel}: {evidence_summary}; "
                 f"{recovery_count} recovery path(s), {locality_count} locality state(s)"
             )
         except (ValidationError, OSError) as exc:
@@ -189,8 +248,10 @@ def main() -> int:
 
     print()
     print(
-        "Checked structured evidence strength across "
+        "Checked evidence strength across "
         f"{len(device_paths)} device record(s): "
+        f"{positive_overall_records} positive overall state(s), "
+        f"{non_promoting_overall_records} non-promoting overall state(s), "
         f"{recovery_entries} recovery path(s), {locality_entries} locality state(s)."
     )
 
@@ -201,8 +262,8 @@ def main() -> int:
         return 1
 
     print(
-        "All positive structured recovery/locality truth states are supported "
-        "by equal-or-stronger cited evidence claims."
+        "All positive record summaries and structured recovery/locality truth states "
+        "are supported by equal-or-stronger positive evidence claims."
     )
     return 0
 
