@@ -1,0 +1,291 @@
+schema_version: "0.1"
+record_id: polestar-2-my2026
+
+identity:
+  manufacturer: Polestar
+  model: Polestar 2
+  common_name: Polestar 2 model year 2026
+  marketed_category: vehicle_infotainment_non_safety_computer
+  hardware_revision: unknown
+  release_period: "2026 model year"
+  configuration_scope:
+    model_year: 2026
+    exact_infotainment_hardware_revision: unknown
+    market_variant: unknown
+    note: "This record is scoped to Polestar's model-year-2026 manual/software documentation. It does not infer the exact infotainment ECU/SoC revision, trim-specific hardware, or regional app availability for an arbitrary physical vehicle."
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  accelerator:
+    gpu: unknown
+    npu: unknown
+    dsp: unknown
+  notes:
+    - "Polestar documents Android Automotive OS and third-party app support, but no authoritative exact-MY2026 SoC/core/RAM evidence was collected in this activation."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  removable_storage:
+    present: unknown
+    types: unknown
+  notes:
+    - "Do not infer writable capacity or removable-media execution from the Android Automotive platform alone."
+
+execution:
+  surfaces:
+    - type: manufacturer_app
+      environment: Android_Automotive_OS_with_Google_Play
+      version: unknown
+      custom_code: true
+      privilege: sandboxed
+      access_method: "Third-party developer publishes a car-adapted Android Automotive OS application through Google Play; user installs an eligible app from Google Play in the vehicle"
+      state: DOCUMENTED
+      admission_controls:
+        - "application must opt into Android Automotive OS distribution and satisfy Google Play car requirements"
+        - "Google Play reviews compatible car apps for safety/compatibility before distribution"
+        - "vehicle-side Google Play access requires a Google account linked to the current profile"
+        - "vehicle must have internet connectivity to download/install a new app"
+        - "Polestar documents app download while the vehicle is stationary / in Comfort mode"
+      safety_boundary:
+        parent_system: road_vehicle
+        proven_scope: infotainment_application_execution
+        excluded_without_additional_evidence:
+          - vehicle_motion_control
+          - braking_control
+          - steering_control
+          - propulsion_control
+          - safety_system_control
+          - arbitrary_vehicle_property_read_or_write
+          - CAN_bus_access
+        rationale: "Android Automotive application execution is permission- and form-factor-bounded. Google documents driver-distraction restrictions and permission-gated car APIs; this record has no Polestar-specific evidence granting third-party Play apps authority over safety-critical vehicle controls."
+      notes:
+        - "Polestar's MY2026 manual documents downloading and installing only car-adapted apps from Google Play."
+        - "Android's car developer documentation says apps opting into Android Automotive OS distribution are reviewed for car safety/compatibility and parked apps are blocked while UX driving restrictions are active unless the supported car-app framework/rules apply."
+        - "This surface is evidence of third-party application execution, not evidence of ADB, sideloading, shell, root, bootloader control, CAN access, privileged OEM APIs, or safety-critical actuation."
+        - "No AXM application was installed or run on a physical Polestar 2."
+
+connectivity:
+  ethernet: unknown
+  wifi: unknown
+  bluetooth: unknown
+  cellular: unknown
+  usb: unknown
+  serial: unknown
+  gpio: unknown
+  internet_for_google_play_install: true
+  notes:
+    - "The MY2026 app-download manual explicitly requires the vehicle to be connected to the internet for new Google Play app installation. Hardware transport details are left unknown here rather than inferred from platform expectations."
+
+inputs:
+  sensors: []
+  microphones: []
+  controls:
+    - centre_display_touch_input
+  notes:
+    - "The vehicle obviously contains many sensors and controls, but their accessibility to a third-party Google Play app is not inferred from physical presence."
+    - "Android car APIs expose selected vehicle information under permissions on supporting vehicles; this record does not claim any exact Polestar property is available to an arbitrary third-party app without model-specific evidence."
+
+outputs:
+  display:
+    present: true
+    custom_rendering_verified: false
+    scope: centre_display
+  speaker: unknown
+  leds: unknown
+  motors: []
+  relays: []
+  notes:
+    - "The documented app execution surface is on the vehicle infotainment display, but AXM has not locally verified rendering behavior for a custom application."
+    - "Vehicle propulsion, steering, braking and other safety-critical actuators are intentionally outside the claimed execution scope."
+
+power:
+  source:
+    battery: true
+    external_power: unknown
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "No attempt is made to convert whole-vehicle battery/charging specifications into infotainment-computer power consumption."
+    - "Infotainment subsystem wall-equivalent power, sleep behavior and always-on cost remain unmeasured and unknown."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "Google Play application installability does not establish cold-boot autostart, background-service persistence, bootloader access or alternative-OS boot."
+
+recovery:
+  factory_reset: true
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: restart_centre_display
+      from_state: operating_or_locked_centre_display
+      target_state: restarted_infotainment_session
+      method: "Hold the centre-display Home button for 20 seconds; continue holding through the message and release when the display turns black"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - polestar_my2026_centre_display_restart
+      notes:
+        - "Polestar documents this as a centre-display restart for a frozen/non-working function. It is not evidence of firmware reflash or recovery from a failed infotainment ECU."
+    - id: factory_reset_user_data
+      from_state: operating_vehicle_software
+      target_state: factory_reset_user_profile_state
+      method: "Use the centre-display System reset flow with an administrator profile; all vehicle keys must be inside the vehicle"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: partially_reset
+        user_data: erased
+        application_state: unknown
+      source_claim_ids:
+        - polestar_factory_reset_user_data
+      notes:
+        - "Polestar states factory reset deletes profiles, user data, connected keys and personal settings. The source separately lists app settings as resettable, but does not establish that every installed application package is removed, so application_state remains unknown."
+        - "This is not evidence of low-level firmware restore, bootloader recovery or recovery from non-booting vehicle electronics."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: true
+  local_network_operation: unknown
+  offline_operation: unknown
+  notes:
+    - "The documented Google Play app-install path requires internet connectivity and a Google account linked to the current profile."
+    - "That provisioning dependency does not prove every installed third-party app requires Google cloud access for its own runtime logic."
+    - "Basic vehicle operation is outside this record's app-execution claim and is not classified from infotainment app evidence."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - "Google account for the documented Google Play installation path"
+    - "internet connectivity for application download/install"
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No used-market cohort or acquisition price was collected."
+    - "The infotainment computer is embedded in a road vehicle; whole-vehicle acquisition, insurance, maintenance, depreciation and opportunity cost make it inappropriate to treat the embedded computer as a standalone cheap node without a vehicle-already-owned use case."
+
+roles:
+  - role: in_vehicle_infotainment_app_host
+    confidence: high
+    reason: "Polestar's MY2026 manual documents installation of car-adapted Google Play apps, and Android documents AAOS app distribution/review for cars."
+  - role: parked_interactive_dashboard_surface
+    confidence: medium
+    reason: "Android supports parked-app categories on Android Automotive OS, but exact app-category availability and regional Google Play supply on an arbitrary MY2026 vehicle are not exhaustively enumerated here."
+  - role: vehicle_control_node
+    confidence: low
+    reason: "No evidence in this record grants third-party Play apps authority over braking, steering, propulsion, safety systems, CAN, or arbitrary vehicle properties; those remain explicitly outside the proven scope."
+  - role: always_on_registry_node
+    confidence: low
+    reason: "Cold-boot autostart, background-service persistence, subsystem power, sleep behavior, opportunity cost and physical recovery are not evidence-ready."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: polestar_my2026_google_play_apps
+      state: DOCUMENTED
+      source: "https://www.polestar.com/at/manual/polestar-2/2026/article/d61b349459320b5fc0a8015105e15000/"
+      additional_sources:
+        - "https://developer.android.com/training/cars/parked/automotive-os"
+      proves:
+        - "Polestar 2 MY2026 documentation says internet-connected vehicles can download and install new apps through Google Play"
+        - "Polestar says only apps adapted for the car are available and a Google account must be linked to the current profile to open Google Play"
+        - "Polestar documents the vehicle being stationary / in Comfort mode for downloading apps"
+        - "Android documents that apps opting into Android Automotive OS distribution are reviewed by Google Play for car safety/compatibility requirements"
+      does_not_prove:
+        - "ADB or local sideloading on Polestar 2"
+        - "shell, root, bootloader or kernel authority"
+        - "CAN bus access or arbitrary vehicle-property access"
+        - "control over braking, steering, propulsion or safety systems"
+        - "cold-boot app autostart or indefinite background execution"
+        - "AXM local reproduction"
+    - id: polestar_my2026_android_automotive_software
+      state: DOCUMENTED
+      source: "https://www.polestar.com/au/manual/polestar-2/2026/software-updates/"
+      proves:
+        - "Polestar's MY2026 software-update history names Android Automotive OS and documents third-party app development as part of the platform history"
+        - "Polestar separates software behavior by model year and notes that functionality after updates may vary by market, model year and options"
+      does_not_prove:
+        - "the exact Android Automotive OS major version currently installed on every MY2026 vehicle"
+        - "exact infotainment hardware revision or compute specifications"
+        - "privileged third-party application authority"
+        - "AXM local reproduction"
+    - id: android_automotive_app_safety_boundary
+      state: DOCUMENTED
+      source: "https://developer.android.com/training/cars/parked/automotive-os"
+      additional_sources:
+        - "https://developer.android.com/training/cars/apps/library/car-hardware-api"
+        - "https://developer.android.com/guide/topics/permissions/overview"
+      proves:
+        - "Android Automotive OS app distribution through Google Play has car-specific review and driver-distraction requirements"
+        - "parked app activities are blocked/obscured while UX driving restrictions are active unless the applicable supported rules are met"
+        - "Android car hardware APIs use explicit permissions and expose bounded sets of vehicle information on supported vehicles rather than implying unrestricted hardware authority"
+        - "Android signature permissions are granted only to appropriately signed/system-authorized applications, not ordinary third-party apps by default"
+      does_not_prove:
+        - "which optional car-hardware properties a specific Polestar 2 exposes to a given app"
+        - "that ordinary Google Play applications can control vehicle safety actuators"
+        - "that the infotainment application sandbox is a security boundary for every possible vulnerability"
+        - "AXM local reproduction"
+    - id: polestar_my2026_centre_display_restart
+      state: DOCUMENTED
+      source: "https://www.polestar.com/is-is/manual/polestar-2/2026/article/da263fe506b716cec0a8015119c03510/"
+      proves:
+        - "Polestar documents a 20-second Home-button procedure to restart the MY2026 centre display when a function stops working or the system locks"
+      does_not_prove:
+        - "firmware reflash"
+        - "recovery from failed storage, ECU hardware or bootloader corruption"
+        - "application autostart after restart"
+        - "AXM local recovery reproduction"
+    - id: polestar_factory_reset_user_data
+      state: DOCUMENTED
+      source: "https://www.polestar.com/uk/manual/polestar-2/2026/article/519b67d02463defac0a801510215e0ff/"
+      additional_sources:
+        - "https://www.polestar.com/uk/manual/polestar-2/2023/article/96fc5cb24f6b5dbfc0a801514786d063/"
+      proves:
+        - "Polestar documents administrator privilege as required for network/factory reset and says the owner profile has administrator privilege"
+        - "Polestar documents factory reset deleting profiles, user data, connected keys and personal settings, with all vehicle keys required inside the vehicle"
+      does_not_prove:
+        - "low-level infotainment firmware restore"
+        - "bootloader or rescue-partition access"
+        - "that every installed app package is removed"
+        - "AXM local factory-reset reproduction"
+
+notes:
+  - "This record intentionally treats the road vehicle as a safety-critical parent system around a non-safety infotainment application surface. A Play-distributed app being executable on the centre display does not grant authority over the whole vehicle."
+  - "The useful new boundary is nested authority: sandboxed infotainment execution can be real while vehicle-control authority remains absent or unknown."
+  - "The vehicle is not entered into the low-power registry comparison. Infotainment power, autostart, restart behavior for custom services, market economics and opportunity cost are not comparable with the router/NAS/thin-client candidates."
+  - "No AXM local install, app execution, permissions test, power measurement, market observation, centre-display restart or factory reset has been performed."
