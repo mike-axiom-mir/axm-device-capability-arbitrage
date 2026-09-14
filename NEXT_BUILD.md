@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains twelve grounded records across twelve marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, and 3D-printer/manufacturing appliance. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 13 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains thirteen grounded records across thirteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, and handheld gaming PC/console. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 12 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; and Creality K1 now shows that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; and Steam Deck LCD 256 GB now shows that execution privilege must remain separate from persistence across vendor OS updates.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -232,22 +232,41 @@ same device
 
 Do not silently turn root SSH into a claim that unrelated always-on compute is cheap, low-power, restart-safe or wise. Physical safety, printer opportunity cost, memory headroom, recovery, and interference with normal fabrication remain part of total useful cost.
 
+### Update-persistence rule learned from Steam Deck LCD 256 GB
+
+A manufacturer-supported root/sudo path does not imply that installed state is durable across vendor OS updates.
+
+```text
+Flatpak on SteamOS
+  -> normal-user application execution
+  -> Valve places applications on writable storage
+  -> Valve says this avoids breakage from future SteamOS system updates
+
+sudo / non-Flatpak installation
+  -> higher privilege exists
+  -> Valve warns software installed outside Flatpak may be wiped by a SteamOS update
+```
+
+Matching must therefore keep **execution authority** and **update persistence** separate. A less-privileged application path can be operationally stronger for a persistent service if the privileged path is not update-stable.
+
+This is one pressure case. Preserve it in the device record, but do not freeze a universal schema extension until independent hardware or operating-system evidence repeats the pattern.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 12 distinct categories. Do not pad the remaining 13 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 13 distinct categories. Do not pad the remaining 12 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
-1. console/handheld gaming device with a supported exact-model homebrew/Linux path and recovery evidence;
-2. industrial/commercial surplus hardware with non-PC market positioning and conventional local execution;
-3. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
-4. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
-5. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
-6. a second admission-controlled application platform only if it independently tests the Canon lesson;
-7. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
+1. industrial/commercial surplus hardware with non-PC market positioning and conventional local execution;
+2. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+3. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
+4. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
+5. a second admission-controlled application platform only if it independently tests the Canon lesson;
+6. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
+7. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
 8. an oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating root access.
 
-Each new record should expose something the existing twelve do not.
+Each new record should expose something the existing thirteen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -439,6 +458,18 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market sample only if a real contract makes the K1 a plausible candidate;
 - count fabrication opportunity cost instead of treating an already-owned printer as a free server.
 
+### L. Valve Steam Deck LCD 256 GB
+
+- on an owned/authorized 256 GB LCD unit, preserve hardware revision, SteamOS version, battery health and SSD state before testing;
+- reproduce the manufacturer-supported Flatpak path and preserve an experiment receipt;
+- separately test one harmless sudo-level service only if needed, without assuming privileged state survives a SteamOS update;
+- verify what survives a normal SteamOS update for Flatpak application state versus any explicitly chosen non-Flatpak service state;
+- test normal restart and hard-power-loss -> SteamOS -> chosen local service lifecycle;
+- measure whole-device wall power at idle, charging idle and common-workload active state rather than reusing the 4-15 W APU envelope or 45 W charger rating;
+- test previous-OS rollback, Repair SteamOS and full re-image only on noncritical state, preserving exact data/application impact;
+- collect a dated NL/EU used-market cohort with battery condition and storage configuration attached where listings disclose them;
+- do not add it to the low-power registry comparison until power, autostart, acquisition cost, battery/charging behavior and opportunity cost are comparable.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -457,6 +488,7 @@ Do not expand the census blindly if:
 - a single locality label hides materially different persistent-state cloud behavior;
 - replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored;
 - privileged host access is silently promoted to safe actuator control or cheap general-purpose infrastructure;
+- execution privilege is silently promoted to update-stable deployment state;
 - listing asking prices are silently promoted to transaction prices or permanent device values;
 - private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size;
 - CI or template workload execution is described as physical-device verification.
@@ -465,7 +497,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, admission inflation, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
 **Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators remain visibly user-controlled.  
-**Continuity:** evidence, variant caveats, execution/admission boundaries, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains and cheap listings must be weighed against installation, recovery, opportunity cost, electricity, physical safety and interference with the device's primary useful role.
+**Continuity:** evidence, variant caveats, execution/admission/update-persistence boundaries, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains and cheap listings must be weighed against installation, recovery, update durability, opportunity cost, electricity, physical safety and interference with the device's primary useful role.

@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    12 / 25
-Categories: 12 distinct / 8 required
+Devices:    13 / 25
+Categories: 13 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -41,6 +41,7 @@ A device counts when it has:
 | 10 | Google Pixel 3a / `sargo` | Smartphone / handheld | Current Ubuntu Touch replacement OS with native apps/shell; custom-OS capability gated by bootloader-unlockable acquisition variant | COMMUNITY_VERIFIED | No | `devices/google/pixel-3a-sargo.yaml` |
 | 11 | Canon imageRUNNER ADVANCE C3530i | Printer / office MFP | Manufacturer-supported MEAP application runtime via administrator SMS install; `.jar` application + license-aware admission without shell/root claim | DOCUMENTED | No | `devices/canon/imagerunner-advance-c3530i.yaml` |
 | 12 | Creality K1 | 3D printer / manufacturing appliance | Manufacturer-documented opt-in root SSH on stock Creality OS, plus firmware rollback and official low-level recovery tooling | DOCUMENTED | No | `devices/creality/k1.yaml` |
+| 13 | Valve Steam Deck LCD 256 GB | Handheld gaming PC / console | Manufacturer-supported SteamOS/KDE/Flatpak execution, explicit sudo elevation, BIOS/multi-boot/microSD boot, and official recovery; privilege kept separate from update persistence | DOCUMENTED | No | `devices/valve/steam-deck-lcd-256gb.yaml` |
 
 ## Category coverage
 
@@ -55,7 +56,7 @@ A device counts when it has:
 - [x] E-reader / e-ink device
 - [x] Printer / office appliance
 - [x] 3D printer / manufacturing appliance
-- [ ] Console / handheld gaming device
+- [x] Console / handheld gaming device
 - [x] Thin client / POS / kiosk
 - [ ] Industrial / commercial surplus
 - [ ] Vehicle infotainment / non-safety computer
@@ -67,14 +68,16 @@ Only eight categories are required for Milestone 01. New records should now opti
 
 These are research targets, **not capability claims**.
 
-1. One console/handheld with a maintained exact-model homebrew path and recovery evidence.
-2. One industrial/commercial surplus computer, controller or panel with conventional local execution.
-3. One non-safety vehicle/infotainment computer with a documented application execution path.
-4. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
-5. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
-6. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
-7. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
-8. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
+1. One industrial/commercial surplus computer, controller or panel with conventional local execution.
+2. One non-safety vehicle/infotainment computer with a documented application execution path.
+3. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
+4. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+5. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
+6. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
+7. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
+8. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
+
+The console/handheld slot is no longer a queue item: Steam Deck LCD 256 GB fills it with manufacturer-supported Linux application execution, explicit privileged elevation, multi-boot, removable-media boot, and official recovery.
 
 The oddball-manufacturing-appliance slot is no longer a queue item: Creality K1 fills it with manufacturer-documented root SSH on a heated moving appliance plus documented rollback/recovery.
 
@@ -238,6 +241,25 @@ The K1 is a physically consequential fabrication appliance with documented root 
 
 This is one pressure case. It is enough to preserve the distinction, not enough to freeze a universal actuator-authority schema.
 
+### 11. Execution privilege is not update persistence
+
+Steam Deck LCD 256 GB adds a software-lifecycle distinction:
+
+```text
+Flatpak application on SteamOS
+  -> normal-user application path
+  -> Valve says it runs from writable storage
+  -> Valve says this arrangement avoids breakage from future SteamOS system updates
+
+sudo / non-Flatpak system modification
+  -> higher privilege is manufacturer-documented
+  -> Valve warns non-Flatpak software may be wiped by a later SteamOS update
+```
+
+Therefore a matcher must not turn `root` or `sudo` into an implicit claim that deployment state survives vendor updates.
+
+The record uses an additive `update_persistence` note on its execution surfaces. One pressure case is enough to preserve the lesson but not enough to freeze a universal schema field.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -298,6 +320,8 @@ The C3530i is not added merely because it has 3 GB RAM and an embedded applicati
 
 The Creality K1 is not added merely because it exposes manufacturer-documented root SSH. RAM, comparable wall power, harmless-service restart behavior, printer opportunity cost and the wisdom of tying registry availability to a heated moving fabrication appliance are unproven.
 
+The Steam Deck LCD 256 GB is not added merely because it has 16 GB RAM, x86 Linux and documented sudo. Whole-device wall power, battery/charging behavior, service autostart, hard-power-loss recovery, update-stable service deployment, used-unit cost and handheld opportunity cost are not comparable with the current infrastructure candidates.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -314,6 +338,7 @@ The milestone should answer:
 8. Can acquisition variants that gate the execution surface stay distinct instead of being silently merged into one model-level capability claim?
 9. Can a real but administrator/license-gated application runtime remain distinct from unrestricted general-purpose execution?
 10. Can privileged host execution remain distinct from physical-actuator suitability and total-useful-cost fit?
+11. Can execution privilege remain distinct from the persistence of installed state across vendor OS updates?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

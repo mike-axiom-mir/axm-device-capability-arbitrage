@@ -1,0 +1,348 @@
+schema_version: "0.1"
+record_id: valve-steam-deck-lcd-256gb
+
+identity:
+  manufacturer: Valve
+  model: Steam Deck
+  common_name: Steam Deck LCD 256 GB
+  marketed_category: handheld_gaming_pc_console
+  hardware_revision: unknown
+  release_period: unknown
+  configuration_scope:
+    storage: "256 GB NVMe SSD"
+    display: "7-inch 1280x800 IPS LCD, up to 60 Hz"
+    note: "This record is scoped to the 256 GB LCD Steam Deck. OLED models and other LCD storage configurations must not inherit configuration-specific fields automatically."
+
+compute:
+  soc: "7 nm AMD APU"
+  architecture: x86_64
+  cpu:
+    family: "Zen 2"
+    cores: 4
+    threads: 8
+    clock_ghz:
+      min: 2.4
+      max: 3.5
+  gpu:
+    family: "RDNA 2"
+    compute_units: 8
+    clock_ghz: 1.6
+  apu_power_watts:
+    min: 4
+    max: 15
+    source_class: manufacturer_component_envelope
+  notes:
+    - "Valve publishes the APU power envelope, not whole-device wall consumption under an AXM workload."
+
+memory:
+  ram_mb: 16384
+  ram_type: LPDDR5
+  ram_rate_mt_s: 5500
+  internal_persistent_storage_mb: unknown
+  internal_storage:
+    manufacturer_capacity: "256 GB"
+    type: NVMe_SSD
+  removable_storage:
+    present: true
+    types:
+      - microSD
+    boot_supported: true
+  notes:
+    - "Manufacturer decimal storage capacity is preserved as 256 GB instead of being silently converted to MiB."
+    - "Usable free storage after SteamOS and user content is not established here."
+
+execution:
+  surfaces:
+    - type: package_manager
+      environment: SteamOS_3_KDE_Plasma
+      version: unknown
+      custom_code: true
+      privilege: normal_user
+      access_method: "Desktop Mode -> Discover / Flatpak"
+      state: DOCUMENTED
+      update_persistence:
+        state: DOCUMENTED
+        note: "Valve says Flatpak applications install on the writable part of the disk so future SteamOS system updates do not break them."
+      notes:
+        - "Desktop applications installed this way can also be added to Steam as non-Steam applications for launch from Gaming Mode."
+        - "This is a manufacturer-supported general application path, not a homebrew exploit."
+    - type: shell
+      environment: SteamOS_3_Arch_based
+      version: unknown
+      custom_code: true
+      privilege: root
+      access_method: "Desktop terminal -> set a password with passwd -> sudo when elevation is required"
+      state: DOCUMENTED
+      update_persistence:
+        state: unknown
+        note: "Valve warns that software installed outside Flatpak, for example through pacman, may be wiped by a subsequent SteamOS update."
+      notes:
+        - "Valve documents disabling the read-only system image with 'sudo steamos-readonly disable' when a user intentionally needs to modify it."
+        - "The default deck user ships without a password; setting one is an explicit owner action before sudo can be used."
+        - "Root authority does not prove that arbitrary system modifications survive vendor updates."
+    - type: bootloader
+      environment: BIOS_UEFI_boot_selection
+      version: unknown
+      custom_code: true
+      privilege: bootloader
+      access_method: "User-accessible BIOS / multi-boot; OS boot from microSD is manufacturer-supported"
+      state: DOCUMENTED
+      notes:
+        - "Valve's FAQ states that users have BIOS access, multi-boot is supported, and an OS can boot from microSD."
+
+connectivity:
+  ethernet: false
+  wifi:
+    present: true
+    standard: "dual-band 802.11a/b/g/n/ac"
+  bluetooth:
+    present: true
+    version: "5.0"
+  usb:
+    present: true
+    connector: USB_C
+    modes:
+      - USB_3_2_Gen_2
+      - DisplayPort_1_4_Alt_Mode
+      - USB_PD_charging
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "Wired Ethernet may be available through an external USB-C dock/adapter, but it is not built into the handheld and is not represented as native Ethernet."
+
+inputs:
+  sensors:
+    - type: six_axis_imu
+      present: true
+      accessible_to_custom_code: unknown
+    - type: ambient_light_sensor
+      present: true
+      accessible_to_custom_code: unknown
+  microphones:
+    - type: dual_microphone_array
+      accessible_to_custom_code: unknown
+  controls:
+    - touchscreen
+    - dpad
+    - abxy
+    - analog_triggers
+    - bumpers
+    - thumbsticks
+    - trackpads
+    - assignable_grip_buttons
+
+outputs:
+  display:
+    present: true
+    type: optically_bonded_IPS_LCD
+    resolution: "1280x800"
+    size_inches: 7
+    refresh_hz: 60
+    custom_rendering_verified: true
+  speaker:
+    present: true
+    type: stereo_with_DSP
+    custom_audio_verified: unknown
+  haptics:
+    present: true
+  notes:
+    - "Custom rendering follows from the manufacturer-supported Linux application environment; no AXM local display test was performed."
+
+power:
+  source:
+    battery: true
+    external_power: true
+  battery_capacity_wh: 40
+  supplied_power_adapter_watts: 45
+  apu_power_watts:
+    min: 4
+    max: 15
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  notes:
+    - "The 45 W adapter rating and 4-15 W APU envelope are not whole-device self-consumption measurements."
+    - "No AXM wall-power, charging-loss, battery-health, or always-on measurement was performed."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: true
+  bootloader_access: true
+  multi_boot: true
+  notes:
+    - "BIOS/microSD boot support is manufacturer-documented. Cold-boot autostart of an arbitrary service after unexpected power loss is not."
+
+recovery:
+  factory_reset: true
+  official_restore: true
+  rescue_partition: documented
+  dual_firmware: unknown
+  removable_media_recovery: true
+  usb_recovery: true
+  uart_recovery: unknown
+  bootloader_recovery: true
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: previous_os_rollback
+      from_state: bootable_or_recovery_menu_accessible_steamos
+      target_state: previous_known_good_steamos
+      method: "SteamOS recovery menu -> Previous B"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: partially_reset
+        user_data: preserved
+        application_state: unknown
+      source_claim_ids:
+        - valve_steamos_recovery
+      notes:
+        - "Valve describes rollback to the previous known-good OS while retaining user data."
+        - "Application-state survival is not generalized from user-data preservation."
+    - id: repair_steamos
+      from_state: steamos_needs_repair
+      target_state: repaired_steamos
+      method: "Official SteamOS recovery image -> Repair SteamOS"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: preserved
+        application_state: unknown
+      source_claim_ids:
+        - valve_steamos_install_repair
+      notes:
+        - "Valve says Repair SteamOS reinstalls SteamOS while attempting to preserve games and personal content."
+        - "Because Valve says 'attempting', preservation is not upgraded to a guarantee beyond the documented intent."
+    - id: reimage_stock_steamos
+      from_state: arbitrary_or_broken_OS_state
+      target_state: stock_steamos
+      method: "Official recovery image -> Re-image Device"
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: erased
+      source_claim_ids:
+        - valve_steamos_install_repair
+      notes:
+        - "Valve documents this as a full factory reset that removes user information, installed games, applications, and operating systems."
+
+locality:
+  state: local_after_provisioning
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: partial
+  notes:
+    - "SteamOS provides a local Linux desktop and locally installed applications can execute without being described as vendor-cloud runtimes."
+    - "The record does not claim that initial Steam account setup, all package acquisition, game licensing, or every application works without internet."
+    - "Valve separately documents offline game behavior as PC-like, but that does not justify a blanket fully-local classification for the whole commercial ecosystem."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: 0
+  setup_minutes: unknown
+  special_tools:
+    - "8 GB or larger USB drive for the official recovery-image workflow"
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU used-market cohort was collected."
+    - "Current web storefront prices are not used as a durable acquisition-cost claim."
+    - "Battery condition and SSD wear are potentially relevant used-unit costs but are not measured here."
+
+roles:
+  - role: portable_general_linux_compute
+    confidence: high
+    reason: "Valve documents SteamOS 3, KDE Plasma, Flatpak desktop applications, sudo elevation, and user-accessible multi-boot."
+  - role: local_human_machine_interface
+    confidence: high
+    reason: "Integrated display, touchscreen, game controls, trackpads, audio, Wi-Fi, Bluetooth and general Linux application execution are manufacturer-documented."
+  - role: recoverable_experiment_host
+    confidence: medium
+    reason: "Official previous-OS rollback, Repair SteamOS, full re-image, BIOS access, and microSD boot create strong recovery options, but AXM has not reproduced them locally."
+  - role: low_power_registry_node
+    confidence: low
+    reason: "General Linux execution exists, but whole-device wall power, battery/charging behavior, hard-power-loss restart, service autostart, provisioning time, used price and opportunity cost are not comparable with the current registry candidates."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: valve_lcd_256_hardware
+      state: DOCUMENTED
+      source: "https://www.steamdeck.com/en/tech/deck"
+      additional_sources:
+        - "https://www.steamdeck.com/en/deck"
+      proves:
+        - "The LCD Steam Deck line uses a 7 nm AMD APU with Zen 2 4c/8t CPU and 8 RDNA 2 compute units"
+        - "The LCD line has 16 GB LPDDR5 RAM and a 256 GB configuration"
+        - "The 256 GB LCD configuration is listed with NVMe SSD, 7-inch LCD, Wi-Fi 5, 40 Wh battery and 45 W power supply"
+        - "SteamOS 3 is Arch-based and exposes a KDE Plasma desktop"
+      does_not_prove:
+        - "whole-device wall power under an AXM workload"
+        - "battery health of a used unit"
+        - "hard-power-loss custom-service restart"
+        - "AXM local reproduction"
+    - id: valve_desktop_flatpak_sudo
+      state: DOCUMENTED
+      source: "https://help.steampowered.com/en/faqs/view/671A-4453-E8D2-323C"
+      proves:
+        - "Valve supports desktop applications installed through Flatpak on the writable part of the disk"
+        - "Valve says Flatpak applications are insulated from future SteamOS system updates"
+        - "Valve documents setting a password and using sudo for elevation"
+        - "Valve documents disabling the read-only system image when an owner intentionally needs to edit it"
+        - "Valve warns that software installed outside Flatpak, such as through pacman, may be wiped by a SteamOS update"
+      does_not_prove:
+        - "that arbitrary privileged modifications persist across every SteamOS update"
+        - "SSH enabled by default"
+        - "unattended service autostart"
+        - "AXM local reproduction"
+    - id: valve_bios_multiboot
+      state: DOCUMENTED
+      source: "https://www.steamdeck.com/en/faq"
+      proves:
+        - "users have access to the BIOS menu"
+        - "multi-boot is supported"
+        - "booting an operating system from microSD is supported"
+      does_not_prove:
+        - "a specific non-SteamOS distribution is supported by Valve"
+        - "all boot configurations are equally recoverable"
+    - id: valve_steamos_recovery
+      state: DOCUMENTED
+      source: "https://help.steampowered.com/en/faqs/view/1B71-EDF2-EB6D-2BB3"
+      proves:
+        - "Valve documents factory reset, previous-OS rollback, user-data erase and SteamOS recovery paths"
+        - "previous-OS rollback is described as retaining user data"
+      does_not_prove:
+        - "application state survives every rollback"
+        - "AXM has reproduced the rollback"
+    - id: valve_steamos_install_repair
+      state: DOCUMENTED
+      source: "https://help.steampowered.com/en/faqs/view/65B4-2AA3-5F37-4227"
+      proves:
+        - "Valve publishes an official SteamOS recovery image"
+        - "Re-image Device performs a destructive factory reset to stock SteamOS"
+        - "Repair SteamOS reinstalls SteamOS while attempting to preserve games and personal content"
+      does_not_prove:
+        - "preservation of every application/configuration during Repair SteamOS"
+        - "AXM local recovery reproduction"
+
+notes:
+  - "This is the first console/handheld-gaming census record."
+  - "Its main schema lesson is that execution privilege and update persistence are separate: manufacturer-supported Flatpak applications have an explicit writable/update-stable path, while Valve warns that software installed outside Flatpak may be removed by a SteamOS update."
+  - "The record does not interpret the manufacturer's 4-15 W APU envelope or 45 W charger rating as measured whole-device power."
+  - "No AXM local install, sudo, boot, recovery, power, price, battery-health, or hard-power-loss test has been performed."
