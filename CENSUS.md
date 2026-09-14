@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    9 / 25
-Categories: 9 distinct / 8 required
+Devices:    10 / 25
+Categories: 10 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -38,13 +38,14 @@ A device counts when it has:
 | 7 | Amazon Fire TV Stick 4K Max 1st Gen / AFTKA | Media / TV / signage | Manufacturer-supported opt-in ADB + sideloaded Android APK execution; application authority without proven root | DOCUMENTED | No | `devices/amazon/fire-tv-stick-4k-max-1st-gen-aftka.yaml` |
 | 8 | Wyze Cam v2 | IP camera | Thingino replacement firmware with exact JXF22/JXF23 targets, root shell evidence and local RTSP/ONVIF/WebUI/SSH | COMMUNITY_VERIFIED | No | `devices/wyze/cam-v2.yaml` |
 | 9 | SONOFF BASICR2 | Smart-home / microcontroller appliance | Exact-device Tasmota replacement-firmware path on ESP8285; stock eWeLink LAN control vs local Tasmota WebUI/MQTT | COMMUNITY_VERIFIED | No | `devices/sonoff/basicr2.yaml` |
+| 10 | Google Pixel 3a / `sargo` | Smartphone / handheld | Current Ubuntu Touch replacement OS with native apps/shell; custom-OS capability gated by bootloader-unlockable acquisition variant | COMMUNITY_VERIFIED | No | `devices/google/pixel-3a-sargo.yaml` |
 
 ## Category coverage
 
 - [x] Consumer camera
 - [x] Router / access point
 - [x] IP camera / NVR
-- [ ] Phone / tablet / handheld terminal
+- [x] Phone / tablet / handheld terminal
 - [x] Smart-home / microcontroller appliance
 - [x] Media / TV / signage hardware
 - [x] NAS / storage appliance
@@ -63,16 +64,16 @@ Only eight categories are required for Milestone 01. New records should now opti
 
 These are research targets, **not capability claims**.
 
-1. One old Android phone with exact-model bootloader/recovery/offline evidence.
-2. One printer/MFP with a documented application, script, plugin or embedded-Linux execution surface.
-3. One console/handheld with a maintained exact-model homebrew path and recovery evidence.
-4. One industrial/commercial surplus computer, controller or panel with conventional local execution.
-5. One non-safety vehicle/infotainment computer with a documented application execution path.
-6. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
-7. One oddball appliance whose machine capability is clearly under-described by its market category.
-8. One device with a state-dependent locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+1. One printer/MFP with a documented application, script, plugin or embedded-Linux execution surface.
+2. One console/handheld with a maintained exact-model homebrew path and recovery evidence.
+3. One industrial/commercial surplus computer, controller or panel with conventional local execution.
+4. One non-safety vehicle/infotainment computer with a documented application execution path.
+5. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
+6. One oddball appliance whose machine capability is clearly under-described by its market category.
+7. One device with a state-dependent locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+8. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
 
-The ESP-class smart-appliance slot is no longer a queue item: BASICR2 now fills it with exact-device evidence.
+The old-Android-phone slot is no longer a queue item: Pixel 3a now fills it with an exact `sargo` replacement-OS path plus a carrier/bootloader capability gate.
 
 ## Schema pressure learned so far
 
@@ -171,6 +172,25 @@ DS220+
 
 The repository now stores raw dated listing observations under `market_snapshots/` and mechanically checks sample counts plus low/median/high arithmetic. Asking/displayed listing prices remain evidence about the collected sample, not permanent device prices.
 
+### 8. Execution capability can be gated by acquisition variant
+
+Pixel 3a adds a stronger identity problem than optional RAM/radio/sensor differences:
+
+```text
+same marketed model: Pixel 3a
+
+bootloader-unlockable non-Verizon unit
+  -> UBports-supported Ubuntu Touch installation path exists
+
+Verizon unit
+  -> UBports says bootloader cannot be unlocked
+  -> replacement-OS path is unavailable
+```
+
+A market listing with carrier/origin unknown therefore must not inherit the custom-OS capability merely from the `Pixel 3a` name. Future market collection should preserve the capability gate or leave it unknown rather than merging locked and unlockable supply.
+
+One pressure case is enough to record the lesson but not enough to freeze a universal new variant schema.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -225,6 +245,8 @@ Do **not** rank the candidates yet. Comparable evidence is still missing for:
 
 The SONOFF BASICR2 is not added to this comparison merely because it runs replacement firmware. Its 1 MB flash, unknown RAM, mains-coupled actuator role and absent registry workload evidence make it a different contract candidate.
 
+The Pixel 3a is also not added merely because it has 4 GB RAM and a Linux-phone OS. Unattended boot/service lifecycle, battery wear, charging behavior, wall power and acquisition-variant unlockability are not yet comparable with the infrastructure candidates.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -238,6 +260,7 @@ The milestone should answer:
 5. Can another human or machine follow the evidence trail without relying on hidden chat memory?
 6. Can persistent firmware/software state be represented without flattening recovery or locality into false global booleans?
 7. Can dated market observations remain configuration-aware without turning asking prices into permanent device truth?
+8. Can acquisition variants that gate the execution surface stay distinct instead of being silently merged into one model-level capability claim?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

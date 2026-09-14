@@ -1,0 +1,306 @@
+schema_version: "0.1"
+record_id: google-pixel-3a-sargo
+
+identity:
+  manufacturer: Google
+  model: Pixel 3a
+  common_name: Google Pixel 3a
+  marketed_category: smartphone
+  hardware_revision: sargo
+  release_period: 2019
+  configuration_scope:
+    custom_os_install_scope: non_Verizon_bootloader_unlockable_units
+    excluded_variant:
+      carrier: Verizon
+      reason: "UBports states the Verizon Pixel 3a model does not allow the bootloader to be unlocked."
+    note: "The marketed Pixel 3a identity is not sufficient by itself to prove a usable replacement-OS path; acquisition variant can gate bootloader unlockability."
+
+compute:
+  soc: Qualcomm Snapdragon 670
+  architecture: arm64
+  cpu_cores: 8
+  clock_mhz:
+    performance: 2000
+    efficiency: 1700
+  gpu: Adreno 615
+  notes:
+    - "Google documents Snapdragon 670 as a 64-bit octa-core platform; UBports independently identifies the sargo target as arm64."
+
+memory:
+  ram_mb: 4096
+  ram_type: LPDDR4x
+  internal_persistent_storage_mb: 64000
+  storage_marketing_value: "64 GB"
+  removable_storage:
+    present: false
+  notes:
+    - "64 GB is the marketed internal capacity. Free writable capacity depends on installed OS and applications and has not been measured by AXM."
+
+execution:
+  surfaces:
+    - type: replaceable_firmware
+      environment: Ubuntu_Touch
+      version: "24.04 noble; stable 24.04-1.4 listed at check date"
+      custom_code: true
+      privilege: application_user
+      access_method: "UBports Installer after bootloader unlock and required Android 9 factory-image baseline"
+      state: COMMUNITY_VERIFIED
+      notes:
+        - "UBports lists Google Pixel 3a codename sargo with full community support and a current 24.04 noble stable channel."
+        - "UBports requires a bootloader-unlockable unit and specifically excludes the Verizon model."
+        - "If the phone is above Android 9, UBports requires reverting to factory image PQ3B.190801.002 before installation."
+        - "This surface proves user-controlled replacement-OS/application execution, not unrestricted persistent root."
+    - type: native_binary
+      environment: Ubuntu_Touch
+      version: "platform capability"
+      custom_code: true
+      privilege: application_user
+      access_method: "Ubuntu Touch Click package / Clickable application workflow"
+      state: DOCUMENTED
+      notes:
+        - "UBports documents native Ubuntu Touch applications with QML plus C++, Python, Go, Rust or JavaScript backends."
+        - "Applications are subject to Ubuntu Touch confinement; this record does not promote app execution to host-root authority."
+    - type: shell
+      environment: Ubuntu_Touch
+      version: "platform capability"
+      custom_code: true
+      privilege: normal_user
+      access_method: "local Terminal application or remote ADB/SSH"
+      state: DOCUMENTED
+      notes:
+        - "UBports advanced-use documentation exposes shell access via ADB/SSH, and the exact Pixel 3a device page marks ADB access working."
+        - "System-image writability/root escalation is not asserted."
+
+connectivity:
+  ethernet: false
+  wifi:
+    present: true
+    custom_os_state: COMMUNITY_VERIFIED
+  bluetooth:
+    present: true
+    custom_os_state: COMMUNITY_VERIFIED
+  cellular:
+    present: true
+    custom_os_data_state: COMMUNITY_VERIFIED
+    volte:
+      state: partial_or_global_issue
+      note: "UBports marks LTE calling/VoLTE as experimental and carrier/region dependent."
+  nfc:
+    present: true
+    custom_os_state: COMMUNITY_VERIFIED
+  usb:
+    present: true
+    connector: USB_Type_C
+    adb_access_under_ubuntu_touch: true
+  serial: unknown
+  gpio: unknown
+
+inputs:
+  controls:
+    - touchscreen
+    - power_button
+    - volume_buttons
+  sensors:
+    - type: fingerprint_reader
+      custom_os_state: COMMUNITY_VERIFIED
+    - type: proximity
+      custom_os_state: COMMUNITY_VERIFIED
+    - type: rotation
+      custom_os_state: COMMUNITY_VERIFIED
+    - type: gps
+      custom_os_state: partial_or_global_issue
+  cameras:
+    rear:
+      megapixels: 12.2
+      custom_os_state: COMMUNITY_VERIFIED
+    front:
+      megapixels: 8
+      custom_os_state: COMMUNITY_VERIFIED
+
+outputs:
+  display:
+    present: true
+    type: OLED
+    resolution: 2220x1080
+    custom_rendering_state: COMMUNITY_VERIFIED
+  speaker:
+    present: true
+    custom_audio_state: COMMUNITY_VERIFIED
+  vibration:
+    present: true
+    custom_control_state: COMMUNITY_VERIFIED
+
+power:
+  battery:
+    present: true
+    capacity_mah: 3000
+  external_power:
+    present: true
+    method: USB_Type_C
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "Battery capacity and charging support do not establish wall power for an always-on workload."
+    - "No AXM power measurement or battery-health observation has been performed."
+
+boot:
+  bootloader_unlock:
+    required_for_ubuntu_touch: true
+    non_verizon_units: available_per_ubports_install_requirements
+    verizon_units: unavailable_per_ubports
+    state: COMMUNITY_VERIFIED
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  notes:
+    - "A used Pixel 3a listing that omits carrier/origin must not be treated as replacement-OS-capable until bootloader unlockability is established."
+
+recovery:
+  factory_reset: documented_under_ubuntu_touch_device_support
+  official_restore: google_factory_image_available
+  rescue_partition: unknown
+  removable_media_recovery: unknown
+  usb_recovery: true
+  bootloader_recovery: fastboot_factory_image_on_unlockable_unit
+  known_brick_risk: unknown
+  recovery_state: COMMUNITY_VERIFIED
+  paths:
+    - id: return_to_stock_android_factory_image
+      from_state: ubuntu_touch_or_other_custom_build
+      target_state: stock_android_factory_firmware
+      method: google_factory_image_fastboot_restore
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: must_recreate
+      source_claim_ids:
+        - google_factory_image_restore
+        - ubports_pixel3a_sargo
+      notes:
+        - "Google documents factory images as a path back to original factory firmware and warns that factory-image installation erases device data."
+        - "Within this record the path applies to the bootloader-unlockable Pixel 3a state used for custom OS installation; low-level hardware/boot-ROM failure is not covered."
+    - id: ubuntu_touch_factory_reset
+      from_state: ubuntu_touch
+      target_state: fresh_ubuntu_touch_state
+      method: ubuntu_touch_reset_to_factory_defaults
+      availability: true
+      state: COMMUNITY_VERIFIED
+      data_impact:
+        system_configuration: erased
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - ubports_pixel3a_sargo
+      notes:
+        - "The exact-device UBports page marks reset-to-factory-defaults and recovery-image support as working, but the page does not establish detailed per-data-class retention here."
+
+locality:
+  state: local_after_provisioning
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: false
+  local_network_operation: true
+  offline_operation: unknown
+  notes:
+    - "Ubuntu Touch is installed through the community UBports path rather than a Google vendor-cloud runtime."
+    - "The exact device page shows working Wi-Fi, Bluetooth, ADB and core device functions under Ubuntu Touch."
+    - "This record does not claim every application or update workflow works indefinitely without internet, so full offline operation remains unknown."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - development_computer_for_bootloader_and_UBports_installer
+    - USB_data_cable
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "UBports displays an approximate price on its device page, but this repository does not promote that estimate into a dated NL/EU used-market observation."
+    - "Carrier/bootloader-unlockability must be captured in any future market sample because a cheaper locked Verizon unit does not satisfy the same execution contract."
+
+roles:
+  - role: battery_backed_local_field_node
+    confidence: medium
+    reason: "4 GB RAM, 64 GB storage, Wi-Fi/cellular, sensors and a current community Linux-phone OS make useful local field workloads plausible; battery health, background-service policy and wall power remain unmeasured."
+  - role: human_machine_terminal
+    confidence: high
+    reason: "Touchscreen, display, audio, sensors and native Ubuntu Touch application execution are all supported on the exact sargo target."
+  - role: sensor_gateway
+    confidence: medium
+    reason: "Ubuntu Touch exposes a working phone sensor/connectivity stack, but stable application access to each sensor/API should still be tested per workload."
+  - role: local_registry
+    confidence: low
+    reason: "Compute and storage are ample, but unattended boot, service autostart, charging behavior, battery wear and measured power are not established for infrastructure duty."
+
+evidence:
+  overall_state: COMMUNITY_VERIFIED
+  locally_verified: false
+  last_checked: "2026-09-14"
+  claims:
+    - id: google_pixel3a_hardware
+      state: DOCUMENTED
+      source: "https://support.google.com/pixelphone/answer/16043605?hl=en"
+      proves:
+        - "Pixel 3a uses Qualcomm Snapdragon 670 with a 64-bit octa-core CPU and Adreno 615 GPU"
+        - "Pixel 3a has 4 GB LPDDR4x RAM and 64 GB internal storage"
+        - "Pixel 3a has a 5.6-inch 2220x1080 OLED display"
+      does_not_prove:
+        - "bootloader unlockability of every carrier variant"
+        - "Ubuntu Touch support"
+        - "wall-power consumption"
+    - id: ubports_pixel3a_sargo
+      state: COMMUNITY_VERIFIED
+      source: "https://devices.ubuntu-touch.io/device/sargo/release/noble/"
+      proves:
+        - "Google Pixel 3a codename sargo has a UBports Installer path and full community support"
+        - "Ubuntu Touch 24.04 noble has a stable release channel for the exact target"
+        - "Wi-Fi, Bluetooth, NFC, cellular data, ADB, recovery image, reset to factory defaults and core phone functions are marked working"
+        - "Ubuntu Touch installation requires an unlocked bootloader and Android 9 baseline"
+        - "the Verizon Pixel 3a model is excluded because its bootloader cannot be unlocked"
+        - "UBports instructs devices above Android 9 to restore factory image PQ3B.190801.002 before installation"
+      does_not_prove:
+        - "unattended service startup after hard power loss"
+        - "AXM local reproduction"
+        - "identical bootloader policy across every reseller/carrier history not identified by the listing"
+    - id: ubuntu_touch_custom_application_surface
+      state: DOCUMENTED
+      source: "https://docs.ubports.com/en/latest/appdev/"
+      additional_sources:
+        - "https://docs.ubports.com/en/latest/userguide/advanceduse/"
+        - "https://docs.ubports.com/en/latest/appdev/guides/writeable-dirs.html"
+      proves:
+        - "Ubuntu Touch supports user-built native applications"
+        - "native application backends can use C++, Python, Go, Rust or JavaScript"
+        - "Ubuntu Touch exposes shell access through ADB/SSH and local terminal workflows"
+        - "normal applications are subject to confinement rather than implied host-root authority"
+      does_not_prove:
+        - "persistent unrestricted root"
+        - "safe modification of the read-only system image"
+    - id: google_factory_image_restore
+      state: DOCUMENTED
+      source: "https://developers.google.com/android/images"
+      proves:
+        - "Google publishes factory images intended to restore Nexus and Pixel devices to original factory firmware"
+        - "factory-image installation erases device data"
+        - "Google recommends relocking the bootloader after factory-image use"
+      does_not_prove:
+        - "recovery from physical flash failure"
+        - "recovery from every bootloader or hardware corruption state"
+        - "data preservation during factory-image restore"
+
+notes:
+  - "This is the first phone/handheld census record."
+  - "The main schema lesson is acquisition-variant gating: the same marketed Pixel 3a can be useful for replacement-OS capability only when the particular unit's bootloader policy allows unlocking. UBports explicitly excludes Verizon units."
+  - "A future market collector must preserve carrier/variant or verified unlockability instead of treating all Pixel 3a asking prices as equivalent capability supply."
+  - "No AXM local install, power measurement, battery-health test, hard-power-loss test, service-autostart test or used-market sample has been performed."
