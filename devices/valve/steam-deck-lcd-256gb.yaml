@@ -15,7 +15,7 @@ identity:
 
 compute:
   soc: "7 nm AMD APU"
-  architecture: x86_64
+  architecture: unknown
   cpu:
     family: "Zen 2"
     cores: 4
@@ -178,12 +178,12 @@ boot:
 recovery:
   factory_reset: true
   official_restore: true
-  rescue_partition: documented
+  rescue_partition: unknown
   dual_firmware: unknown
   removable_media_recovery: true
   usb_recovery: true
   uart_recovery: unknown
-  bootloader_recovery: true
+  bootloader_recovery: unknown
   known_brick_risk: unknown
   recovery_state: DOCUMENTED
   paths:
@@ -210,7 +210,7 @@ recovery:
       state: DOCUMENTED
       data_impact:
         system_configuration: unknown
-        user_data: preserved
+        user_data: unknown
         application_state: unknown
       source_claim_ids:
         - valve_steamos_install_repair
