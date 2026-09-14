@@ -1,8 +1,9 @@
-# Locality State Model — provisional v0.1 extension
+# Locality State Model — evidence-backed v0.1 extension
 
-**Status:** Evidence-driven provisional extension.  
-**First pressure case:** Wyze Cam v2 — stock Wyze firmware vs Thingino replacement firmware.  
-**Rule:** Cloud/local behavior belongs to the device state that actually exposes it.
+**Status:** Accepted optional extension; structurally validated when used.  
+**Pressure case 1:** Wyze Cam v2 — stock Wyze firmware vs Thingino.  
+**Pressure case 2:** SONOFF BASICR2 — stock eWeLink firmware vs Tasmota.  
+**Rule:** Cloud/local behavior belongs to the persistent device state that actually exposes it.
 
 ## Why this exists
 
@@ -17,9 +18,11 @@ locality:
   offline_operation: unknown
 ```
 
-That remains useful for devices whose relevant software state is stable.
+That remains correct for devices whose relevant software state is stable or whose evidence does not justify multiple states.
 
-The Wyze Cam v2 shows a case where flattening loses truth:
+Two independent device classes now show that flattening can lose truth.
+
+### Pressure case 1 — Wyze Cam v2
 
 ```text
 same physical camera
@@ -32,13 +35,26 @@ same physical camera
       -> vendor cloud is not required for normal local runtime
 ```
 
-A single `fully_local`, `cloud_required`, or boolean value would describe one state while silently misdescribing the other.
+### Pressure case 2 — SONOFF BASICR2
+
+```text
+same physical Wi-Fi relay
+  + stock eWeLink firmware
+      -> same-LAN on/off control can survive WAN loss after pairing
+      -> account/server-backed provisioning and some internet functions remain
+
+  + Tasmota firmware
+      -> direct local WebUI / console / LAN MQTT
+      -> vendor cloud is not required for normal local runtime
+```
+
+These cases are materially different. One is an IP camera whose replacement firmware exposes a local camera/Linux stack. The other is a tiny ESP8285 mains relay whose stock firmware is already partly local. The common state structure therefore appears general enough to validate without pretending every device needs it.
 
 This is the locality equivalent of the recovery-state lesson learned from the Roborock S5.
 
-## Provisional representation
+## Representation
 
-When locality materially changes with persistent device state, a record may use:
+When locality materially changes with persistent device state, use:
 
 ```yaml
 locality:
@@ -57,7 +73,6 @@ locality:
         - local_recording_after_prior_configuration
       internet_required_capabilities:
         - remote_live_view
-        - cloud_notifications
       provisioning_cloud_requirement: required
       source_claim_ids:
         - stock_locality_claim
@@ -67,7 +82,7 @@ locality:
       locality_state: fully_local
       state: COMMUNITY_VERIFIED
       offline_capabilities:
-        - local_rtsp
+        - local_service
         - local_admin
       internet_required_capabilities: []
       provisioning_cloud_requirement: no_vendor_cloud_required_for_runtime
@@ -75,30 +90,30 @@ locality:
         - replacement_locality_claim
 ```
 
-`state_dependent` is a meta-state, not a claim that locality is unknowable. It means the record must be read through the structured state entries.
+`state_dependent` is a summary/meta-state. It does not mean locality is unknowable; it means the structured entries are the truth-bearing unit.
 
-## Required meaning
+## Required fields for each state entry
 
-A structured locality-state entry should preserve at least:
+When `locality.states` is present, every entry must preserve:
 
 - `id` — unique within the device record;
 - `device_state` — the persistent software/firmware state being described;
-- `locality_state` — the best grounded locality classification for that state;
+- `locality_state` — grounded locality classification for that state;
 - `state` — evidence truth state;
-- `source_claim_ids` — evidence claims in the same device record.
+- `source_claim_ids` — references to evidence claims in the same record.
 
 Useful optional fields include:
 
 - `offline_capabilities`;
 - `internet_required_capabilities`;
 - `provisioning_cloud_requirement`;
-- notes on local-network scope or one-time setup dependencies.
+- notes describing LAN scope, one-time setup dependencies, or optional internet services.
 
-Do not force every device to populate these fields. The extension exists for evidence that actually needs it.
+The validator does not require the optional fields because different device classes may express locality with different capability granularity.
 
 ## Per-state locality vocabulary
 
-Use the existing locality vocabulary for `locality_state`:
+Valid `locality_state` values are:
 
 ```text
 fully_local
@@ -109,13 +124,13 @@ cloud_required
 unknown
 ```
 
-Do not use `state_dependent` inside an individual state entry. That value belongs only at the summary level when multiple states differ materially.
+Do not use `state_dependent` inside an individual state entry. That value belongs only at the summary level.
 
 ## Capability scope matters
 
-A device can perform one useful function offline while other functions remain cloud-dependent.
+One offline capability does not make the whole device fully local.
 
-For example:
+Examples:
 
 ```text
 offline recording works
@@ -123,84 +138,144 @@ offline recording works
 full local administration works
 ```
 
-Therefore, when a state is only partly local, preserve which capabilities survive without the internet instead of converting partial operation into `offline_operation: true` and stopping there.
+and:
+
+```text
+same-LAN relay on/off works
+!=
+all schedules, scenes, sharing and provisioning are cloud-independent
+```
+
+When a state is only partly local, preserve the capability split instead of collapsing it to `offline_operation: true`.
 
 ## Provisioning vs runtime
 
 Keep these separate:
 
 ```text
-internet needed to install/download firmware
+internet used to download/install software
 !=
 vendor cloud required for normal runtime
 ```
 
-A local-first replacement firmware may be downloaded from the internet during setup while still having no vendor-cloud dependency once installed.
+Likewise:
 
-Likewise, a stock device may need vendor-cloud provisioning before a narrow offline function remains available.
+```text
+vendor cloud/account required for initial stock pairing
+!=
+public internet required for every post-pairing LAN action
+```
+
+A replacement firmware can be downloaded from the internet during setup and still be fully local at runtime. A stock device can use a cloud/account path for provisioning while retaining narrower local behavior afterwards.
 
 ## Matching rule
 
-Capability matching should evaluate the locality of the **target device state**, not average all known states together.
+Capability matching evaluates the locality of the **target device state**, not an average of all known states.
 
 Example:
 
 ```text
-contract requires fully local RTSP
+contract requires fully local camera streaming
 
-stock Wyze state
+Wyze stock state
   -> does not satisfy from gathered evidence
 
-Thingino state
+Wyze Thingino state
   -> can satisfy locality requirement
-  -> but modification/recovery cost must also be counted
+  -> modification/recovery cost must also count
 ```
 
-Changing state is not free. Installation effort, recovery burden, irreversible changes, loss of vendor features, and consent implications belong in total useful cost.
+For a relay contract:
+
+```text
+contract requires basic same-LAN on/off during WAN outage
+
+BASICR2 stock eWeLink state
+  -> may satisfy that narrow locality requirement after pairing
+
+contract additionally requires no vendor account/cloud provisioning
+
+BASICR2 stock state
+  -> does not satisfy
+BASICR2 Tasmota state
+  -> can satisfy locality requirement
+  -> firmware replacement + mains/recovery burden must count
+```
+
+Changing state is never free. Installation effort, recovery burden, irreversible/uncertain reversion, lost vendor features, physical safety, and consent implications belong in total useful cost.
 
 ## Evidence rule
 
-A state-dependent locality claim must not be inferred merely because replacement firmware exists.
+A state-dependent locality claim must not be inferred merely because alternative firmware exists.
 
-Evidence should establish the relevant behavior, such as:
+Evidence should establish the relevant behavior, for example:
 
 - documented local service interfaces;
 - documented internet/cloud requirements;
-- community reproduction on the exact device or hardware target;
-- local test receipts when available.
+- community reproduction on the exact device/target;
+- manufacturer LAN/offline behavior;
+- local verification receipts when available.
 
 Unknown stays unknown.
 
 ## Relationship to recovery
 
-Locality and recovery are related but independent.
+Locality and recovery are related but independent axes.
 
-A replacement firmware state may be more local while being harder to recover from. A stock state may be cloud-dependent while offering a stronger official restore path.
+A replacement firmware state may improve locality while worsening recovery. A stock state may retain cloud dependence while offering a stronger official reset path.
 
-Do not let improvement on one axis erase cost on the other.
+Examples already in the census:
 
-## Validator status
+- Wyze Cam v2: Thingino improves local control; Thingino-to-stock recovery remains unknown in the current evidence.
+- SONOFF BASICR2: Tasmota improves local ownership; current gathered evidence does not establish a tested return-to-stock path.
+- Roborock S5: Valetudo is local-first while upstream documents return to stock as unavailable.
 
-`tools/validate_records.py` currently validates the stable core plus structured recovery paths. It intentionally does **not** yet enforce `locality.states`.
+Do not let a gain on one axis erase cost on another.
 
-Reason: this structure has one strong pressure case so far. Freeze the mechanical contract only after at least one additional device demonstrates whether these fields generalize cleanly. Until then:
+## Validator behavior
 
-- document the extension;
-- preserve evidence claim IDs;
-- keep unknowns explicit;
-- do not silently reinterpret existing records.
+`tools/validate_records.py` now validates `locality.states` **only when a device record chooses to use it**.
 
-This is deliberate schema restraint, not an invitation to use arbitrary locality fields.
+It checks:
 
-## Migration note
+- summary `locality.state` is `state_dependent`;
+- `locality.states` is a non-empty list;
+- state-entry IDs are unique;
+- `device_state` is explicit;
+- `locality_state` uses the bounded vocabulary above;
+- evidence `state` uses the repository truth-state vocabulary;
+- every `source_claim_ids` reference resolves to an evidence claim in the same record;
+- optional offline/internet capability lists are actually lists of non-empty strings;
+- optional provisioning requirement is an explicit non-empty string.
 
-Existing records should not be rewritten automatically.
+It intentionally does **not**:
 
-Potential candidates such as the Roborock S5 may also have stock-vs-replacement locality differences, but migrate them only after the stock state has direct evidence. Do not backfill a second state from assumption.
+- require every device to migrate to this model;
+- guess missing states;
+- require exactly two states;
+- force stock/replacement naming;
+- decide which firmware state is preferable;
+- convert partial locality into a binary score.
+
+The validator therefore catches structural drift without turning a young evidence model into a rigid ontology.
+
+## Migration rule
+
+Do not rewrite existing records automatically.
+
+Migrate a flat record only when direct evidence shows that persistent states materially differ in locality. For example, the Roborock S5 may eventually justify separate stock/Valetudo locality entries, but the stock state should not be backfilled from assumption merely because Valetudo is local-first.
+
+When migrating:
+
+1. preserve the old evidence claims;
+2. add direct evidence for every new state distinction;
+3. keep unresolved capabilities `unknown`;
+4. do not silently change overall truth level;
+5. record recovery/modification cost separately.
 
 ## Root check
 
-**Truth:** locality belongs to evidenced device state; partial offline capability is not inflated into full locality.  
-**Agency / non-domination:** replacement firmware does not justify hidden modification; ownership/authorization and visible operator control remain required.  
-**Continuity:** state distinctions and source links live in repository data rather than temporary chat context.  
-**Wisdom before speed:** the model is documented now but mechanical enforcement waits for a second pressure case before the shape is frozen.
+**Truth:** locality belongs to evidenced device state; partial offline behavior is not inflated into full locality.  
+**Agency / non-domination:** alternative firmware does not justify hidden modification; owned/authorized hardware and visible operator control remain required.  
+**Continuity:** both pressure cases, state distinctions, source links and validator semantics live in repository state.  
+**Wisdom before speed:** the model became mechanically enforced only after a second independent device class reproduced the need, and state change costs remain part of matching.
