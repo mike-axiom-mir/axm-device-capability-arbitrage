@@ -26,6 +26,9 @@ jobs:
       - name: Validate device and contract records
         run: python tools/validate_records.py
 
+      - name: Validate census state synchronization
+        run: python tools/validate_census_state.py
+
       - name: Validate market snapshots
         run: python tools/validate_market_snapshots.py
 
