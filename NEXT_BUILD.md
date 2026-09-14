@@ -1,6 +1,6 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Nine census records now exercise nine materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership, an IP camera with exact Thingino replacement-firmware targets/root SSH/local RTSP-ONVIF services, and a smart-home ESP8285 relay whose stock eWeLink locality differs materially from its Tasmota replacement-firmware locality. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem; the Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 first exposed state-dependent locality; and SONOFF BASICR2 independently reproduced that locality pattern in a different hardware class. The required 8-category breadth threshold is exceeded at 9 distinct categories, but Milestone 01 still requires 16 more evidence-backed devices and a real arbitrage result. Structural validation now covers both recovery paths and optional state-dependent locality records.
+**Current state:** Initial foundation is in place. Nine census records now exercise nine materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership, an IP camera with exact Thingino replacement-firmware targets/root SSH/local RTSP-ONVIF services, and a smart-home ESP8285 relay whose stock eWeLink locality differs materially from its Tasmota replacement-firmware locality. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem; the Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 first exposed state-dependent locality; and SONOFF BASICR2 independently reproduced that locality pattern in a different hardware class. The required 8-category breadth threshold is exceeded at 9 distinct categories, but Milestone 01 still requires 16 more evidence-backed devices and a real arbitrage result. Structural validation now covers recovery paths, optional state-dependent locality records, evidence-gated comparisons, and dated configuration-aware market snapshots. The first comparison now has a partial EU acquisition snapshot, but it still has no ranked winner because common workload, power, provisioning and restart evidence are not comparable yet.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -15,11 +15,15 @@ Implemented:
 - recovery/evidence state checks;
 - structured recovery-path checks with evidence-claim references;
 - optional structured locality-state checks with evidence-claim references;
+- evidence-gated comparison validation;
+- configuration-aware market-snapshot validation, including sample-count and descriptive-statistic arithmetic;
 - GitHub Actions validation on pushes to `main` and pull requests.
 
 The validator deliberately does **not** reject unknown capability values or enforce a large rigid schema. New hardware classes still need room to challenge v0.1.
 
 `LOCALITY_STATE_MODEL.md` is now an evidence-backed optional extension. Wyze Cam v2 and SONOFF BASICR2 independently show that persistent firmware state can change cloud/local behavior. The validator enforces the minimal shape only when `locality.states` is present; it does not force old flat records to migrate.
+
+`MARKET_SNAPSHOT_METHOD.md` now keeps acquisition observations separate from permanent device identity. Asking/displayed listing prices, seller class, exact revision/configuration, accessory state and cohort arithmetic remain explicit; a sample median is not treated as transaction-price truth.
 
 ## Priority 1 — Run the first actual arbitrage comparison
 
@@ -33,20 +37,44 @@ Current candidates:
 - Synology DS220+ — NAS / supported containers; much larger storage/compute platform with manufacturer power data but drive and opportunity cost;
 - Dell Wyse 3040 — thin client / full Debian; 2 GB RAM, internal eMMC, Gigabit Ethernet, UEFI USB recovery, configurable AC Recovery and a manufacturer sub-4-W claim.
 
-Do **not** rank them yet. The next valuable comparison work is to collect the same missing evidence for all three so unknowns are not converted into fake scores.
+### Acquisition evidence now collected — partial, not ranking-ready
 
-Required comparison state:
+The first validated EU snapshot is:
 
-- used-market snapshot in one NL/EU date window;
-- observed configuration for listings where model variants matter;
-- measured or credible power data with source class;
-- one tiny common registry workload definition;
+`market_snapshots/low-power-local-registry-node-eu-2026-09-14.yaml`
+
+Its descriptive cohorts currently show:
+
+```text
+Archer C7 v5 exact-revision private asks
+  €20–€40, sample median €32
+
+Wyse 3040 private used asks
+  €20–€40, sample median €29.50
+
+Wyse 3040 NL dealer-refurbished exact configurations
+  €59–€67, sample median €63
+
+DS220+ bare-chassis/no-drive mixed-RAM listings
+  €195–€279, sample median €239.50
+```
+
+This is meaningful acquisition evidence, but it is deliberately not a price verdict. Asking/displayed prices are not final transaction prices, shipping is not normalized, and required DS220+ storage remains separate.
+
+Do **not** rank the candidates yet. The most valuable comparison work has now shifted from first-pass listing collection to **common operational evidence** while keeping acquisition evidence refreshable.
+
+Required comparison state before ranking:
+
+- refresh/expand the same-window EU market snapshot when a ranking attempt is made;
+- preserve observed configuration and accessory inclusion for listings where model variants matter;
+- count shipping, required storage and adapters separately from chassis price;
+- measured or credible power data under comparable conditions;
+- one tiny common registry workload definition and implementation;
 - provisioning friction and repeat-provisioning time;
 - recovery quality and data impact;
 - hard-power-loss -> reboot -> service restart behavior;
-- replacement availability;
-- workload fit;
-- required storage/adapters counted separately from chassis price.
+- replacement availability and remaining-life evidence;
+- workload fit.
 
 Only then ask whether the non-obvious device is actually cheaper/better.
 
@@ -132,6 +160,26 @@ These are different hardware and different stock-locality patterns, but both fit
 
 Do **not** infer from this that replacement firmware is always preferable. State change has cost: modification effort, lost vendor features, physical safety, recovery uncertainty and possible irreversible transitions.
 
+### Market-snapshot rule learned from the first three-candidate comparison
+
+Market evidence must preserve the same configuration discipline as hardware evidence.
+
+```text
+asking price
+  != transaction price
+
+private used
+  != dealer refurbished
+
+bare chassis
+  != storage bundle
+
+model name
+  != exact configuration
+```
+
+The first snapshot therefore uses cohorts and keeps raw observations instead of writing one permanent `price` into each device record. Market medians are descriptive properties of that dated sample only.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
 The breadth threshold is exceeded at 9 distinct categories. Do not pad the remaining 16 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
@@ -210,7 +258,7 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 
 ### A. Archer C7 v5
 
-- collect NL/EU used-price samples;
+- refresh/expand the current exact-v5 EU asking-price cohort before final ranking, preserving shipping and power-supply inclusion separately;
 - find credible idle/load power measurements or measure locally later;
 - define and deploy the common tiny registry workload;
 - estimate/test whether 128 MB RAM + 16 MB flash is genuinely enough;
@@ -219,7 +267,7 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 
 ### B. Synology DS220+
 
-- collect NL/EU bare-chassis used-price samples separately from units sold with drives;
+- refresh/expand the current bare-chassis/no-drive EU cohort rather than recollecting from zero;
 - price a minimal supported storage configuration so required drive cost is visible;
 - verify a currently compatible Container Manager release on owned hardware;
 - run the common tiny registry workload and measure RAM/CPU/storage footprint;
@@ -229,7 +277,7 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 
 ### C. Dell Wyse 3040
 
-- collect 5–10 dated NL/EU listings and record 8/16-GB eMMC plus power-adapter inclusion separately;
+- refresh/expand the current private-used EU cohort, preserving 8/16-GB eMMC and power-adapter inclusion; keep dealer-refurbished offers as a separate cohort;
 - record whether each listing identifies optional WLAN/Bluetooth rather than assuming it;
 - on owned hardware, record BIOS version and actual eMMC capacity before install;
 - install Debian from preserved media and time the complete provisioning flow including the EFI/GRUB workaround;
@@ -305,13 +353,15 @@ Do not expand the census blindly if:
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
 - a single locality label hides materially different persistent-state cloud behavior;
-- replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored.
+- replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored;
+- listing asking prices are silently promoted to transaction prices or permanent device values;
+- private-used, dealer-refurbished, bare-chassis and bundled-storage prices are merged merely to increase sample size.
 
 When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, or electrical-rating-as-power-measurement substitution.  
+**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
 **Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible; cameras add privacy/recording consent; physical actuators remain visibly user-controlled.  
-**Continuity:** evidence, variant caveats, execution boundaries, locality states, recovery and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; replacement firmware gains must be weighed against installation, recovery, opportunity cost and physical safety.
+**Continuity:** evidence, variant caveats, execution boundaries, locality states, recovery, market observations and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; replacement firmware gains and cheap listings must be weighed against installation, recovery, opportunity cost, electricity and physical safety.
