@@ -44,6 +44,9 @@ jobs:
       - name: Validate comparison artifact links
         run: python tools/validate_comparison_artifacts.py
 
+      - name: Gate ranking-ready market evidence window
+        run: python tools/validate_market_evidence_window.py
+
       - name: Validate evidence-gated comparisons
         run: python tools/validate_comparisons.py
 
