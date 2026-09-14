@@ -1,6 +1,6 @@
 # Next Build
 
-**Current state:** Initial foundation is in place. Eight census records now exercise eight materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership, and an IP camera with exact Thingino replacement-firmware targets, root SSH and local RTSP/ONVIF services. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem because one marketed model spans multiple eMMC and wireless configurations; the Fire TV AFTKA showed that real custom application execution must remain distinct from administrator/root authority; and the Wyze Cam v2 now shows that locality itself can change with persistent firmware state. The 8-category breadth threshold is reached, but Milestone 01 still requires 17 more evidence-backed devices and a real arbitrage result. A small structural validator and GitHub Actions workflow protect the stable machine-readable core without freezing the research schema too early.
+**Current state:** Initial foundation is in place. Nine census records now exercise nine materially different hardware/execution patterns: a consumer camera with a custom Android application path, a Wi-Fi router with replaceable Linux/OpenWrt firmware, an e-reader with native application/script execution, a mobile robot with rooted Linux/SSH plus local-only control, a NAS with a manufacturer-supported container runtime plus native persistent storage, a thin client with conventional Debian/OpenWrt execution plus PC-class UEFI boot controls, a media stick with manufacturer-supported Android APK sideloading through opt-in ADB but no evidence of root ownership, an IP camera with exact Thingino replacement-firmware targets/root SSH/local RTSP-ONVIF services, and a smart-home ESP8285 relay whose stock eWeLink locality differs materially from its Tasmota replacement-firmware locality. The S5 exposed recovery-by-device-state; the DS220+ added recovery data-impact semantics; the Wyse 3040 exposed configuration identity as a separate problem; the Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 first exposed state-dependent locality; and SONOFF BASICR2 independently reproduced that locality pattern in a different hardware class. The required 8-category breadth threshold is exceeded at 9 distinct categories, but Milestone 01 still requires 16 more evidence-backed devices and a real arbitrage result. Structural validation now covers both recovery paths and optional state-dependent locality records.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -14,15 +14,16 @@ Implemented:
 - execution-surface structure checks;
 - recovery/evidence state checks;
 - structured recovery-path checks with evidence-claim references;
+- optional structured locality-state checks with evidence-claim references;
 - GitHub Actions validation on pushes to `main` and pull requests.
 
 The validator deliberately does **not** reject unknown capability values or enforce a large rigid schema. New hardware classes still need room to challenge v0.1.
 
-`LOCALITY_STATE_MODEL.md` is now a provisional evidence-driven extension. It is intentionally not mechanically frozen yet because Wyze Cam v2 is the first strong pressure case. Require a second independent device before deciding whether that shape should become part of the validator contract.
+`LOCALITY_STATE_MODEL.md` is now an evidence-backed optional extension. Wyze Cam v2 and SONOFF BASICR2 independently show that persistent firmware state can change cloud/local behavior. The validator enforces the minimal shape only when `locality.states` is present; it does not force old flat records to migrate.
 
 ## Priority 1 — Run the first actual arbitrage comparison
 
-The hypothesis is not proven by building a database. The three-category candidate set now exists for the current capability contract:
+The hypothesis is not proven by building a database. The three-category candidate set already exists for the current capability contract:
 
 > **low-power local registry / heartbeat node**
 
@@ -32,7 +33,7 @@ Current candidates:
 - Synology DS220+ — NAS / supported containers; much larger storage/compute platform with manufacturer power data but drive and opportunity cost;
 - Dell Wyse 3040 — thin client / full Debian; 2 GB RAM, internal eMMC, Gigabit Ethernet, UEFI USB recovery, configurable AC Recovery and a manufacturer sub-4-W claim.
 
-Do **not** rank them yet. The next valuable step is to collect the same missing evidence for all three so unknowns are not converted into fake scores.
+Do **not** rank them yet. The next valuable comparison work is to collect the same missing evidence for all three so unknowns are not converted into fake scores.
 
 Required comparison state:
 
@@ -69,7 +70,7 @@ same marketed model
   -> T20X + JXF23 + RTL8189FTV
 ```
 
-Market research, installation and matching must therefore preserve observed unit configuration when it matters. A listing containing only a model name must not inherit the best-known storage/radio/sensor variant silently, and replacement firmware must not be selected from the marketed name alone when hardware variants require separate targets.
+Market research, installation and matching must preserve observed unit configuration when it matters. A listing containing only a model name must not inherit the best-known storage/radio/sensor variant silently, and replacement firmware must not be selected from the marketed name alone when hardware variants require separate targets.
 
 A later schema extension may need a more general variant/configuration representation, but do not freeze that shape until more devices pressure it.
 
@@ -99,11 +100,11 @@ Future matching must preserve sandbox/application-level capability without silen
 
 The Fire TV therefore does not enter the registry comparison merely because it has 2 GB RAM and networking. A candidate must satisfy the contract, not resemble a computer on paper.
 
-### Locality-state rule learned from Wyze Cam v2
+### Locality-state rule — now supported by two independent devices
 
 Locality is not always a permanent hardware property.
 
-For the same Wyze Cam v2:
+Wyze Cam v2:
 
 ```text
 stock Wyze firmware
@@ -115,26 +116,38 @@ Thingino firmware
   -> vendor cloud is not required for normal local runtime
 ```
 
-A flat device-level `fully_local` or `cloud_required` label would erase one of those truths.
+SONOFF BASICR2:
 
-Use `LOCALITY_STATE_MODEL.md` when persistent device state materially changes cloud/local behavior. Do not auto-migrate old records. Wait for direct evidence of the other states and require a second independent pressure case before freezing the shape into the validator.
+```text
+stock eWeLink firmware
+  -> same-LAN on/off can survive WAN loss after pairing
+  -> stock provisioning and some schedule/scene/share setup remain server/internet dependent
+
+Tasmota firmware
+  -> local WebUI / console / LAN MQTT
+  -> vendor cloud is not required for normal local runtime
+```
+
+These are different hardware and different stock-locality patterns, but both fit the same minimal `locality.states` structure. That is enough to validate the optional structure mechanically.
+
+Do **not** infer from this that replacement firmware is always preferable. State change has cost: modification effort, lost vendor features, physical safety, recovery uncertainty and possible irreversible transitions.
 
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The category-breadth threshold is now met at 8 / 8. Do not interpret that as permission to pad the remaining 17 records with near-duplicates. New records should still maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 9 distinct categories. Do not pad the remaining 16 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
 1. old Android phone with documented unlock/recovery and offline operation;
-2. ESP8266/ESP32 consumer appliance with replaceable local firmware;
-3. printer/MFP with an application or embedded Linux/Android execution layer;
-4. console/handheld gaming device with a supported homebrew/Linux path;
-5. industrial/commercial surplus hardware with non-PC market positioning;
-6. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
-7. a second state-dependent-locality device if it can test whether `LOCALITY_STATE_MODEL.md` generalizes;
+2. printer/MFP with an application or embedded Linux/Android execution layer;
+3. console/handheld gaming device with a supported homebrew/Linux path;
+4. industrial/commercial surplus hardware with non-PC market positioning;
+5. non-safety vehicle/infotainment computer only where the execution boundary is clearly separated from safety-critical systems;
+6. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
+7. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
 8. oddball appliance where a different execution/recovery/locality pattern challenges the current schema.
 
-Each new class should expose something the existing eight records do not.
+Each new record should expose something the existing nine do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -170,6 +183,22 @@ factory erase
 ```
 
 Do not let `recovery_path: true` hide whether state, configuration or user data survives.
+
+### Physical-safety rule learned from BASICR2
+
+Software freedom can coexist with hardware hazards.
+
+BASICR2 replacement firmware is an interesting local-control capability, but the device contains hazardous mains voltage. The manufacturer warns about electric shock and recommends qualified-professional installation/repair.
+
+Therefore:
+
+```text
+firmware is community-flashable
+!=
+energized hardware is safe to handle casually
+```
+
+Safe installation/inspection effort is real friction and belongs in total useful cost. Research notes should not normalize live-mains experimentation merely because a low-voltage programming interface exists.
 
 ## Priority 3 — Add scoring only after comparison data exists
 
@@ -249,6 +278,19 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market sample with sensor-variant ambiguity recorded rather than guessed;
 - do not treat root SSH as proof that the camera is a rational general-purpose registry node until RAM/flash headroom and opportunity cost are known.
 
+### H. SONOFF BASICR2
+
+- only inspect/modify an owned or explicitly authorized unit with mains disconnected;
+- follow the manufacturer warning that installation/repair should be handled by a qualified professional;
+- identify the exact BASICR2 board/revision before firmware work;
+- record stock firmware/app state and test stock LAN on/off with WAN deliberately unavailable after normal pairing;
+- determine whether a trustworthy stock-firmware preservation/restore path exists before replacement; do not assume stock factory reset restores overwritten firmware;
+- reproduce Tasmota only through an isolated low-voltage programming setup and preserve firmware/tool hashes;
+- test local WebUI and local MQTT with outbound internet blocked;
+- test repeated hard power loss -> Tasmota -> Wi-Fi -> local control and preserve relay power-on-state behavior;
+- measure device self-consumption only using an appropriate safe mains measurement method, not an exposed energized PCB;
+- collect a dated NL/EU price sample only if actuator-node comparison becomes useful.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -262,13 +304,14 @@ Do not expand the census blindly if:
 - recovery claims hide configuration/data destruction behind a single positive boolean;
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
-- a single locality label hides materially different stock/replacement-firmware cloud behavior.
+- a single locality label hides materially different persistent-state cloud behavior;
+- replacement-firmware capability is treated as free while recovery, lost vendor features or physical hazard are ignored.
 
 When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant inheritance, privilege inflation or cloud/locality flattening.  
-**Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible, and cameras add explicit privacy/recording consent concerns.  
-**Continuity:** evidence, variant caveats, execution boundaries, locality states and recovery live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware or promoting a device into a workload it has not yet earned; replacement firmware gains must be weighed against installation and recovery cost.
+**Truth:** no fake verification, silent best-variant inheritance, privilege inflation, locality flattening, or electrical-rating-as-power-measurement substitution.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer access stays consent-visible; cameras add privacy/recording consent; physical actuators remain visibly user-controlled.  
+**Continuity:** evidence, variant caveats, execution boundaries, locality states, recovery and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; replacement firmware gains must be weighed against installation, recovery, opportunity cost and physical safety.
