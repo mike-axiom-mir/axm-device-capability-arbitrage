@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    15 / 25
-Categories: 15 distinct / 8 required
+Devices:    16 / 25
+Categories: 16 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -44,6 +44,7 @@ A device counts when it has:
 | 13 | Valve Steam Deck LCD 256 GB | Handheld gaming PC / console | Manufacturer-supported SteamOS/KDE/Flatpak execution, explicit sudo elevation, BIOS/multi-boot/microSD boot, and official recovery; privilege kept separate from update persistence | DOCUMENTED | No | `devices/valve/steam-deck-lcd-256gb.yaml` |
 | 14 | Siemens SIMATIC IOT2050 Advanced / 6ES7647-0BA00-1YA2 | Industrial IoT gateway / commercial surplus | Manufacturer-documented Debian-based root SSH/UART + apt execution, external-media boot and U-Boot; exact article number still spans FS-dependent USB capability | DOCUMENTED | No | `devices/siemens/simatic-iot2050-advanced-6es7647-0ba00-1ya2.yaml` |
 | 15 | LG OLED55C1PUB / C1 55-inch OLED | Smart TV / display appliance | Manufacturer-supported webOS Developer Mode `.ipk` execution; sandboxed app authority whose renewable developer session can expire and remove Developer Mode-installed apps | DOCUMENTED | No | `devices/lg/oled55c1pub.yaml` |
+| 16 | Polestar 2 model year 2026 | Vehicle infotainment / non-safety computer | Manufacturer-supported Google Play installation of car-adapted Android Automotive apps; sandboxed infotainment execution explicitly bounded away from whole-vehicle/safety-control authority | DOCUMENTED | No | `devices/polestar/polestar-2-my2026.yaml` |
 
 ## Category coverage
 
@@ -62,7 +63,7 @@ A device counts when it has:
 - [x] Console / handheld gaming device
 - [x] Thin client / POS / kiosk
 - [x] Industrial / commercial surplus
-- [ ] Vehicle infotainment / non-safety computer
+- [x] Vehicle infotainment / non-safety computer
 - [ ] Other / unknown category
 
 Only eight categories are required for Milestone 01. New records should now optimize for **evidence diversity and model pressure**, not category-count padding.
@@ -71,15 +72,14 @@ Only eight categories are required for Milestone 01. New records should now opti
 
 These are research targets, **not capability claims**.
 
-1. One non-safety vehicle/infotainment computer with a documented application execution path and a boundary that clearly excludes safety-critical vehicle systems.
-2. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
-3. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
-4. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
-5. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
-6. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
-7. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
-8. One second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes.
-9. One oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating general Linux/root access.
+1. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
+2. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
+3. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
+4. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
+5. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
+6. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
+7. One second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes.
+8. One oddball appliance whose capability creates a genuinely new schema/evidence pressure rather than repeating general Linux/root access.
 
 The industrial/commercial-surplus slot is no longer a queue item: Siemens SIMATIC IOT2050 Advanced fills it with manufacturer-supported local Linux execution, external-media boot/recovery controls, industrial interfaces, and a new exact-article-versus-functional-status identity pressure case.
 
@@ -88,6 +88,8 @@ The console/handheld slot is no longer a queue item: Steam Deck LCD 256 GB fills
 The oddball-manufacturing-appliance slot is no longer a queue item: Creality K1 fills it with manufacturer-documented root SSH on a heated moving appliance plus documented rollback/recovery.
 
 The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not just that webOS can run custom applications: LG documents a renewable Developer Mode session whose expiry/disable state removes apps installed through Developer Mode, making execution durability a separate capability question.
+
+The vehicle-infotainment slot is now represented by Polestar 2 model year 2026. Its value is not merely that Android apps run in a car: the evidence forces a parent-system boundary. A sandboxed infotainment application may be valid custom execution while braking, steering, propulsion, safety systems, CAN and arbitrary vehicle-property authority remain outside the proven scope.
 
 ## Schema pressure learned so far
 
@@ -308,6 +310,31 @@ Therefore `custom_code: true` must not silently become a claim of indefinitely d
 
 This is one pressure case. The repo preserves the lesson in the device/evidence record but does not freeze a universal execution-lease schema until an independent platform reproduces the pattern.
 
+### 14. Subsystem execution authority is not parent-system authority
+
+Polestar 2 MY2026 adds the first explicit safety-critical-parent case:
+
+```text
+road vehicle
+  contains
+Android Automotive infotainment application environment
+
+car-adapted Google Play app executes
+  -> sandboxed infotainment capability is real
+
+does not prove
+  -> braking control
+  -> steering control
+  -> propulsion control
+  -> safety-system control
+  -> CAN access
+  -> arbitrary vehicle-property read/write
+```
+
+Android's car application model is admission-, permission- and driving-policy-bounded, and the Polestar evidence packet contains no exact-model evidence granting ordinary third-party Play apps safety-critical authority. The record therefore stores a local `safety_boundary` on the execution surface instead of letting application execution leak upward into a whole-vehicle capability claim.
+
+This is one vehicle pressure case. Preserve the distinction, but do not freeze a universal parent-system schema until independent hardware demonstrates the same need again.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -374,6 +401,8 @@ The Siemens IOT2050 Advanced is not added merely because it has manufacturer-doc
 
 The LG OLED55C1PUB is not added merely because it can run custom webOS applications and has Ethernet/Wi-Fi. The documented Developer Mode path is renewable-session-gated, RAM/storage headroom is unknown, cold-boot app/service autostart is unproven, active wall power is unmeasured, and tying infrastructure availability to a large display has significant opportunity cost.
 
+The Polestar 2 MY2026 is not added merely because it can run car-adapted Android Automotive applications. It is a road vehicle with an admission-controlled sandboxed infotainment surface, not a proven general-purpose/root host; infotainment power, service persistence, exact hardware resources and standalone acquisition economics are unknown, while whole-vehicle opportunity cost dominates any speculative registry-node value.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -393,6 +422,7 @@ The milestone should answer:
 11. Can execution privilege remain distinct from the persistence of installed state across vendor OS updates?
 12. Can exact manufacturer order numbers remain revision-aware when a functional-status change alters real capability?
 13. Can a vendor-session-gated developer surface remain distinct from indefinitely durable deployment without hiding account/network renewal dependency?
+14. Can execution authority inside one subsystem remain distinct from authority over a safety-critical parent machine?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 
