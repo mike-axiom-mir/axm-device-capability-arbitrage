@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Gate positive record/structured truth states against evidence strength.
+"""Gate positive record/core/structured truth states against evidence strength.
 
-The base record validator guarantees that recovery/locality source_claim_ids resolve.
-This guard adds semantic strength rules: a positive device evidence summary may not
-outrun the strongest positive claim in the record, and structured recovery/locality
-states may not outrun the positive claims they explicitly cite.
+The base record validator guarantees the required structure and resolves
+recovery/locality source_claim_ids. This guard adds semantic strength rules:
+positive record summaries, execution surfaces, and flat recovery summaries may
+not outrun the strongest positive evidence claim in the record, while structured
+recovery/locality states may not outrun the positive claims they explicitly cite.
 """
 
 from __future__ import annotations
@@ -83,6 +84,34 @@ def strongest_positive_claim(claim_states: dict[str, str]) -> tuple[str, str] | 
     return max(positive, key=lambda item: POSITIVE_TRUTH_RANK[item[1]])
 
 
+def gate_state_against_record_claims(
+    state: Any,
+    *,
+    context: str,
+    claim_states: dict[str, str],
+) -> str | None:
+    """Apply a conservative record-level evidence ceiling to an unlinked state."""
+
+    if state in NON_PROMOTING_STATES:
+        return None
+    if state not in POSITIVE_TRUTH_RANK:
+        raise ValidationError(f"{context} has unsupported truth state {state!r}")
+
+    strongest = strongest_positive_claim(claim_states)
+    if strongest is None:
+        raise ValidationError(
+            f"{context} claims {state} but the record contains no positive evidence claim"
+        )
+
+    strongest_claim_id, strongest_claim_state = strongest
+    if POSITIVE_TRUTH_RANK[state] > POSITIVE_TRUTH_RANK[strongest_claim_state]:
+        raise ValidationError(
+            f"{context} claims {state} but strongest positive evidence claim is "
+            f"{strongest_claim_state} ({strongest_claim_id})"
+        )
+    return strongest_claim_state
+
+
 def gate_overall_state(
     data: dict[str, Any],
     *,
@@ -93,27 +122,55 @@ def gate_overall_state(
         raise ValidationError("evidence must be a mapping")
 
     overall_state = evidence.get("overall_state")
-    if overall_state in NON_PROMOTING_STATES:
-        return str(overall_state), None
-    if overall_state not in POSITIVE_TRUTH_RANK:
-        raise ValidationError(
-            f"evidence.overall_state has unsupported truth state {overall_state!r}"
-        )
+    strongest_claim_state = gate_state_against_record_claims(
+        overall_state,
+        context="evidence.overall_state",
+        claim_states=claim_states,
+    )
+    return str(overall_state), strongest_claim_state
 
-    strongest = strongest_positive_claim(claim_states)
-    if strongest is None:
-        raise ValidationError(
-            f"evidence.overall_state claims {overall_state} but the record contains "
-            "no positive evidence claim"
-        )
 
-    strongest_claim_id, strongest_claim_state = strongest
-    if POSITIVE_TRUTH_RANK[overall_state] > POSITIVE_TRUTH_RANK[strongest_claim_state]:
-        raise ValidationError(
-            f"evidence.overall_state claims {overall_state} but strongest positive "
-            f"claim is {strongest_claim_state} ({strongest_claim_id})"
+def validate_execution_surfaces(
+    data: dict[str, Any],
+    *,
+    claim_states: dict[str, str],
+) -> int:
+    execution = data.get("execution")
+    if not isinstance(execution, dict):
+        raise ValidationError("execution must be a mapping")
+
+    surfaces = execution.get("surfaces")
+    if not isinstance(surfaces, list):
+        raise ValidationError("execution.surfaces must be a list")
+
+    for index, surface in enumerate(surfaces):
+        context = f"execution.surfaces[{index}]"
+        if not isinstance(surface, dict):
+            raise ValidationError(f"{context} must be a mapping")
+        gate_state_against_record_claims(
+            surface.get("state"),
+            context=f"{context}.state",
+            claim_states=claim_states,
         )
-    return overall_state, strongest_claim_state
+    return len(surfaces)
+
+
+def validate_recovery_summary(
+    data: dict[str, Any],
+    *,
+    claim_states: dict[str, str],
+) -> str:
+    recovery = data.get("recovery")
+    if not isinstance(recovery, dict):
+        raise ValidationError("recovery must be a mapping")
+
+    recovery_state = recovery.get("recovery_state")
+    gate_state_against_record_claims(
+        recovery_state,
+        context="recovery.recovery_state",
+        claim_states=claim_states,
+    )
+    return str(recovery_state)
 
 
 def gate_entry(
@@ -191,10 +248,18 @@ def validate_collection(
     return len(entries)
 
 
-def validate_device(path: Path) -> tuple[str, str | None, int, int]:
+def validate_device(path: Path) -> tuple[str, str | None, int, str, int, int]:
     data = load_yaml(path)
     claim_states = evidence_claim_states(data)
     overall_state, strongest_claim_state = gate_overall_state(
+        data,
+        claim_states=claim_states,
+    )
+    execution_count = validate_execution_surfaces(
+        data,
+        claim_states=claim_states,
+    )
+    recovery_state = validate_recovery_summary(
         data,
         claim_states=claim_states,
     )
@@ -210,7 +275,14 @@ def validate_device(path: Path) -> tuple[str, str | None, int, int]:
         collection_name="states",
         claim_states=claim_states,
     )
-    return overall_state, strongest_claim_state, recovery_count, locality_count
+    return (
+        overall_state,
+        strongest_claim_state,
+        execution_count,
+        recovery_state,
+        recovery_count,
+        locality_count,
+    )
 
 
 def main() -> int:
@@ -220,6 +292,7 @@ def main() -> int:
         return 1
 
     errors: list[str] = []
+    execution_surfaces = 0
     recovery_entries = 0
     locality_entries = 0
     positive_overall_records = 0
@@ -228,7 +301,15 @@ def main() -> int:
     for path in device_paths:
         rel = path.relative_to(ROOT)
         try:
-            overall_state, strongest_claim_state, recovery_count, locality_count = validate_device(path)
+            (
+                overall_state,
+                strongest_claim_state,
+                execution_count,
+                recovery_state,
+                recovery_count,
+                locality_count,
+            ) = validate_device(path)
+            execution_surfaces += execution_count
             recovery_entries += recovery_count
             locality_entries += locality_count
             if strongest_claim_state is None:
@@ -241,6 +322,8 @@ def main() -> int:
                 )
             print(
                 f"PASS {rel}: {evidence_summary}; "
+                f"{execution_count} execution surface(s), "
+                f"recovery_summary={recovery_state}, "
                 f"{recovery_count} recovery path(s), {locality_count} locality state(s)"
             )
         except (ValidationError, OSError) as exc:
@@ -252,6 +335,7 @@ def main() -> int:
         f"{len(device_paths)} device record(s): "
         f"{positive_overall_records} positive overall state(s), "
         f"{non_promoting_overall_records} non-promoting overall state(s), "
+        f"{execution_surfaces} execution surface(s), "
         f"{recovery_entries} recovery path(s), {locality_entries} locality state(s)."
     )
 
@@ -262,8 +346,8 @@ def main() -> int:
         return 1
 
     print(
-        "All positive record summaries and structured recovery/locality truth states "
-        "are supported by equal-or-stronger positive evidence claims."
+        "All positive record summaries, execution/recovery summaries, and structured "
+        "recovery/locality truth states stay within the available positive evidence ceiling."
     )
     return 0
 
