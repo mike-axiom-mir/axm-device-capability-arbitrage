@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    19 / 25
-Categories: 19 distinct / 8 required
+Devices:    20 / 25
+Categories: 20 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -48,6 +48,7 @@ A device counts when it has:
 | 17 | Grandstream GXV3370 | Enterprise IP video phone / desk endpoint | Manufacturer-supported Android 7 application development/deployment with administrator-controlled third-party app admission; Safe Mode, factory reset and SD-card firmware recovery remain distinct | DOCUMENTED | No | `devices/grandstream/gxv3370.yaml` |
 | 18 | Critter & Guitari Organelle S2 | Programmable musical instrument / audio processor | Manufacturer-supported Pure Data patch authoring plus Linux terminal/compile access; OS and patch state live on a removable microSD root disk with destructive official re-image and retainable prior-media path | DOCUMENTED | No | `devices/critter-and-guitari/organelle-s2.yaml` |
 | 19 | Texas Instruments TI-Nspire CX II-T | Graphing calculator / programmable handheld | Manufacturer-supported Python + TI-Basic execution; visible Press-to-Test/exam mode can temporarily block pre-existing programs/documents while session-created data is deleted on exit | DOCUMENTED | No | `devices/texas-instruments/ti-nspire-cx-ii-t.yaml` |
+| 20 | Google Nest Mini (2nd gen) / H2C | Smart speaker / voice assistant | Manufacturer-supported Local Home SDK TypeScript/JavaScript executes on-device in a Chrome sandbox; demand-loaded lifecycle and cloud-linked integration remain separate from host ownership | DOCUMENTED | No | `devices/google/nest-mini-2nd-gen-h2c.yaml` |
 
 ## Category coverage
 
@@ -70,6 +71,7 @@ A device counts when it has:
 - [x] Enterprise IP video phone / desk endpoint
 - [x] Programmable musical instrument / audio processor
 - [x] Graphing calculator / programmable handheld
+- [x] Smart speaker / voice assistant
 - [ ] Other / unknown category
 
 Only eight categories are required for Milestone 01. New records should now optimize for **evidence diversity and model pressure**, not category-count padding.
@@ -102,6 +104,8 @@ The enterprise IP video-phone / desk-endpoint slot is now represented by Grandst
 The programmable musical-instrument / audio-processor slot is now represented by Critter & Guitari Organelle S2. Its value is not simply Linux in an instrument: the manufacturer documents user-authored patch execution plus console/compile access while leaving privilege unproven, and the removable microSD root disk creates a recovery case where re-imaging the chosen target is destructive even though an untouched prior OS card can be retained physically.
 
 The programmable graphing-calculator slot is now represented by Texas Instruments TI-Nspire CX II-T. Its value is not merely Python-on-a-calculator: TI documents a visible Press-to-Test/exam policy mode that can make pre-existing programs/documents temporarily inaccessible without deleting that prior state, while data created during the restricted session is deleted on exit. This adds an operational-mode capability-state pressure case distinct from persistent firmware, update persistence, developer-session expiry, and destructive recovery.
+
+The smart-speaker / voice-assistant slot is now represented by Google Nest Mini H2C. Its value is not merely that JavaScript runs on a speaker: Google documents Local Home code executing on-device while also documenting a sandboxed, demand-loaded lifecycle, cloud SYNC/account linkage and cloud fallback. That keeps execution locus separate from arbitrary host authority, persistent service semantics and whole-system offline operation.
 
 ## Schema pressure learned so far
 
@@ -472,6 +476,8 @@ The Organelle S2 is not added merely because it has Linux, 1 GB RAM, local netwo
 
 The TI-Nspire CX II-T is not added merely because it runs Python and TI-Basic. Networking, privilege, unattended boot, custom-service autostart, wall/charging power, battery-life cost, market cost and registry-workload compatibility are unverified, while Press-to-Test/exam mode shows that persisted programs are not necessarily accessible in every operational state.
 
+The Nest Mini H2C is not added merely because Google documents on-device JavaScript/TypeScript and a 1.6 W standardized networked-standby result. The proven runtime is a sandboxed, demand-loaded Local Home fulfillment surface coupled to Cloud-to-cloud/account state; arbitrary persistent registry service execution, WAN-independent operation, registry-workload power, cold-boot persistence and exact-H2C acquisition economics remain unproven.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -494,6 +500,7 @@ The milestone should answer:
 14. Can execution authority inside one subsystem remain distinct from authority over a safety-critical parent machine?
 15. Can recovery distinguish destructive impact on the selected removable boot medium from the separate ability to retain an earlier boot medium intact?
 16. Can operational policy modes temporarily suppress access to persisted capability without being confused with deletion, firmware-state change, or recovery?
+17. Can on-device developer execution remain distinct from arbitrary host ownership, persistent service semantics, and whole-system WAN independence when the platform is sandboxed and vendor-orchestrated?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

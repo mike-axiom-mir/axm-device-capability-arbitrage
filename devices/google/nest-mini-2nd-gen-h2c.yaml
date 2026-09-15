@@ -1,0 +1,283 @@
+schema_version: "0.1"
+record_id: google-nest-mini-2nd-gen-h2c
+
+identity:
+  manufacturer: Google
+  model: Nest Mini (2nd gen)
+  common_name: Google Nest Mini 2nd Gen
+  marketed_category: smart_speaker_voice_assistant
+  hardware_revision: H2C
+  release_period: unknown
+  configuration_scope:
+    model_code: H2C
+    note: "This record is scoped to Google Nest Mini (2nd gen) model H2C. It does not cover Google Home Mini (1st gen), Nest Audio, or Nest Hub products."
+
+compute:
+  soc: unknown
+  architecture: 64_bit_ARM
+  cpu: quad_core_1_4_ghz
+  cpu_cores: 4
+  clock_mhz: 1400
+  accelerator:
+    gpu: unknown
+    npu: unknown
+    dsp: unknown
+  notes:
+    - "Google's current Nest Mini specification documents a quad-core 64-bit ARM CPU at 1.4 GHz and a high-performance ML hardware engine but does not identify the SoC in the sources used here."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  removable_storage:
+    present: unknown
+  notes:
+    - "No exact-model RAM or writable-storage capacity is asserted from the sources used in this record."
+
+execution:
+  surfaces:
+    - type: script_runtime
+      environment: Google_Local_Home_SDK_Chrome_sandbox
+      version: "Chrome M80+ / ECMAScript ES2018 per current Local Home documentation"
+      custom_code: true
+      locus: on_device
+      privilege: sandboxed
+      access_method: Google_Home_Cloud_to_cloud_integration_with_Local_Home_enabled
+      state: DOCUMENTED
+      source_claim_ids:
+        - local_home_sdk_on_device_execution
+      admission:
+        developer_project_required: true
+        cloud_to_cloud_integration_required: true
+        account_linking_required: true
+      lifecycle:
+        loading: on_demand
+        may_terminate_under_memory_pressure: true
+        restart_trigger: new_intents_when_resources_permit
+        idle_unload: documented
+      notes:
+        - "Google documents that supported Home/Nest devices load and run the developer's TypeScript/JavaScript local fulfillment app on-device; Nest Mini is explicitly listed with a Chrome runtime."
+        - "This is not arbitrary native-code or shell execution. Production execution is a Google-hosted JavaScript sandbox tied to an admitted Cloud-to-cloud integration."
+        - "Google documents cloud fulfillment as fallback when local fulfillment fails, and the Local Home platform depends on cloud SYNC/account-linked integration state."
+        - "The local fulfillment app is loaded on demand, can be terminated for memory pressure, and is not evidence of an always-running user service."
+
+connectivity:
+  ethernet: unknown
+  wifi:
+    present: true
+    standards:
+      - 802.11b
+      - 802.11g
+      - 802.11n
+      - 802.11ac
+    bands:
+      - 2.4_GHz
+      - 5_GHz
+  bluetooth:
+    present: true
+    version: "5.0"
+  usb:
+    present: unknown
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "Google documents local-fulfillment communication to smart-home devices over LAN using HTTP, TCP, or UDP through the sandbox API. This does not establish unrestricted raw-network or host-network authority."
+
+inputs:
+  sensors:
+    - type: capacitive_touch
+      accessible_to_custom_code: unknown
+    - type: ultrasound_sensing
+      accessible_to_custom_code: unknown
+  microphones:
+    - type: three_far_field_microphones
+      accessible_to_custom_code: unknown
+  controls:
+    - capacitive_touch
+    - physical_microphone_switch
+  notes:
+    - "Physical sensor/microphone presence does not establish Local Home SDK access to those inputs."
+
+outputs:
+  speaker:
+    present: true
+    type: 40_mm_driver_360_degree_sound
+    custom_audio_verified: unknown
+  display:
+    present: unknown
+  leds: present_but_custom_control_unknown
+  motors: []
+  relays: []
+
+power:
+  source:
+    battery: false
+    external_power: true
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  standardized_measurements:
+    - id: eu_networked_standby_mic_muted
+      metric: networked_standby_power
+      watts: 1.6
+      input_condition: "230 V AC, 50 Hz"
+      test_condition: "EN 50564:2011; microphone switch set to mute"
+      measurement_kind: manufacturer_standardized_test
+      locally_measured: false
+      state: DOCUMENTED
+      source_claim_ids:
+        - eu_networked_standby_1_6w
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "Google also lists a 15 W / 15.4 W external power supply rating. Supply rating is not substituted for device consumption."
+    - "The 1.6 W figure is preserved only as Google's standardized networked-standby result for the documented test condition; it is not generic idle power and not a Local Home workload measurement."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "Local Home code is loaded on demand by the platform; no evidence here establishes arbitrary custom service autostart after cold power loss."
+
+recovery:
+  factory_reset: true
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: official_factory_reset
+      from_state: configured_nest_mini
+      target_state: factory_default_setup_state
+      method: microphone_off_then_center_press_hold
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: unknown
+      source_claim_ids:
+        - official_factory_reset
+      notes:
+        - "Google says factory reset clears data from the device and cannot be undone."
+        - "This path does not establish low-level firmware recovery, bootloader recovery, or recovery of developer-cloud/account state."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: unknown
+  notes:
+    - "The Local Home surface performs LAN fulfillment locally, but Google's documented architecture still uses prior cloud SYNC/account-linked integration state and cloud fallback."
+    - "A local execution step must not be inflated into a claim that the full Nest Mini, Assistant flow, provisioning, or developer integration is WAN-independent."
+
+economics:
+  market_region: NL
+  checked_at: "2026-09-15"
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - Google_Home_Developer_project_for_Local_Home_development
+    - development_machine_for_TypeScript_or_JavaScript_tooling
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "Tweakers Pricewatch and Vraag & Aanbod were checked for Dutch context. Current listings identify Nest Mini 2nd-generation units but the sampled listing text does not expose exact H2C model code, so no exact-model used-price cohort is promoted here."
+    - "Observed Tweakers asking prices are market leads, not transaction prices or a stable H2C distribution."
+
+roles:
+  - role: local_smart_home_fulfillment_host
+    confidence: high
+    reason: "Google explicitly supports Nest Mini as an on-device Chrome runtime for Local Home SDK TypeScript/JavaScript fulfillment, within the documented integration sandbox and lifecycle."
+  - role: voice_audio_endpoint
+    confidence: high
+    reason: "Google documents the speaker, microphones, Wi-Fi/Bluetooth and product role, but arbitrary custom microphone/audio authority is not inferred."
+  - role: general_purpose_script_host
+    confidence: low
+    reason: "The proven script runtime is admission-controlled, Google-orchestrated, demand-loaded and scoped to Local Home fulfillment rather than arbitrary persistent programs."
+  - role: low_power_local_registry
+    confidence: low
+    reason: "A 1.6 W standardized networked-standby result does not prove registry-workload power, arbitrary service execution, WAN-independent behavior or reboot persistence."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-15"
+  claims:
+    - id: exact_model_h2c_identity
+      state: DOCUMENTED
+      source: "https://support.google.com/store/answer/6160585?hl=en-GB"
+      proves:
+        - "Google Nest Mini (2nd gen) has model name H2C"
+        - "H2C is a Google LLC product with 100-240 V AC rated input and 15 W rated power-consumption specification on this regulatory-information page"
+        - "H2C is documented with 802.11b/g/n/ac Wi-Fi, capacitive touch, a 40 mm speaker, three far-field microphones and a DC power jack"
+      does_not_prove:
+        - "generic idle or active wall power"
+        - "RAM or writable storage capacity"
+        - "root, shell, bootloader or arbitrary package authority"
+    - id: exact_generation_hardware_specs
+      state: DOCUMENTED
+      source: "https://support.google.com/googlehome/answer/7072284?hl=en-AU"
+      proves:
+        - "Nest Mini (2nd gen) has 2.4/5 GHz 802.11b/g/n/ac Wi-Fi, Bluetooth 5.0 and Google Cast"
+        - "Nest Mini (2nd gen) has a quad-core 64-bit ARM CPU at 1.4 GHz and a high-performance ML hardware engine"
+        - "Nest Mini (2nd gen) has capacitive touch controls, three far-field microphones, ultrasound sensing and a 40 mm driver"
+      does_not_prove:
+        - "developer access to microphones, ultrasound sensing or every hardware interface"
+        - "SoC model, RAM amount or writable storage capacity"
+        - "root or unrestricted host administration"
+    - id: local_home_sdk_on_device_execution
+      state: DOCUMENTED
+      source: "https://developers.home.google.com/local-home/overview"
+      proves:
+        - "Local Home SDK lets developers write TypeScript or JavaScript local fulfillment applications"
+        - "supported Google Home/Nest devices load and run the local fulfillment application on-device"
+        - "Nest Mini is explicitly listed as a supported Speaker using a Chrome runtime"
+        - "the production local fulfillment app runs in a secure JavaScript sandbox and can communicate with local smart devices over HTTP, TCP or UDP"
+        - "the local app is demand-loaded, may be terminated for memory pressure, and cloud fulfillment is used as fallback when local fulfillment fails"
+      does_not_prove:
+        - "root, administrator, shell, native-binary or bootloader authority"
+        - "an always-running persistent custom service"
+        - "microphone access from the Local Home SDK app"
+        - "full WAN-independent Assistant or provisioning operation"
+    - id: eu_networked_standby_1_6w
+      state: DOCUMENTED
+      source: "https://support.google.com/product-documentation/answer/9851803?hl=en"
+      proves:
+        - "Google's EU test summary identifies Nest Mini (2nd gen) model H2C"
+        - "the exact model records 1.6 W networked-standby power at 230 V 50 Hz for Wi-Fi 2.4 GHz, Wi-Fi 5 GHz and Bluetooth under the stated EN 50564:2011 test with the microphone switch muted"
+        - "external power-supply models G1029 and G1030 are listed with 14.0 V DC 1.1 A / 15.4 W output"
+      does_not_prove:
+        - "AXM local power measurement"
+        - "generic idle power with microphone enabled"
+        - "Local Home SDK workload power"
+        - "active audio power or worst-case power"
+    - id: official_factory_reset
+      state: DOCUMENTED
+      source: "https://support.google.com/googlehome/answer/7073477?hl=en"
+      proves:
+        - "Google provides an official physical factory-reset sequence for Nest Mini (2nd gen)"
+        - "factory reset returns the speaker to factory defaults and clears data from the device"
+      does_not_prove:
+        - "low-level firmware image recovery"
+        - "bootloader recovery"
+        - "preservation or restoration of developer-cloud, Home Graph or account state"
+
+notes:
+  - "This record promotes the previously documented Nest Mini H2C execution-locus pressure case into the census because exact identity, on-device developer execution, recovery, explicit unknowns, economics state and role mapping are now all preserved."
+  - "The strongest new lesson is that real on-device custom code can still be vendor-orchestrated, sandboxed, demand-loaded and coupled to cloud integration state; on-device locus does not imply arbitrary host ownership or WAN independence."
+  - "No AXM physical H2C unit was inspected. No Local Home app was deployed locally, no factory reset was performed, and no wall-power measurement or exact-H2C transaction-price sample was collected."
