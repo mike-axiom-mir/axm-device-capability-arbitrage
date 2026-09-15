@@ -32,6 +32,9 @@ jobs:
       - name: Validate evidence packet synchronization
         run: python tools/validate_evidence_packets.py
 
+      - name: Validate evidence source continuity
+        run: python tools/validate_evidence_source_continuity.py
+
       - name: Gate structured evidence strength
         run: python tools/validate_structured_evidence_strength.py
 
