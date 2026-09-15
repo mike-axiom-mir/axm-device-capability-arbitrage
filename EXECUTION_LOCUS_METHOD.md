@@ -1,6 +1,6 @@
-# Execution Locus Method — v0.1
+# Execution Locus Method — v0.2
 
-**Status:** Evidence-backed research method, intentionally not yet a frozen schema extension.  
+**Status:** Evidence-backed additive v0.1 schema extension; optional, mechanically gated when present.  
 **Checked:** 2026-09-15  
 **Purpose:** Prevent a developer extension surface from being silently promoted into on-device custom-code execution when the developer-controlled code actually runs somewhere else.
 
@@ -14,9 +14,33 @@ That creates a separate question from privilege, application admission, locality
 
 > **Where does the developer-controlled code actually execute?**
 
-The repository already distinguishes application execution from root authority, and local runtime from vendor-cloud dependence. This method adds a narrower truth boundary for platforms where the human-facing device is an endpoint into a remotely executed extension system.
+The repository already distinguishes application execution from root authority, and local runtime from vendor-cloud dependence. Execution locus is narrower: it describes where the developer-controlled logic for one execution surface actually runs.
 
-A useful first vocabulary for research is:
+Two independent platform families now pressure the same distinction:
+
+- Amazon Alexa custom skills: developer logic is hosted in AWS Lambda or an HTTPS service rather than being established as code running on the Echo endpoint;
+- Google Home / Nest smart-home integrations: Cloud-to-cloud fulfillment runs in a developer cloud, while Local Home SDK can run a developer JavaScript/TypeScript fulfillment app on supported Google Home or Nest devices, including Nest Mini.
+
+That independent repetition is enough to test the smallest reusable additive machine field without forcing older records to migrate.
+
+---
+
+## 2. Optional machine-readable field
+
+Execution locus belongs to an individual execution surface, not to the device globally:
+
+```yaml
+execution:
+  surfaces:
+    - type: local_home_sdk
+      environment: chrome_sandbox
+      custom_code: true
+      locus: on_device
+      privilege: sandboxed
+      state: DOCUMENTED
+```
+
+Allowed values:
 
 ```text
 on_device
@@ -25,13 +49,37 @@ split
 unknown
 ```
 
-These labels are research descriptors only for now. Do not bulk-migrate existing device records and do not make them mandatory after one pressure case.
+Semantics:
+
+- `on_device` — the evidence establishes that developer-controlled code for this surface executes on the recorded physical device;
+- `remote_service` — the developer-controlled logic for this surface executes somewhere else; the endpoint may mediate input/output but this surface does not establish endpoint custom-code execution;
+- `split` — the documented surface contains both endpoint-local and remote developer-controlled execution as one coupled path;
+- `unknown` — the developer extension exists, but the evidence does not establish where its developer-controlled logic executes.
+
+`locus` is optional. Existing records remain valid without it. Do not bulk-migrate records merely to fill the field.
+
+### `custom_code` relation
+
+Within a physical-device record, `custom_code` continues to mean developer/user-controlled code executing on that recorded device.
+
+Therefore, when `locus` is present:
+
+```text
+locus: on_device     -> custom_code must be true
+locus: split         -> custom_code must be true
+locus: remote_service -> custom_code must not be true
+locus: unknown       -> custom_code must not be true
+```
+
+This is intentionally conservative. A remote webhook is real programmable behavior, but it must not satisfy a capability contract that requires local code execution on the endpoint.
+
+The mechanical gate is `tools/validate_execution_locus.py`; its regression test is `tools/test_execution_locus.py`.
 
 ---
 
-## 2. Core rule
+## 3. Core truth rule
 
-A documented extension, plugin, skill, action, automation, or integration surface does **not** prove on-device custom-code execution by itself.
+A documented extension, plugin, skill, action, automation, integration, or webhook does **not** prove on-device custom-code execution by itself.
 
 Before a capability contract treats a device as a custom-code host, identify the execution locus of the developer-controlled logic.
 
@@ -46,23 +94,15 @@ cloud service receives endpoint requests
   -> on-device arbitrary/custom execution remains unproven
 ```
 
-Do not solve this ambiguity by setting `custom_code: true` on the physical endpoint unless exact evidence proves that some developer-controlled code actually executes there.
+Do not solve this ambiguity by setting `custom_code: true` unless exact evidence proves that some developer-controlled code actually executes on the recorded physical device.
 
-Likewise, do not set `custom_code: false` for the entire physical machine merely because one supported extension model is remote. A remote extension architecture does not prove that no other local execution surface exists.
-
-The safe state is often:
-
-```text
-supported developer extension: documented
-extension execution locus: remote_service
-on-device custom-code execution: unknown / not established by this evidence
-```
+Likewise, proving one remote extension path does **not** prove that the whole physical machine lacks every possible local execution surface. Keep unresearched surfaces unknown.
 
 ---
 
-## 3. First pressure case — Amazon Echo Dot (5th Generation), C2N6L4
+## 4. First pressure case — Amazon Echo Dot (5th Generation), C2N6L4
 
-This device is **not being added to the census in this activation**. The point of the case is to pressure the research model without forcing a misleading device record.
+This device is **not counted in the census** from this research alone. The point of the case is to preserve the difference between a programmable user experience and endpoint-local execution.
 
 ### Exact hardware identity
 
@@ -81,28 +121,26 @@ Primary source, checked 2026-09-15:
 
 Truth boundary:
 
-- the 15 W figure is an **adapter output rating**, not a measured device idle/load value;
+- the 15 W figure is an adapter/output rating, not a measured idle/load value;
 - it must not be copied into `idle_watts` or `active_watts`;
 - CPU, RAM, persistent-storage size, privilege, bootloader access and arbitrary local execution are not established by this source.
 
 ### Provisioning and cloud boundary
 
-Amazon's exact-generation setup page says setup requires an Amazon account and an internet connection/Wi-Fi, and uses the Alexa app. It also states that when the blue indicator is active, Alexa is listening and processing the request in Amazon's secure cloud.
+Amazon's exact-generation setup page says setup requires an Amazon account and an internet connection/Wi-Fi, and uses the Alexa app. It also says Alexa requests are processed in Amazon's cloud.
 
 Primary source, checked 2026-09-15:
 
 - https://digprjsurvey.amazon.com/csad/help/node/TdLI5SX5VhnxC6x6Ct
 
-This supports a documented account/internet dependency for normal setup and cloud processing for Alexa requests. It does **not** prove that every hardware function is unavailable offline, so a future device record should not flatten the whole endpoint into `offline_operation: false` without a broader exact-model locality study.
+This supports account/internet dependency for normal setup and cloud processing for Alexa requests. It does **not** prove that every hardware function is unavailable offline.
 
 ### Developer extension architecture
 
-Amazon's Alexa Skills Kit documentation is explicit that a custom skill's developer-controlled service is cloud-based. Amazon documents two supported hosting patterns:
+Amazon's Alexa Skills Kit documentation says a custom skill's developer-controlled service is hosted through either:
 
 - AWS Lambda; or
 - an HTTPS web service endpoint.
-
-Alexa sends requests to that service; the service code performs the developer logic and sends a response back.
 
 Primary sources, checked 2026-09-15:
 
@@ -110,11 +148,11 @@ Primary sources, checked 2026-09-15:
 - https://developer.amazon.com/en-US/docs/alexa/custom-skills/understanding-custom-skills.html
 - https://developer.amazon.com/en-US/docs/alexa/build/build-your-skill-overview.html
 
-Therefore the supported custom-skill path establishes:
+The supported custom-skill path therefore establishes:
 
 ```text
 Echo / Alexa endpoint
-  -> captures/mediates user interaction
+  -> captures or mediates interaction
   -> Alexa service invokes developer endpoint
   -> developer-controlled skill logic executes in Lambda or HTTPS service
   -> response returns through Alexa
@@ -131,9 +169,7 @@ boot persistence for user code
 WAN-independent custom-skill operation
 ```
 
-This is the key model pressure:
-
-> **A programmable user experience can be real while the developer's program does not run on the endpoint hardware.**
+For this surface, the grounded execution-locus descriptor is `remote_service`.
 
 ### Recovery boundary
 
@@ -142,44 +178,159 @@ Amazon documents two visible reset paths for Echo Dot generations including the 
 - Action button for 20 seconds: reset while keeping smart-home connections, then enter setup mode;
 - Volume Down + Microphone Off for 20 seconds: factory reset, erase personal information plus device/smart-home connections, then enter setup mode.
 
-Amazon also states that deregistration erases device settings.
-
 Primary source, checked 2026-09-15:
 
 - https://digprjsurvey.amazon.com/csad/help/node/GK84VTU42NKF2E8E
 
-This is useful recovery evidence, but it does not establish low-level firmware restore media, bootloader recovery, preservation of every cloud-side skill/account object, or AXM local reproduction.
+This does not establish low-level firmware restore media, bootloader recovery, preservation of every cloud-side object, or AXM local reproduction.
 
 ---
 
-## 4. Tweakers NL/EU discovery context
+## 5. Second pressure case — Google Nest Mini (2nd generation), H2C
 
-Tweakers Pricewatch is useful here as a Netherlands-facing product/variant and retail-context cross-check.
+This second independent vendor/platform case justifies making `execution.surfaces[].locus` an optional additive field that is mechanically validated when present.
 
-Checked 2026-09-15:
+It does **not** by itself justify bulk migration of older records or a universal claim that every Google/Nest extension executes locally.
 
-- https://tweakers.net/pricewatch/2303014/amazon-echo-dot-5e-generatie-blauw.html
-- https://tweakers.net/speakers/amazon/echo-dot-5e-generatie_p1664480/vergelijken/
+### Exact hardware identity and power boundary
 
-Observed scope:
+Google's device-information page identifies the Google Nest Mini (2nd gen) as model `H2C`. Google also documents the Nest Mini's 802.11b/g/n/ac Wi-Fi, Bluetooth 5.0, 40 mm driver, three far-field microphones, quad-core 64-bit ARM CPU at 1.4 GHz, and a 15 W power adapter.
+
+Primary sources, checked 2026-09-15:
+
+- https://support.google.com/store/answer/6160585?hl=en-GB
+- https://support.google.com/googlehome/answer/7072284?hl=en-AU
+
+Truth boundary:
+
+- the 15 W value is a rated consumption / adapter specification, not a locally measured idle or active result;
+- the generic device specification does not establish root, shell, bootloader access, arbitrary native package installation, unattended custom service persistence, or writable storage capacity available to developer code.
+
+### Remote developer execution — Cloud-to-cloud
+
+Google's Cloud-to-cloud smart-home model requires a developer-provided cloud fulfillment/webhook for smart-home intents. Google's documentation describes Assistant sending intents to the developer's fulfillment and the developer cloud acting on the target device.
+
+Primary sources, checked 2026-09-15:
+
+- https://developers.home.google.com/cloud-to-cloud/primer/intents
+- https://developers.home.google.com/codelabs/smarthome-local
+
+For that path:
 
 ```text
-surface: Tweakers Pricewatch
-use: variant/specification/retail-context discovery
-family shown: Echo Dot (5e generatie)
-visible variants: blue / white / black
-visible specification context: Alexa, Wi-Fi a/b/g/n/ac, mains power, adapter included
+Google Assistant / Home surface
+  -> Google cloud
+  -> developer cloud fulfillment/webhook
+  -> target smart-home device or hub
 ```
 
-Do **not** convert the currently displayed retailer offers on those aggregate Pricewatch pages into a used-market acquisition cohort or transaction-price claim. The existing market-snapshot vocabulary represents individual observations; Pricewatch remains supporting context until a dedicated aggregate/history representation exists.
+The developer-controlled fulfillment code is therefore `remote_service` with respect to the Nest Mini endpoint.
 
-No exact Echo Dot 5th Generation Vraag & Aanbod observation was collected in this activation. Do not substitute a different Echo generation/model merely to create a used-price sample.
+### On-device developer execution — Local Home SDK
+
+Google's Local Home SDK documentation independently establishes a different path. It says developers can write a local fulfillment app in TypeScript or JavaScript containing smart-home business logic, and that supported Google Home or Google Nest devices can load and run that app **on-device**. The supported-device table explicitly includes `Nest Mini` with a Chrome execution environment.
+
+Google also documents that the local app communicates with local smart devices over LAN protocols and that cloud fulfillment remains a fallback if the local path fails.
+
+Primary source, checked 2026-09-15:
+
+- https://developers.home.google.com/local-home/overview
+
+Supporting codelab, checked 2026-09-15:
+
+- https://developers.home.google.com/codelabs/smarthome-local
+
+This establishes a real on-device developer-code surface for the supported Nest Mini platform:
+
+```text
+Local Home SDK app
+  -> JavaScript / TypeScript developer logic
+  -> loaded into supported Nest Mini runtime
+  -> executes in Chrome sandbox on the device
+  -> communicates to local smart devices over LAN
+```
+
+It does **not** establish:
+
+```text
+root or administrator host authority
+arbitrary native binaries
+persistent always-running service semantics
+microphone access from the Local Home app
+bootloader access
+full WAN-independent Google Assistant operation
+locally measured power
+```
+
+Google explicitly documents lifecycle limits: the local fulfillment app is loaded on demand and may be terminated because the device is memory constrained; the platform restarts it when new intents arrive and resources permit. Execution authority and service persistence must therefore remain separate.
+
+### Why this is a stronger second case
+
+The same supported product family exposes both:
+
+```text
+Cloud-to-cloud fulfillment -> remote_service
+Local Home SDK fulfillment -> on_device
+```
+
+And the production architecture can use the cloud path as fallback when the local path fails.
+
+Therefore execution locus is not safely modeled as one device-wide property. It belongs to the execution surface or integration path.
 
 ---
 
-## 5. Research checklist for extension-capable endpoints
+## 6. Tweakers NL/EU discovery and market boundary
 
-When a device advertises skills, plugins, actions, integrations, webhooks, apps, macros, or automations, ask these separately:
+Tweakers remains useful here for Dutch variant and market discovery, but its evidence role stays bounded.
+
+### Exact-generation used-market lead
+
+Vraag & Aanbod listing checked 2026-09-15:
+
+- https://tweakers.net/aanbod/4192160/google-nest-mini-wit-2e-gen.html
+
+Observed listing facts:
+
+```text
+surface: Tweakers Vraag & Aanbod
+listing date: 2026-08-09 16:37
+seller class: private community seller
+location: Arnhem, Netherlands
+advertised product: Google Nest Mini white, 2nd generation
+condition: Nieuwstaat
+asking price: EUR 50
+shipping: excluded
+included by description: box and charger
+exact H2C model code shown in listing: no
+```
+
+This is a useful dated generation-level market observation, but it is **not** promoted into exact-model economics because the listing text does not expose model code `H2C`. Asking price is also not transaction-price truth.
+
+Tweakers product-family context:
+
+- https://tweakers.net/serie/11168/nest/
+
+That surface is useful for variant/retail discovery, not as a substitute for one seller observation or a completed transaction.
+
+Tweakers community anecdotes may still provide failure-mode or hidden-interface leads, but none are used here to establish positive execution-locus truth. The positive locus claims rest on Google developer documentation.
+
+---
+
+## 7. Recovery boundary for the second case
+
+Google's factory-reset support page documents the Nest Mini (2nd gen) reset sequence: microphone off, press the center for five seconds to begin reset, then continue for about ten more seconds until confirmation.
+
+Primary source, checked 2026-09-15:
+
+- https://support.google.com/googlehome/answer/7073477
+
+This is an official user-level reset path. It does **not** establish low-level firmware restoration, bootloader recovery, developer-project/account recovery, or preservation of cloud-side integration state. A future census record must keep those separate.
+
+---
+
+## 8. Research checklist for extension-capable endpoints
+
+When a device advertises skills, plugins, actions, integrations, webhooks, apps, macros, or automations, ask separately:
 
 1. **Endpoint identity** — exact model/revision and current software state.
 2. **Extension authoring** — can a third party create behavior at all?
@@ -187,16 +338,16 @@ When a device advertises skills, plugins, actions, integrations, webhooks, apps,
 4. **Admission** — who approves/enables the extension?
 5. **Privilege** — what authority does the extension have on the endpoint, if any?
 6. **Transport dependency** — does the extension require WAN/vendor infrastructure?
-7. **Persistence** — what survives reboot, update, account/session expiry, or vendor-side removal?
+7. **Persistence** — what survives reboot, update, account/session expiry, memory pressure, or vendor-side removal?
 8. **Recovery** — how are endpoint state and remote extension state independently restored or removed?
-9. **Economics** — account, hosting, subscription, network and maintenance cost belong in total useful cost when the developer logic is remote.
+9. **Economics** — account, hosting, subscription, network and maintenance cost belong in total useful cost when developer logic is remote.
 10. **Local verification** — only a physical/authorized experiment receipt can promote endpoint-local behavior to local verification.
 
 ---
 
-## 6. Capability-contract consequence
+## 9. Capability-contract consequence
 
-A future matcher should not satisfy an on-device execution requirement from a remote extension alone.
+A matcher must not satisfy an on-device execution requirement from a remote extension alone.
 
 Example:
 
@@ -206,49 +357,48 @@ contract requires:
   WAN-independent runtime
 
 platform proves only:
-  custom skill backed by Lambda / HTTPS service
+  remote webhook / cloud fulfillment
 
 result:
-  extension capability = real
+  programmable extension = real
   local host requirement = not proven
 ```
 
-For a different contract such as `voice endpoint for a remotely hosted workflow`, the same device may be a legitimate candidate. Capability arbitrage depends on the goal, not on whether the extension sounds like an "app."
+A different contract such as `voice endpoint for a remotely hosted workflow` may legitimately accept the same remote surface.
+
+For a supported Nest Mini Local Home SDK surface, on-device JavaScript execution is documented, but that still does not prove WAN-independent end-to-end operation, always-on service persistence, root authority, arbitrary native code, or sufficient resource headroom for an unrelated workload.
+
+Capability arbitrage depends on the exact goal, not on whether the extension sounds like an "app."
 
 ---
 
-## 7. Why the Echo Dot is not counted yet
+## 10. Migration rule
 
-The current census counting rule asks for a meaningful execution-surface finding. The C2N6L4 research clearly exposes a meaningful **developer extension** surface, but the existing v0.1 device shape can easily be read as though `execution.surfaces` describes code executing on the recorded physical machine.
+The two independent cases justify an additive field, not a migration campaign.
 
-Counting this device immediately by calling Alexa Skills `custom_code: true` would therefore create a false local-host implication.
+Use `locus` when:
 
-For now:
+- a new or edited record has evidence that materially depends on where developer code runs;
+- an existing execution surface would otherwise be easy to misread as endpoint-local;
+- a capability comparison depends on local-vs-remote execution.
 
-```text
-exact hardware identity: documented
-supported remote extension system: documented
-remote developer-code locus: documented
-on-device custom-code execution: not established
-recovery paths: documented
-local verification: none
-market cohort: not collected
-census status: intentionally not counted yet
-```
+Do not add it when evidence is weak merely to make records look complete.
 
-A second independent hardware/platform case with the same execution-locus problem would justify testing the smallest reusable additive schema shape. Until then, preserve the pressure without freezing the schema.
+Older records without `locus` remain valid. When an older record is touched for relevant evidence, annotate only the surface actually supported by the evidence.
+
+The Amazon Fire TV AFTKA APK surface is an example of a safe first annotation: Amazon documents the sideloaded APK being installed and launched on the Fire TV itself, so `locus: on_device` is grounded for that APK surface without upgrading privilege beyond the existing application-user boundary.
 
 ---
 
-## 8. Root gate
+## 11. Root gate
 
-**Truth** — do not turn a remote skill/plugin/backend into on-device custom execution; do not turn a power-adapter rating into measured consumption; unknown endpoint privilege remains unknown.  
-**Agency / non-domination** — extension/account enrollment remains explicit and user-visible; do not seek hidden persistence or unauthorized access to endpoints.  
-**Continuity** — preserve exact model, source URLs, checked dates, execution locus, cloud dependency and recovery boundaries in repo state rather than hidden chat context.  
-**Wisdom before speed** — a remote extension can be useful, but cloud/account/hosting/network dependency and recovery burden are part of total useful cost; do not count a device simply to increase census volume.
+**Truth** — do not turn a remote skill/webhook/backend into endpoint-local execution; do not turn adapter/rated power into measured consumption; per-surface locus must follow evidence.  
+**Agency / non-domination** — account linking, developer enrollment and device authorization remain visible; do not seek hidden persistence or unauthorized endpoint access.  
+**Continuity** — preserve exact model, source URLs, checked dates, per-surface execution locus, cloud dependency and recovery boundaries in repo state rather than chat memory.  
+**Wisdom before speed** — local execution can still have lifecycle, memory, cloud-fallback, account, maintenance and recovery costs; do not treat `on_device` as synonymous with unrestricted or infrastructure-suitable.
 
 ---
 
-## 9. One-line rule
+## 12. One-line rule
 
-> **A developer can control behavior through a device without their code executing on that device; record the execution locus before calling the endpoint a custom-code host.**
+> **Record where each developer-controlled execution surface actually runs; a programmable endpoint is not automatically the computer executing the program.**

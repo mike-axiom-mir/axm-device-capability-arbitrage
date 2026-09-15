@@ -26,6 +26,12 @@ jobs:
       - name: Validate device and contract records
         run: python tools/validate_records.py
 
+      - name: Test execution-locus gate
+        run: python tools/test_execution_locus.py
+
+      - name: Validate execution-locus annotations
+        run: python tools/validate_execution_locus.py
+
       - name: Validate evidence claim scope
         run: python tools/validate_evidence_claim_scope.py
 

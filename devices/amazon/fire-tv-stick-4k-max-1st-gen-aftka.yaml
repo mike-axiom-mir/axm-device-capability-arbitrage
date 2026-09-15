@@ -40,6 +40,7 @@ execution:
       environment: Fire_OS_7_Android_9_API_28
       version: Fire OS 7
       custom_code: true
+      locus: on_device
       privilege: application_user
       access_method: adb_sideload_after_user_enabled_developer_options
       state: DOCUMENTED
