@@ -1,7 +1,7 @@
 # Evidence Packet — Synology DiskStation DS220+
 
 **Device record:** `devices/synology/ds220-plus.yaml`  
-**Checked:** 2026-09-13  
+**Checked:** 2026-09-15  
 **Local verification:** No  
 **Current evidence state:** DOCUMENTED
 
@@ -15,7 +15,8 @@ That makes it useful schema pressure in several directions:
 - persistent state is a native product strength rather than an add-on;
 - power data exists from the manufacturer under a named test condition;
 - the product is discontinued while DSM updates remain supported, separating hardware lifecycle from software support;
-- recovery has different **data impact** depending on the reset path.
+- recovery has different **data impact** depending on the reset path;
+- DSM local access and Synology online-account services can now be kept separate instead of leaving vendor-cloud runtime dependence ambiguous.
 
 The most important new recovery lesson is:
 
@@ -196,6 +197,41 @@ Future recovery modeling should preserve at least:
 
 The last item remains unknown for DS220+ Mode 2 in this record and should not be guessed.
 
+## Source 6 — Local DSM access vs Synology online services
+
+Primary source:
+
+- https://global.download.synology.com/download/Document/Software/UserGuide/Os/DSM/7.2/enu/Syno_UsersGuide_NAServer_7_2_enu.pdf
+
+Supporting Container Manager source:
+
+- https://kb.synology.com/en-global/DSM/help/ContainerManager/docker_desc
+
+Checked: 2026-09-15
+
+Synology's DSM 7.2 User's Guide separates a **DSM user account**, which can sign in to DSM, from a **Synology Account**, which it describes as the account for Synology online services such as QuickConnect, DDNS and C2. After DSM installation, the same guide documents signing in from a computer on the same local network by entering the NAS IP address and port `5000` in a browser.
+
+The guide separately describes QuickConnect as an Internet-access service that can be enabled through `Control Panel > External Access > QuickConnect`. Synology's Container Manager help describes Container Manager as a DSM environment for building and running applications in isolated software containers.
+
+### What this proves
+
+- after DSM installation, DSM can be reached on the same LAN by NAS IP using a DSM user account;
+- Synology Account and DSM user accounts have different documented roles;
+- QuickConnect is a separately enabled Internet-access service rather than the only documented DSM access path;
+- Container Manager is a DSM execution environment for running containerized applications.
+
+This is sufficient to change `vendor_cloud_required_for_basic_operation` from `unknown` to `false` for the evaluated post-provisioning DSM state. It is a documentation-level claim, not local verification.
+
+### What this does not prove
+
+- first-time DSM installation can be completed with no Internet access;
+- DSM, Container Manager or container-image updates can be completed offline;
+- every container workload has no external network dependency;
+- the AXM registry workload has been run with WAN disconnected;
+- DS220+ has been locally verified by AXM.
+
+`offline_operation` therefore remains `unknown`, and `vendor_cloud_required_for_provisioning` remains `unknown`.
+
 ## Fit against the existing low-power registry contract
 
 The DS220+ is an interesting candidate for `low-power-local-registry-node` because current evidence gives it:
@@ -206,14 +242,17 @@ The DS220+ is an interesting candidate for `low-power-local-registry-node` becau
 - dual Gigabit Ethernet;
 - documented recovery;
 - manufacturer-measured power below 15 W in the cited access test;
-- power recovery / wake / scheduling features.
+- power recovery / wake / scheduling features;
+- documented basic local DSM access without requiring Synology online-account services after provisioning.
 
-However the repo should **not** mark it as a contract winner yet because the following remain ungrounded:
+The vendor-cloud hard-requirement ambiguity is therefore no longer the DS220+'s blocker at the documentation layer. The candidate is still only **conditional**, because persistent state requires separately counted drives and unattended restart depends on a suitable Power Recovery configuration.
 
-- used purchase price in the target region;
-- required drive cost;
+The repo should still **not** mark it as a contract winner because the following remain ungrounded:
+
+- required drive cost and total acquisition cost;
 - exact container autostart behavior after a hard power loss;
 - fully offline first-time provisioning/update path;
+- WAN-disconnected behavior of the actual shared registry workload;
 - actual power and RAM usage of the intended registry workload;
 - replacement availability and remaining hardware life.
 
@@ -224,28 +263,28 @@ The product may prove to be a good node, but NAS storage value can also make it 
 - exact motherboard/hardware subrevision;
 - host-shell/root execution path in the supported product model;
 - container autostart semantics across all failure modes;
-- fully offline initial provisioning;
+- fully offline initial provisioning/update;
+- WAN-disconnected behavior of the shared registry workload;
 - AXM local power measurements;
-- NL/EU used-price distribution;
-- drive cost and storage configuration;
+- drive cost and total acquisition cost;
 - remaining life of used units;
 - application/container-state survival through Mode 2 recovery;
 - low-level bootloader/serial recovery.
 
 ## Next falsifiable tests
 
-1. Collect at least 5–10 dated NL/EU used DS220+ listings and keep bare-chassis price separate from included drives.
-2. Price two minimal storage configurations and record whether drive cost destroys the apparent compute bargain.
-3. On owned hardware, install a compatible Container Manager release and preserve the package/DSM versions.
-4. Run a tiny registry container and measure RAM, CPU and disk footprint.
-5. Measure wall power with drives active, idle and hibernated; compare with Synology's published figures.
-6. Test hard power loss → Power Recovery → DSM → container restart behavior.
-7. Test Mode 2 recovery on noncritical storage and record which application/container state must be rebuilt.
-8. Compare total useful cost against Archer C7 v5 and at least one thin client using the same capability contract.
+1. Refresh/expand the dated EU DS220+ market cohort and keep bare-chassis price separate from included drives and shipping.
+2. Price a minimal supported storage configuration and record whether drive cost destroys the apparent compute bargain.
+3. On owned hardware, install the exact compatible Container Manager/DSM state and preserve versions.
+4. Run the common registry workload and measure RAM, CPU and disk footprint.
+5. Run the workload after provisioning with WAN unavailable and record exactly which local functions remain available.
+6. Measure wall power with the required drive configuration under the shared workload profile; keep Synology's published figures separate.
+7. Test hard power loss → Power Recovery → DSM → container restart behavior.
+8. Test Mode 2 recovery on noncritical storage and record which application/container state must be rebuilt.
 
 ## Root gate
 
-**Truth:** container compatibility and hardware/power claims are manufacturer-documented; local verification remains false.  
+**Truth:** the new locality claim is limited to what Synology documents: post-install local DSM access and separately enabled online services; offline provisioning, WAN-disconnected workload behavior and local verification remain unknown.  
 **Agency / non-domination:** only owned/authorized NAS hardware and storage should be modified or reset.  
-**Continuity:** the execution, lifecycle, power and recovery evidence now lives in repository state rather than temporary chat.  
-**Wisdom before speed:** the NAS is not called a bargain until drive cost, market price, power, restart behavior and opportunity cost are counted.
+**Continuity:** the execution, lifecycle, power, recovery and locality evidence now lives in repository state rather than temporary chat.  
+**Wisdom before speed:** removing one documentation blocker does not create a winner; drive cost, acquisition cost, power, restart behavior, remaining life and opportunity cost still have to be counted.
