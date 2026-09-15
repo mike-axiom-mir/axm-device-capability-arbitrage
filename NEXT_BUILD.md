@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains eighteen grounded records across eighteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, enterprise IP video phone/desk endpoint, and programmable musical instrument/audio processor. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 7 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains nineteen grounded records across nineteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, enterprise IP video phone/desk endpoint, programmable musical instrument/audio processor, and programmable graphing calculator/handheld. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 6 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; Polestar 2 MY2026 shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine; and Critter & Guitari Organelle S2 now shows that destructive factory re-imaging of a selected removable root disk can coexist with continuity through physically retaining the prior boot medium.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; Polestar 2 MY2026 shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine; Critter & Guitari Organelle S2 shows that destructive factory re-imaging of a selected removable root disk can coexist with continuity through physically retaining the prior boot medium; and Texas Instruments TI-Nspire CX II-T now shows that a persisted programming surface can be temporarily inaccessible under a visible operational policy mode without that pre-existing state being deleted.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -333,7 +333,7 @@ This is one vehicle pressure case. Preserve the local `safety_boundary` evidence
 
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 18 distinct categories. Do not pad the remaining 7 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 19 distinct categories. Do not pad the remaining 6 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
@@ -357,7 +357,9 @@ The enterprise IP video-phone / desk-endpoint slot is now represented by Grandst
 
 The programmable musical-instrument/audio-processor slot is now represented by Critter & Guitari Organelle S2. Its value is not merely Linux execution: the manufacturer documents user-authored patches, console/compile workflows and a removable microSD root disk whose official factory restore wipes the selected card while explicitly permitting a new card so the old OS can be retained.
 
-Each new record should expose something the existing eighteen do not.
+The programmable graphing-calculator slot is now represented by Texas Instruments TI-Nspire CX II-T. Its value is not merely Python/TI-Basic execution: its visible Press-to-Test/exam state can temporarily suppress access to persisted programs/documents and later restore that access, while state created during the restricted session is intentionally deleted on exit. That pressures operational-mode accessibility rather than repeating a firmware-state, update-persistence or developer-session case.
+
+Each new record should expose something the existing nineteen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -408,6 +410,25 @@ image a separate new microSD
 ```
 
 Do not flatten these into either `recovery is destructive` or `recovery preserves state`. The correct answer depends on **which medium is targeted** and whether the prior medium remains retained outside the restore operation. Preserve that distinction locally until independent hardware shows the smallest reusable schema.
+
+### Operational-mode accessibility rule learned from TI-Nspire CX II-T
+
+Installed or persisted custom code is not necessarily usable in every current operational policy state.
+
+```text
+normal calculator state
+  -> stored programs/documents accessible
+
+Press-to-Test / exam state
+  -> access to pre-existing programs/documents blocked
+  -> restriction visibly indicated
+
+exit restricted state
+  -> prior state becomes accessible again
+  -> restricted-session-created data is deleted
+```
+
+Do not turn `custom_code: true` into an unconditional claim that the code is currently available in every device mode. Keep this separate from persistent firmware state, update persistence, vendor-session lease state and recovery. One device is enough to preserve a local `operational_modes` pressure structure, not enough to freeze a universal schema.
 
 ### Physical-safety rule learned from BASICR2
 
@@ -654,6 +675,19 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market cohort only if a real capability contract makes the instrument a plausible candidate;
 - count musical-instrument opportunity cost instead of treating an already-owned programmable instrument as a free Linux node.
 
+### R. Texas Instruments TI-Nspire CX II-T
+
+- on an owned/authorized exact non-CAS CX II-T, record OS version, free storage and existing document/program state before testing;
+- reproduce one harmless Python program and one TI-Basic program and preserve a local experiment receipt without treating either runtime as shell/root authority;
+- verify the acquired OS state satisfies the manufacturer-documented Python requirement rather than assuming current capability from model identity alone;
+- enter the documented Press-to-Test/exam mode on deliberately noncritical test documents/programs and record which selected restrictions actually affect Python, TI-Basic and document access;
+- exit the mode through a documented method and verify pre-existing state becomes accessible again while separately recording the deletion of intentionally created Press-to-Test session data;
+- test Reset All Memory only on a prepared noncritical device image/state and preserve exact user/configuration/application impact;
+- test official OS reinstall only when justified on owned noncritical hardware, preserving OS version/source/hash where possible and recording unknown data impact rather than assuming preservation;
+- measure charging/idle/use power only with a defined safe method; do not infer consumption from battery presence or USB connection;
+- collect a dated NL/EU used-market cohort only if a capability contract makes the calculator relevant, preserving OS state and accessories where listings disclose them;
+- do not add it to the low-power registry comparison merely because Python exists: networking, unattended restart, service persistence, power, battery wear, privilege and workload fit are unproven.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -666,6 +700,7 @@ Do not expand the census blindly if:
 - recovery claims stop identifying which device state they apply to;
 - recovery claims hide configuration/data destruction behind a single positive boolean;
 - removable-root-media recovery is flattened so destructive impact on the selected target is confused with whether an older boot medium can be retained separately;
+- a persisted execution surface is treated as currently accessible without checking a documented operational policy mode that can temporarily suppress it;
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
 - an exact manufacturer article/order number silently assigns a higher functional-status capability to every physical unit;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
@@ -687,7 +722,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, parent-system authority inflation, recovery-target/retained-media conflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
-**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators, industrial process connections and vehicle/safety boundaries remain visibly user/operator-controlled.  
-**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/parent-system boundaries, software/security state, locality states, recovery target/retained-media distinctions, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, removable-media recovery flexibility, renewable developer access and cheap listings must be weighed against installation, recovery, update/session durability, opportunity cost, electricity, physical/industrial/vehicle safety and interference with the device's primary useful role.
+**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, parent-system authority inflation, operational-mode accessibility inflation, recovery-target/retained-media conflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root/exam-mode access stays consent-visible; cameras add privacy/recording consent; physical actuators, industrial process connections and vehicle/safety boundaries remain visibly user/operator-controlled.  
+**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/parent-system/operational-mode boundaries, software/security state, locality states, recovery target/retained-media distinctions, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, removable-media recovery flexibility, renewable developer access, temporary policy-mode restrictions and cheap listings must be weighed against installation, recovery, update/session/mode durability, opportunity cost, electricity, battery wear, physical/industrial/vehicle safety and interference with the device's primary useful role.

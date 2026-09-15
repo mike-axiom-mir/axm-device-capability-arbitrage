@@ -1,0 +1,304 @@
+schema_version: "0.1"
+record_id: texas-instruments-ti-nspire-cx-ii-t
+
+identity:
+  manufacturer: Texas Instruments
+  model: TI-Nspire CX II-T
+  common_name: TI-Nspire CX II-T
+  marketed_category: graphing_calculator
+  hardware_revision: unknown
+  lifecycle: current_product_family
+  notes:
+    - "This record is scoped to the non-CAS TI-Nspire CX II-T handheld. TI's Dutch product/specification pages distinguish it from the TI-Nspire CX II-T CAS."
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  notes:
+    - "No exact-model manufacturer CPU/SoC architecture claim was collected in this activation."
+
+memory:
+  ram_mb: 64
+  internal_persistent_storage_mb: unknown
+  documented_storage_memory_min_mb: 90
+  removable_storage:
+    present: unknown
+    types: unknown
+  notes:
+    - "Texas Instruments specifies 64 MB 'besturingsgeheugen' (operating memory) and 90+ MB storage memory for the CX II-T / CX II-T CAS family."
+    - "The schema keeps internal_persistent_storage_mb unknown because the manufacturer states 90+ MB rather than one exact capacity."
+
+execution:
+  surfaces:
+    - type: script_runtime
+      environment: TI_Nspire_Python
+      version: software_state_dependent
+      custom_code: true
+      privilege: unknown
+      access_method: manufacturer_supported_python_programming_environment
+      state: DOCUMENTED
+      availability_notes:
+        - "Texas Instruments' exact CX II-T product page documents Python programming on the handheld."
+        - "TI's CX II getting-started guidance says Python capability is installed and ready when the handheld OS version is greater than 5.2; the OS version of any acquired unit must therefore be recorded rather than assumed."
+        - "Press-to-Test / Dutch exam mode can temporarily block access to existing programs/documents; successful programming capability in normal mode must not be treated as unconditional access in every operating mode."
+      notes:
+        - "Manufacturer-supported Python execution does not establish native-binary execution, shell, root, kernel, bootloader, or unrestricted package installation."
+    - type: script_runtime
+      environment: TI_Basic
+      version: unknown
+      custom_code: true
+      privilege: unknown
+      access_method: manufacturer_supported_programming_environment
+      state: DOCUMENTED
+      availability_notes:
+        - "Texas Instruments documents TI-Basic as one of two programming languages available on the exact CX II-T product family."
+        - "Press-to-Test / exam mode can block access to existing programs and documents until the mode is exited."
+      notes:
+        - "TI-Basic execution is an application-level programming surface; host privilege is not inferred."
+
+operational_modes:
+  - id: normal_mode
+    state: DOCUMENTED
+    access_to_preexisting_documents_and_programs: true
+    source_claim_ids:
+      - official_exam_mode_access_boundary
+    notes:
+      - "Normal access is the reference state before Press-to-Test/exam-mode restrictions are enabled."
+  - id: press_to_test_exam_mode
+    state: DOCUMENTED
+    reversible: true
+    visibly_indicated: true
+    access_to_preexisting_documents_and_programs: false
+    exit_effects:
+      preexisting_documents_and_programs: access_restored
+      press_to_test_session_created_data: erased
+    source_claim_ids:
+      - official_exam_mode_access_boundary
+    notes:
+      - "TI documents exam/Press-to-Test as a visible temporary restriction state rather than a permanent deletion of pre-existing documents/programs."
+      - "The US CX II exam guide states that data created while in Press-to-Test is permanently deleted when the mode is exited."
+      - "This local structure records one pressure case only; it is not a frozen universal operational-mode schema."
+
+connectivity:
+  ethernet: unknown
+  wifi: unknown
+  bluetooth: unknown
+  nfc: unknown
+  usb:
+    present: true
+    connector: unknown
+    documented_functions:
+      - computer_connection
+      - handheld_to_handheld_or_computer_exam_mode_exit
+      - official_os_transfer
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "USB computer connectivity is manufacturer-documented. No Wi-Fi, Bluetooth, Ethernet, serial, or GPIO capability is inferred from product class."
+
+inputs:
+  sensors: []
+  controls:
+    - physical_keyboard
+    - touchpad
+  external_sensor_support:
+    state: DOCUMENTED
+    notes:
+      - "TI documents compatibility with the TI-Nspire Lab Cradle, Vernier EasyLink USB Sensor and Vernier EasyTemp systems for data collection."
+      - "This does not establish arbitrary raw sensor access from every Python/TI-Basic program."
+
+outputs:
+  display:
+    present: true
+    resolution: "320x240"
+    color_depth: "16-bit"
+    custom_rendering_verified: unknown
+  speaker: unknown
+  leds:
+    present: true
+    documented_exam_mode_indicator: true
+  motors: []
+  relays: []
+
+power:
+  source:
+    battery: true
+    external_power: unknown
+  battery_type: rechargeable_manufacturer_included
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  notes:
+    - "The manufacturer documents an included rechargeable battery. No battery capacity, charging power, idle draw, workload draw, or always-on measurement is promoted here."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "Normal handheld startup and Press-to-Test reboot behavior do not establish unattended infrastructure boot or custom-code autostart."
+
+recovery:
+  factory_reset: true
+  official_restore: true
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: true
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: reset_all_memory
+      from_state: user_configured_handheld
+      target_state: factory_default_settings
+      method: manufacturer_reset_all_memory
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: unknown
+      source_claim_ids:
+        - official_reset_all_memory
+      notes:
+        - "TI says Resetting All Memory restores default settings and permanently removes user-saved data."
+        - "The cited page does not establish firmware/OS reinstallation or the exact disposition of every system application, so application_state remains unknown."
+    - id: official_os_reinstall_over_usb
+      from_state: os_not_found_or_reinstall_required
+      target_state: official_os_installed
+      method: transfer_official_ti_nspire_os_from_computer_over_usb
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - official_os_reinstall_path
+      notes:
+        - "TI's CX/CX II-T support article documents downloading the correct official OS and transferring it from computer connectivity software to the handheld over USB."
+        - "The support article does not establish preservation or erasure of user data/configuration during this recovery path, so all data-impact fields remain unknown."
+  notes:
+    - "Press-to-Test exit is modeled as an operational-mode transition, not as device recovery."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: unknown
+  offline_operation: unknown
+  notes:
+    - "The handheld clearly executes local programs, but this activation did not collect an exact-source locality study covering provisioning, updates, all Python/TI-Basic dependencies, or every normal operation. The locality summary therefore remains unknown rather than being inflated from on-device execution."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools: []
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU acquisition cohort was collected in this activation. Current retail availability is not converted into a stable market-price claim."
+
+roles:
+  - role: programmable_graphing_calculator
+    confidence: high
+    reason: "The exact product is a graphing handheld with manufacturer-supported Python and TI-Basic programming environments."
+  - role: portable_programming_learning_endpoint
+    confidence: high
+    reason: "Texas Instruments explicitly positions the CX II-T as a handheld Python/TI-Basic programming platform."
+  - role: portable_science_data_collection_endpoint
+    confidence: medium
+    reason: "The exact product family documents DataQuest and supported external sensor systems, but custom-program access to every sensor capability is not established here."
+  - role: always_on_infrastructure_node
+    confidence: low
+    reason: "Networking, unattended boot, service autostart, wall power, battery wear, privilege, and persistent-service behavior are unverified."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-15"
+  claims:
+    - id: official_hardware_and_programming_specification
+      state: DOCUMENTED
+      source: "https://education.ti.com/nl/producten/rekenmachines/grafische-rekenmachines/ti-nspire-cx-ii-cx-ii-cas/specifications"
+      additional_sources:
+        - "https://education.ti.com/nl/producten/rekenmachines/grafische-rekenmachines/ti-nspire-cx-ii-cx-ii-cas"
+      proves:
+        - "Texas Instruments distinguishes the TI-Nspire CX II-T from the TI-Nspire CX II-T CAS in the current Dutch product family"
+        - "the CX II-T family specification lists 64 MB operating memory and 90+ MB storage memory"
+        - "the specification lists an included rechargeable battery, a USB computer-connection port, and a 320x240 color display"
+        - "Texas Instruments documents Python and TI-Basic as programming languages on the CX II-T family"
+        - "the specification documents supported external data-collection systems including TI-Nspire Lab Cradle and Vernier USB/temperature sensors"
+      does_not_prove:
+        - "CPU or SoC architecture"
+        - "root, shell, kernel, bootloader, or native-binary execution"
+        - "exact writable storage capacity on an acquired unit"
+        - "wall-power consumption or always-on suitability"
+        - "NL/EU acquisition price"
+    - id: official_python_os_dependency
+      state: DOCUMENTED
+      source: "https://education.ti.com/en/resources/getting-started-on-ti-technology/ti-nspire-cx-ii"
+      proves:
+        - "Texas Instruments says TI-Nspire CX II Python capability is installed and ready when the handheld OS version is greater than 5.2"
+        - "Texas Instruments documents writing, storing, and running Python programs directly on the CX II handheld"
+      does_not_prove:
+        - "the OS version currently installed on any acquired TI-Nspire CX II-T"
+        - "Python availability in every exam/Press-to-Test restriction state"
+        - "root, shell, arbitrary package installation, or native-binary execution"
+    - id: official_exam_mode_access_boundary
+      state: DOCUMENTED
+      source: "https://education.ti.com/nl/ondersteuning/examenstand-nspire"
+      additional_sources:
+        - "https://education.ti.com/en/resources/test-preparation/education-test-prep-guides/ti-nspire-cx-ii"
+      proves:
+        - "Texas Instruments documents exam mode for TI-Nspire CX II-T as blocking access to documents and programs while the mode is active"
+        - "the exam mode is visibly indicated on the handheld and can be exited through documented owner/administrator-visible methods"
+        - "Texas Instruments documents Press-to-Test as temporary for pre-existing stored data/features rather than permanent deletion of that prior state"
+        - "the CX II exam guide says data created while in Press-to-Test is permanently deleted when the mode is exited"
+      does_not_prove:
+        - "that every exam profile disables the same optional feature set"
+        - "that Python or TI-Basic is disabled under every possible selected restriction configuration"
+        - "that the mode is a firmware recovery mechanism"
+        - "that data created during Press-to-Test survives exit"
+    - id: official_reset_all_memory
+      state: DOCUMENTED
+      source: "https://education.ti.com/en/resources/test-preparation/education-test-prep-guides/ti-nspire-cx-ii"
+      proves:
+        - "Texas Instruments says Resetting All Memory restores factory default settings"
+        - "Texas Instruments says Resetting All Memory permanently removes user-saved data"
+      does_not_prove:
+        - "firmware or operating-system reinstallation"
+        - "the exact disposition of every built-in or downloadable system application"
+        - "recovery from hardware failure"
+        - "AXM local reproduction"
+    - id: official_os_reinstall_path
+      state: DOCUMENTED
+      source: "https://education.ti.com/nl-be/klantenservice/kennisbank/hardware/80000"
+      proves:
+        - "Texas Instruments documents an OS-reinstallation path for TI-Nspire CX II-T when the handheld reports that the operating system is not found"
+        - "the documented path downloads the correct official OS and transfers it from computer connectivity software to the handheld through USB"
+      does_not_prove:
+        - "that user documents, settings, or custom programs survive OS reinstallation"
+        - "recovery from failed USB hardware, mainboard, battery, or storage hardware"
+        - "AXM local recovery reproduction"
+
+notes:
+  - "This is the first graphing-calculator / programmable-calculator hardware class in the census."
+  - "The key execution finding is manufacturer-supported Python and TI-Basic, not a speculative native/root execution claim."
+  - "The strongest new model pressure is operational-mode capability suppression: Press-to-Test/exam mode can temporarily make pre-existing programs/documents inaccessible without erasing that prior state, while session-created data has a different lifecycle and is deleted on exit."
+  - "No local handheld test, OS-version inspection, programming run, Press-to-Test reproduction, destructive reset, OS reinstall, wall-power measurement, battery-health test, or market sample was performed."

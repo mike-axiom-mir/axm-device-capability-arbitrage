@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    18 / 25
-Categories: 18 distinct / 8 required
+Devices:    19 / 25
+Categories: 19 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -47,6 +47,7 @@ A device counts when it has:
 | 16 | Polestar 2 model year 2026 | Vehicle infotainment / non-safety computer | Manufacturer-supported Google Play installation of car-adapted Android Automotive apps; sandboxed infotainment execution explicitly bounded away from whole-vehicle/safety-control authority | DOCUMENTED | No | `devices/polestar/polestar-2-my2026.yaml` |
 | 17 | Grandstream GXV3370 | Enterprise IP video phone / desk endpoint | Manufacturer-supported Android 7 application development/deployment with administrator-controlled third-party app admission; Safe Mode, factory reset and SD-card firmware recovery remain distinct | DOCUMENTED | No | `devices/grandstream/gxv3370.yaml` |
 | 18 | Critter & Guitari Organelle S2 | Programmable musical instrument / audio processor | Manufacturer-supported Pure Data patch authoring plus Linux terminal/compile access; OS and patch state live on a removable microSD root disk with destructive official re-image and retainable prior-media path | DOCUMENTED | No | `devices/critter-and-guitari/organelle-s2.yaml` |
+| 19 | Texas Instruments TI-Nspire CX II-T | Graphing calculator / programmable handheld | Manufacturer-supported Python + TI-Basic execution; visible Press-to-Test/exam mode can temporarily block pre-existing programs/documents while session-created data is deleted on exit | DOCUMENTED | No | `devices/texas-instruments/ti-nspire-cx-ii-t.yaml` |
 
 ## Category coverage
 
@@ -68,6 +69,7 @@ A device counts when it has:
 - [x] Vehicle infotainment / non-safety computer
 - [x] Enterprise IP video phone / desk endpoint
 - [x] Programmable musical instrument / audio processor
+- [x] Graphing calculator / programmable handheld
 - [ ] Other / unknown category
 
 Only eight categories are required for Milestone 01. New records should now optimize for **evidence diversity and model pressure**, not category-count padding.
@@ -99,6 +101,8 @@ The enterprise IP video-phone / desk-endpoint slot is now represented by Grandst
 
 The programmable musical-instrument / audio-processor slot is now represented by Critter & Guitari Organelle S2. Its value is not simply Linux in an instrument: the manufacturer documents user-authored patch execution plus console/compile access while leaving privilege unproven, and the removable microSD root disk creates a recovery case where re-imaging the chosen target is destructive even though an untouched prior OS card can be retained physically.
 
+The programmable graphing-calculator slot is now represented by Texas Instruments TI-Nspire CX II-T. Its value is not merely Python-on-a-calculator: TI documents a visible Press-to-Test/exam policy mode that can make pre-existing programs/documents temporarily inaccessible without deleting that prior state, while data created during the restricted session is deleted on exit. This adds an operational-mode capability-state pressure case distinct from persistent firmware, update persistence, developer-session expiry, and destructive recovery.
+
 ## Schema pressure learned so far
 
 The census exists partly to break weak assumptions in the schema. Current evidence has produced several durable distinctions.
@@ -109,7 +113,7 @@ Roborock S5:
 
 ```text
 stock S5
-  -> manufacturer factory reset can restore original stock firmware
+  -> manufacturer factory reset can restore stock firmware
 
 rooted / Valetudo S5
   -> upstream says return to stock is unavailable
@@ -373,6 +377,27 @@ The recovery action is destructive to its selected target, but removable-media c
 
 This is one pressure case. The Organelle record stores the distinction locally on its recovery path instead of freezing a universal removable-root-medium schema after a single device.
 
+### 16. Installed capability can be temporarily inaccessible in an operational policy mode
+
+TI-Nspire CX II-T adds a state distinction different from persistent firmware changes or destructive recovery:
+
+```text
+normal mode
+  -> stored programs/documents are accessible
+
+Press-to-Test / exam mode
+  -> access to pre-existing programs/documents is temporarily blocked
+  -> mode is visibly indicated
+
+exit Press-to-Test
+  -> access to prior stored state returns
+  -> data created during the restricted session is deleted
+```
+
+Therefore persistent presence of an execution surface or program is not enough to claim **current accessibility under every operating mode**. Capability matching may eventually need an operational-mode dimension that is separate from firmware state, account/session lease state, and recovery state.
+
+This is one pressure case. The TI-Nspire record preserves the distinction locally in `operational_modes` but the repo does not freeze a universal operational-mode schema until an independent hardware class reproduces the need.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -445,6 +470,8 @@ The Grandstream GXV3370 is not added merely because it has 2 GB RAM, Gigabit Eth
 
 The Organelle S2 is not added merely because it has Linux, 1 GB RAM, local networking through a USB adapter and a real console/compile surface. Root privilege, service autostart, hard-power-loss restart, measured wall power, acquisition cost and opportunity cost as a musical instrument remain unverified, so registry-node suitability is not inferred from programmability alone.
 
+The TI-Nspire CX II-T is not added merely because it runs Python and TI-Basic. Networking, privilege, unattended boot, custom-service autostart, wall/charging power, battery-life cost, market cost and registry-workload compatibility are unverified, while Press-to-Test/exam mode shows that persisted programs are not necessarily accessible in every operational state.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -466,6 +493,7 @@ The milestone should answer:
 13. Can a vendor-session-gated developer surface remain distinct from indefinitely durable deployment without hiding account/network renewal dependency?
 14. Can execution authority inside one subsystem remain distinct from authority over a safety-critical parent machine?
 15. Can recovery distinguish destructive impact on the selected removable boot medium from the separate ability to retain an earlier boot medium intact?
+16. Can operational policy modes temporarily suppress access to persisted capability without being confused with deletion, firmware-state change, or recovery?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 
