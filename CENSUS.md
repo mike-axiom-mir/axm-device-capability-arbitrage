@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    16 / 25
-Categories: 16 distinct / 8 required
+Devices:    17 / 25
+Categories: 17 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -45,6 +45,7 @@ A device counts when it has:
 | 14 | Siemens SIMATIC IOT2050 Advanced / 6ES7647-0BA00-1YA2 | Industrial IoT gateway / commercial surplus | Manufacturer-documented Debian-based root SSH/UART + apt execution, external-media boot and U-Boot; exact article number still spans FS-dependent USB capability | DOCUMENTED | No | `devices/siemens/simatic-iot2050-advanced-6es7647-0ba00-1ya2.yaml` |
 | 15 | LG OLED55C1PUB / C1 55-inch OLED | Smart TV / display appliance | Manufacturer-supported webOS Developer Mode `.ipk` execution; sandboxed app authority whose renewable developer session can expire and remove Developer Mode-installed apps | DOCUMENTED | No | `devices/lg/oled55c1pub.yaml` |
 | 16 | Polestar 2 model year 2026 | Vehicle infotainment / non-safety computer | Manufacturer-supported Google Play installation of car-adapted Android Automotive apps; sandboxed infotainment execution explicitly bounded away from whole-vehicle/safety-control authority | DOCUMENTED | No | `devices/polestar/polestar-2-my2026.yaml` |
+| 17 | Grandstream GXV3370 | Enterprise IP video phone / desk endpoint | Manufacturer-supported Android 7 application development/deployment with administrator-controlled third-party app admission; Safe Mode, factory reset and SD-card firmware recovery remain distinct | DOCUMENTED | No | `devices/grandstream/gxv3370.yaml` |
 
 ## Category coverage
 
@@ -64,6 +65,7 @@ A device counts when it has:
 - [x] Thin client / POS / kiosk
 - [x] Industrial / commercial surplus
 - [x] Vehicle infotainment / non-safety computer
+- [x] Enterprise IP video phone / desk endpoint
 - [ ] Other / unknown category
 
 Only eight categories are required for Milestone 01. New records should now optimize for **evidence diversity and model pressure**, not category-count padding.
@@ -75,7 +77,7 @@ These are research targets, **not capability claims**.
 1. One additional NAS/router/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence.
 2. One device with a persistent-state locality pattern that differs again from camera/relay firmware replacement, if evidence reveals it naturally.
 3. One second phone/tablet/handheld only if it pressures a materially different execution, recovery or acquisition-identity boundary.
-4. One second admission-controlled application platform only if it independently pressures the C3530i lesson enough to justify a general schema shape.
+4. A third admission-controlled application platform only if it adds a materially different signing, licensing, lease, credential or distribution boundary beyond the Canon C3530i and Grandstream GXV3370 cases.
 5. One second privileged physical appliance only if it tests whether the K1 host/actuator distinction generalizes rather than merely repeating root access.
 6. One device that independently pressures execution-state persistence across vendor updates, if evidence shows a pattern materially different from Steam Deck Flatpak vs system modification.
 7. One second vendor-session-gated developer platform only if it independently tests whether the LG webOS execution-lease pattern generalizes.
@@ -90,6 +92,8 @@ The oddball-manufacturing-appliance slot is no longer a queue item: Creality K1 
 The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not just that webOS can run custom applications: LG documents a renewable Developer Mode session whose expiry/disable state removes apps installed through Developer Mode, making execution durability a separate capability question.
 
 The vehicle-infotainment slot is now represented by Polestar 2 model year 2026. Its value is not merely that Android apps run in a car: the evidence forces a parent-system boundary. A sandboxed infotainment application may be valid custom execution while braking, steering, propulsion, safety systems, CAN and arbitrary vehicle-property authority remain outside the proven scope.
+
+The enterprise IP video-phone / desk-endpoint slot is now represented by Grandstream GXV3370. Its value is not simply Android-on-a-phone: Grandstream documents a real custom-application path whose install/uninstall admission can be allowed, administrator-gated, source-sensitive, or prohibited, plus separate Safe Mode, factory-reset and SD-card firmware-recovery layers.
 
 ## Schema pressure learned so far
 
@@ -209,7 +213,7 @@ One pressure case is enough to record the lesson but not enough to freeze a univ
 
 ### 9. An application runtime can be admission-controlled
 
-Canon C3530i adds another execution distinction:
+Canon C3530i first exposed the distinction:
 
 ```text
 MEAP runtime exists
@@ -217,18 +221,30 @@ MEAP runtime exists
   -> compatible MEAP application package is selected
   -> applicable license/admission conditions are satisfied
   -> application can be installed and started
-
-does not prove
-
-arbitrary unsigned JAR execution
-shell
-root
-generic Linux ownership
 ```
 
-The record therefore stores `admission_controls` on the execution surface while keeping unrestricted application admission unknown. A platform can provide real programmable capability while the usable supply of applications still depends on licensing, compatibility and administrator authority.
+Grandstream GXV3370 now independently repeats the same higher-level pattern through a different mechanism:
 
-This is one pressure case, so the repository records the lesson without freezing a universal admission-control schema yet.
+```text
+Android application runtime exists
+  -> administrator install/uninstall policy applies
+  -> policy may allow, require administrator authentication, be source-sensitive, or forbid third-party app changes
+  -> compatible admitted application can run
+```
+
+Neither case proves unrestricted general-purpose host authority.
+
+```text
+custom application execution
+  !=
+arbitrary unsigned package admission
+  !=
+shell/root/bootloader ownership
+```
+
+The two records preserve their platform-specific admission controls locally instead of forcing unlike mechanisms into one rigid universal schema. Two cross-vendor cases are enough to treat admission as a durable capability axis, but not enough to pretend Canon licensing and Grandstream Android policy are the same thing.
+
+The GXV3370 adds a second lesson in the same record: Safe Mode can isolate problematic third-party applications without being confused with factory reset or firmware restoration. Recovery target state matters even when the underlying device is still bootable.
 
 ### 10. Root host authority is not physical-actuator suitability
 
@@ -403,6 +419,8 @@ The LG OLED55C1PUB is not added merely because it can run custom webOS applicati
 
 The Polestar 2 MY2026 is not added merely because it can run car-adapted Android Automotive applications. It is a road vehicle with an admission-controlled sandboxed infotainment surface, not a proven general-purpose/root host; infotainment power, service persistence, exact hardware resources and standalone acquisition economics are unknown, while whole-vehicle opportunity cost dominates any speculative registry-node value.
 
+The Grandstream GXV3370 is not added merely because it has 2 GB RAM, Gigabit Ethernet and manufacturer-supported Android application execution. Its application admission policy is state-dependent, privilege remains unknown, cold-boot service persistence is unverified, wall power is unmeasured, and no dated acquisition cohort or registry workload evidence exists.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -417,7 +435,7 @@ The milestone should answer:
 6. Can persistent firmware/software state be represented without flattening recovery or locality into false global booleans?
 7. Can dated market observations remain configuration-aware without turning asking prices into permanent device truth?
 8. Can acquisition variants that gate the execution surface stay distinct instead of being silently merged into one model-level capability claim?
-9. Can a real but administrator/license-gated application runtime remain distinct from unrestricted general-purpose execution?
+9. Can real but administrator/license/policy-gated application runtimes remain distinct from unrestricted general-purpose execution?
 10. Can privileged host execution remain distinct from physical-actuator suitability and total-useful-cost fit?
 11. Can execution privilege remain distinct from the persistence of installed state across vendor OS updates?
 12. Can exact manufacturer order numbers remain revision-aware when a functional-status change alters real capability?

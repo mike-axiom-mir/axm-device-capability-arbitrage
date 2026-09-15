@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains sixteen grounded records across sixteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, and vehicle infotainment/non-safety computer. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 9 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains seventeen grounded records across seventeen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, and enterprise IP video phone/desk endpoint. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 8 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; and Polestar 2 MY2026 now shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; and Polestar 2 MY2026 now shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -201,9 +201,11 @@ Pixel 3a, Verizon unit
 
 A market listing with carrier/origin unknown must not inherit replacement-OS eligibility merely from the model name. Keep the gate explicit or unknown.
 
-### Admission-control rule learned from Canon C3530i
+### Admission-control rule — independently repeated by Canon C3530i and Grandstream GXV3370
 
 A real application runtime can exist without freely admitted arbitrary applications.
+
+Canon C3530i:
 
 ```text
 MEAP runtime
@@ -213,7 +215,24 @@ MEAP runtime
   -> documented application execution
 ```
 
-This does not prove arbitrary unsigned JAR execution, shell, root or general Linux ownership. Application availability/licensing can be real acquisition friction.
+Grandstream GXV3370:
+
+```text
+Android application runtime
+  + administrator install/uninstall policy
+  + compatible application
+  -> documented application execution
+
+administrator policy may
+  -> allow
+  -> require admin password
+  -> require admin password for unknown-source install/uninstall conditions
+  -> disallow third-party app changes
+```
+
+These two platforms independently establish admission as a real capability axis while using different mechanisms. Neither proves arbitrary unsigned package execution, shell, root, bootloader authority or general-purpose host ownership. Preserve the platform-specific controls rather than flattening them into `custom_code: true`.
+
+The GXV3370 also shows that application-level recovery can exist below destructive reset/firmware recovery: Grandstream Safe Mode runs only system applications so an incompatible third-party application can be removed. Safe Mode, factory reset and SD-card firmware recovery target different failure states and must stay distinct.
 
 ### Privileged-appliance rule learned from Creality K1
 
@@ -314,13 +333,13 @@ This is one vehicle pressure case. Preserve the local `safety_boundary` evidence
 
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 16 distinct categories. Do not pad the remaining 9 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 17 distinct categories. Do not pad the remaining 8 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
 1. an additional network/storage/thin-client candidate only if it materially improves the first comparison's price/power/recovery evidence;
 2. a new persistent-state pattern that pressures locality, recovery or execution authority differently again;
-3. a second admission-controlled application platform only if it independently tests the Canon lesson;
+3. a third admission-controlled application platform only if it adds a materially different signing, licensing, lease, credential or distribution boundary beyond the Canon/GXV3370 cases;
 4. a second privileged physical appliance only if it independently tests the K1 host/actuator distinction;
 5. an independent execution/update-persistence case only if it materially tests the Steam Deck lesson rather than repeating Linux root access;
 6. a second industrial device only if it independently tests functional-status identity, software-maintenance state, or industrial recovery rather than merely repeating general Linux execution;
@@ -334,7 +353,9 @@ The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not
 
 The vehicle-infotainment/non-safety slot is now represented by Polestar 2 MY2026. Its value is not merely Android Automotive app execution; the record explicitly prevents sandboxed infotainment authority from leaking into claims about braking, steering, propulsion, CAN or other safety-critical vehicle controls.
 
-Each new record should expose something the existing sixteen do not.
+The enterprise IP video-phone / desk-endpoint slot is now represented by Grandstream GXV3370. Its value is not merely Android execution; the manufacturer exposes a policy-controlled third-party application surface and separately documents Safe Mode, factory reset and SD-card Recovery Mode. It independently pressures admission control and layered recovery without requiring exploit-based access.
+
+Each new record should expose something the existing seventeen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -588,6 +609,20 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - do not infer subsystem power from traction-battery capacity or charging specifications; only measure infotainment energy if a safe, meaningful method exists;
 - do not collect a used-vehicle price merely to call the embedded computer cheap: whole-vehicle acquisition, depreciation, insurance, maintenance and opportunity cost dominate unless the car is already owned for another purpose;
 - keep braking, steering, propulsion, safety systems, CAN and arbitrary vehicle-property control outside the experiment unless a future independent research question, explicit authority and appropriate safety process justify studying them.
+
+### P. Grandstream GXV3370
+
+- on an owned/authorized exact unit, record hardware revision, firmware/system/recovery versions, administrator-policy state and installed third-party applications before changing anything;
+- use the documented application surface rather than seeking an exploit path; install one harmless compatible test application only when administrator policy/authorization permits it;
+- preserve which `Permission to Install/Uninstall Apps` mode is active and whether unknown-source or Developer Mode controls are needed for the chosen test path;
+- test a deliberately local application with WAN unavailable after provisioning without turning local Web-GUI/firmware support into a blanket claim that all telephony/application functions are cloud-independent;
+- test normal reboot -> chosen application lifecycle and keep application persistence separate from mere successful installation;
+- enter Safe Mode on noncritical app state and verify third-party isolation/removal behavior before considering destructive recovery;
+- test factory reset only on prepared noncritical state and record configuration/user/application/SD-card effects separately;
+- test SD-card Recovery Mode only on owned noncritical hardware or when recovery is genuinely required, preserving firmware image identity/hash and exact data/configuration impact;
+- measure whole-device wall/PoE power under a defined profile rather than converting the 12 VDC 1.5 A adapter or PoE class into consumption;
+- collect a dated NL/EU used-market cohort with power supply/stand/accessory state and administrator usability preserved where listings disclose it;
+- do not add GXV3370 to the low-power registry comparison merely because it has 2 GB RAM and Gigabit Ethernet; admission policy, privilege, application persistence, power, market cost and workload fit must be comparable first.
 
 ## Stop conditions
 

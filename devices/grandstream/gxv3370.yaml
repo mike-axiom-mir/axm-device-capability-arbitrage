@@ -1,0 +1,306 @@
+schema_version: "0.1"
+record_id: grandstream-gxv3370
+
+identity:
+  manufacturer: Grandstream
+  model: GXV3370
+  common_name: Grandstream GXV3370 IP Video Phone
+  marketed_category: ip_video_phone
+  hardware_revision: unknown
+  lifecycle: unknown
+
+compute:
+  soc: unknown
+  cpu_family: ARM_Cortex_A53
+  architecture: unknown
+  cpu_cores: 4
+  clock_mhz: 1300
+  notes:
+    - "Grandstream documents a 4-core 1.3 GHz ARM Cortex-A53 processor; the record does not infer a broader CPU/ABI claim beyond the manufacturer wording."
+
+memory:
+  ram_mb: 2048
+  internal_persistent_storage_mb: 8192
+  internal_storage_type: eMMC
+  removable_storage:
+    present: true
+    types:
+      - microSD
+  notes:
+    - "The product page documents 2 GB RAM and 8 GB eMMC. Usable free RAM/storage on an acquired unit remains a unit/software-state fact."
+
+execution:
+  surfaces:
+    - type: android_apk
+      environment: Android_7.0
+      version: "7.0"
+      custom_code: true
+      privilege: unknown
+      access_method: manufacturer_supported_application_deployment
+      state: DOCUMENTED
+      admission_controls:
+        install_uninstall_policy:
+          state: DOCUMENTED
+          documented_options:
+            - allow
+            - require_admin_password
+            - require_admin_password_if_unknown_source
+            - not_allow
+        unknown_sources_toggle: documented
+        developer_mode_toggle: documented
+        unrestricted_application_admission: unknown
+      notes:
+        - "Grandstream documents Android 7.0-compliant applications being developed, downloaded and run on the embedded device with provisioning control, plus an SDK/API path for custom applications."
+        - "The administrator guide separately documents a policy that can allow third-party app install/uninstall, require administrator authentication, or forbid it. Custom-code execution therefore does not imply unrestricted application admission on every acquired unit/state."
+        - "The guide exposes Developer Mode and debugging authorization controls, but this record does not promote them into a claim of root, general shell, bootloader access, or unrestricted Android debugging capability."
+
+connectivity:
+  ethernet:
+    present: true
+    ports_1gbit: 2
+  wifi:
+    present: true
+    bands:
+      - 2.4GHz
+      - 5GHz
+  bluetooth:
+    present: true
+    version: "4.0 + EDR"
+  usb:
+    present: true
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "The administrator guide documents dual Gigabit Ethernet, dual-band Wi-Fi, Bluetooth, USB, SD and HDMI interfaces. Accessibility of those interfaces to third-party applications is not assumed."
+
+inputs:
+  display_touch:
+    present: true
+    size_inches: 7
+    resolution: 1024x600
+  camera:
+    present: true
+    class: megapixel_CMOS
+    privacy_shutter: true
+    accessible_to_custom_code: unknown
+  microphones:
+    present: true
+    accessible_to_custom_code: unknown
+  controls:
+    - touchscreen
+    - handset
+    - physical_keys
+
+outputs:
+  display:
+    present: true
+    size_inches: 7
+    resolution: 1024x600
+    custom_rendering_verified: unknown
+  speaker:
+    present: true
+    custom_audio_verified: unknown
+  hdmi_out:
+    present: true
+    custom_output_verified: unknown
+  motors: []
+  relays: []
+
+power:
+  source:
+    external_power: true
+    poe: true
+    poe_plus: true
+  external_adapter_rating:
+    output_volts_dc: 12
+    output_amps: 1.5
+  poe_classes:
+    - "802.3af Class 3"
+    - "802.3at Class 4"
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  notes:
+    - "12 VDC 1.5 A and PoE/PoE+ classes are supply/interface ratings from the manufacturer, not measured GXV3370 self-consumption."
+    - "No AXM wall-power measurement or comparable workload-power evidence exists."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "The guide documents normal boot, firmware upgrade, factory reset and recovery behavior, but this record does not infer unattended third-party app/service startup."
+
+recovery:
+  factory_reset: documented
+  official_restore: documented_sd_card_recovery_mode
+  rescue_partition: unknown
+  removable_media_recovery: true
+  usb_recovery: false
+  serial_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: hard_key_factory_reset
+      from_state: booting_or_operating_stock_firmware
+      target_state: factory_default_configuration
+      method: hard_key_factory_reset
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - official_factory_reset_recovery_and_safe_mode
+      notes:
+        - "Grandstream says factory reset deletes all phone configuration information. The source does not establish the fate of every third-party application or user-created file, so those impacts remain unknown."
+        - "Formatting the mounted SD card is a separate option and is not assumed here."
+    - id: sd_card_recovery_mode
+      from_state: stock_firmware_not_reaching_idle_screen
+      target_state: restored_or_reconfigured_stock_firmware
+      method: sd_card_recovery_mode
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - official_factory_reset_recovery_and_safe_mode
+      notes:
+        - "The administrator guide documents FAT32 SD-card recovery using a GXV3370 firmware image when the phone cannot reach the idle screen normally. Exact data/configuration impact is not stated in the cited recovery section."
+    - id: safe_mode_third_party_isolation
+      from_state: booting_or_operating_with_problematic_third_party_application
+      target_state: safe_mode_system_apps_only
+      method: safe_mode
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: unknown
+        user_data: unknown
+        application_state: unknown
+      source_claim_ids:
+        - official_factory_reset_recovery_and_safe_mode
+      notes:
+        - "Grandstream documents Safe Mode running only system applications so an incompatible third-party application can be removed. This is an application-level recovery surface, not firmware restoration."
+  notes:
+    - "The GXV3370 provides three materially different recovery layers: third-party-app isolation in Safe Mode, factory configuration reset, and SD-card firmware recovery."
+    - "USB firmware upgrade is explicitly documented as unsupported; USB recovery therefore remains false for this documented path rather than being inferred from the physical USB port."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: unknown
+  notes:
+    - "The administrator guide documents local Web GUI management by device IP and local/LAN firmware provisioning methods including direct Web upload, TFTP/HTTP/HTTPS and SD card."
+    - "Those management paths do not prove fully offline SIP operation, offline third-party application installation, or independence from all vendor/third-party services. Broader locality remains unknown."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools: []
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU acquisition cohort was collected in this activation. PoE capability may change adapter needs in a deployment, but no cost is assigned without market evidence."
+
+roles:
+  - role: enterprise_sip_video_endpoint
+    confidence: high
+    reason: "The manufacturer positions the exact device as a 16-line Android IP video phone with SIP accounts, camera, audio, Ethernet/Wi-Fi and PoE."
+  - role: android_application_terminal
+    confidence: high
+    reason: "Grandstream documents Android 7.0 application development/deployment plus API/SDK support, subject to explicit administrator admission policy."
+  - role: local_interactive_dashboard
+    confidence: medium
+    reason: "Display, touch, networking and a supported Android application surface are present, but cold-boot app persistence, offline runtime and power remain unverified."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-15"
+  claims:
+    - id: exact_model_hardware_and_android_platform
+      state: DOCUMENTED
+      source: "https://www.grandstream.com/products/ip-video-telephony/ip-video-phones-android/product/gxv3370"
+      additional_sources:
+        - "https://www.grandstream.com/hubfs/Product_Documentation/datasheet_gxv3370_english.pdf"
+      proves:
+        - "GXV3370 runs Android 7.0"
+        - "GXV3370 has a 4-core 1.3 GHz ARM Cortex-A53 processor"
+        - "GXV3370 has 2 GB RAM and 8 GB eMMC flash"
+        - "GXV3370 has dual Gigabit Ethernet, dual-band Wi-Fi, Bluetooth, PoE/PoE+, a 7-inch touch display, camera, USB, Micro SD and HDMI-out"
+      does_not_prove:
+        - "current firmware version on an acquired unit"
+        - "root or bootloader authority"
+        - "AXM local power measurements"
+        - "usable free RAM or storage after provisioning"
+    - id: manufacturer_android_application_deployment
+      state: DOCUMENTED
+      source: "https://documentation.grandstream.com/knowledge-base/gxv3370-administration-guide/"
+      proves:
+        - "Grandstream documents creating Android applications for GXV3370 using Google APIs and Grandstream SDK tooling"
+        - "the technical specification documents Android 7.0-compliant applications being developed, downloaded and run on the embedded device with provisioning control"
+        - "the device supports third-party Android applications and an API/SDK for custom application development"
+      does_not_prove:
+        - "every APK is compatible"
+        - "root or unrestricted host administration"
+        - "third-party applications survive every reboot or firmware update"
+        - "third-party applications can be provisioned without internet access"
+    - id: administrator_application_admission_policy
+      state: DOCUMENTED
+      source: "https://documentation.grandstream.com/knowledge-base/gxv3370-administration-guide/"
+      proves:
+        - "the administrator can configure install/uninstall policy to allow third-party apps, require an administrator password, conditionally require administrator authentication for unknown sources, or disallow install/uninstall"
+        - "the system settings expose an unknown-sources control and a Developer Mode control"
+      does_not_prove:
+        - "the admission policy of any acquired used unit"
+        - "administrator credentials are available to every purchaser"
+        - "Developer Mode provides root, shell, or bootloader access"
+    - id: local_management_and_firmware_paths
+      state: DOCUMENTED
+      source: "https://documentation.grandstream.com/knowledge-base/gxv3370-administration-guide/"
+      proves:
+        - "GXV3370 exposes an embedded local Web GUI addressable by device IP"
+        - "firmware/configuration provisioning supports TFTP, HTTP and HTTPS"
+        - "firmware can be uploaded directly through the local Web GUI"
+        - "firmware upgrade through external SD card is documented"
+      does_not_prove:
+        - "the complete device can operate indefinitely with WAN unavailable"
+        - "all Android application provisioning is local-only"
+        - "vendor or third-party cloud services are unnecessary for every telephony or application function"
+    - id: official_factory_reset_recovery_and_safe_mode
+      state: DOCUMENTED
+      source: "https://documentation.grandstream.com/knowledge-base/gxv3370-administration-guide/"
+      proves:
+        - "factory reset is available through LCD, Web GUI, and hard-key paths"
+        - "factory reset deletes phone configuration information and reboots to factory defaults"
+        - "Recovery Mode can restore or reconfigure the phone from a FAT32 SD card when normal idle-screen boot fails"
+        - "Safe Mode runs only system applications and can be used to remove an incompatible third-party application"
+        - "USB storage firmware upgrade is documented as unsupported"
+      does_not_prove:
+        - "all user files or third-party applications are erased by factory reset"
+        - "SD recovery preserves or erases any specific user/application data"
+        - "recovery from physical flash, power, or mainboard failure"
+        - "AXM local recovery reproduction"
+
+notes:
+  - "This is the first enterprise IP video-phone/desk-endpoint record in the census."
+  - "It independently repeats the admission-control lesson from Canon C3530i through a different mechanism: Android application install/uninstall can be allowed, administrator-gated, source-sensitive, or forbidden by policy."
+  - "It also adds a layered recovery pattern: Safe Mode can isolate problematic third-party applications without being confused with factory reset or SD-card firmware restoration."
+  - "No local device test, market sample, wall-power measurement, current-unit firmware check, offline third-party-app test, or cold-boot application persistence test was performed."
+  - "The product's Android surface is real and manufacturer-supported, but the record deliberately does not convert it into root/general-purpose-host authority."
