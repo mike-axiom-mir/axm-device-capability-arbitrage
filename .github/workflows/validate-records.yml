@@ -56,6 +56,12 @@ jobs:
       - name: Gate structured evidence strength
         run: python tools/validate_structured_evidence_strength.py
 
+      - name: Test standardized power-evidence gate
+        run: python tools/test_standardized_power.py
+
+      - name: Validate standardized power evidence
+        run: python tools/validate_standardized_power.py
+
       - name: Validate census state synchronization
         run: python tools/validate_census_state.py
 
