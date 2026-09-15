@@ -4,16 +4,23 @@ from __future__ import annotations
 
 from validate_execution_locus import ValidationError, validate_surface
 
-KNOWN_CLAIMS = {"local_execution", "remote_execution"}
+CLAIM_STATES = {
+    "local_documented": "DOCUMENTED",
+    "local_community": "COMMUNITY_VERIFIED",
+    "remote_documented": "DOCUMENTED",
+    "unresearched": "UNRESEARCHED",
+    "deprecated": "DEPRECATED",
+    "contradicted": "CONTRADICTED",
+}
 
 
 def expect_pass(surface: dict, label: str) -> None:
-    validate_surface(surface, label, KNOWN_CLAIMS)
+    validate_surface(surface, label, CLAIM_STATES)
 
 
 def expect_fail(surface: dict, label: str) -> None:
     try:
-        validate_surface(surface, label, KNOWN_CLAIMS)
+        validate_surface(surface, label, CLAIM_STATES)
     except ValidationError:
         return
     raise AssertionError(f"{label} unexpectedly passed")
@@ -25,7 +32,8 @@ def main() -> int:
         {
             "custom_code": True,
             "locus": "on_device",
-            "source_claim_ids": ["local_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["local_documented"],
         },
         "on_device_custom_code",
     )
@@ -33,7 +41,8 @@ def main() -> int:
         {
             "custom_code": True,
             "locus": "split",
-            "source_claim_ids": ["local_execution", "remote_execution"],
+            "state": "COMMUNITY_VERIFIED",
+            "source_claim_ids": ["local_community", "remote_documented"],
         },
         "split_custom_code",
     )
@@ -41,7 +50,8 @@ def main() -> int:
         {
             "custom_code": False,
             "locus": "remote_service",
-            "source_claim_ids": ["remote_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["remote_documented"],
         },
         "remote_service",
     )
@@ -49,16 +59,18 @@ def main() -> int:
         {
             "custom_code": "unknown",
             "locus": "unknown",
-            "source_claim_ids": ["remote_execution"],
+            "state": "UNRESEARCHED",
+            "source_claim_ids": ["unresearched"],
         },
-        "unknown_locus",
+        "unknown_locus_can_preserve_uncertainty",
     )
 
     expect_fail(
         {
             "custom_code": True,
             "locus": "remote_service",
-            "source_claim_ids": ["remote_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["remote_documented"],
         },
         "remote_promoted_to_local",
     )
@@ -66,7 +78,8 @@ def main() -> int:
         {
             "custom_code": True,
             "locus": "unknown",
-            "source_claim_ids": ["remote_execution"],
+            "state": "UNRESEARCHED",
+            "source_claim_ids": ["unresearched"],
         },
         "unknown_promoted_to_local",
     )
@@ -74,7 +87,8 @@ def main() -> int:
         {
             "custom_code": False,
             "locus": "on_device",
-            "source_claim_ids": ["local_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["local_documented"],
         },
         "on_device_without_custom_code",
     )
@@ -82,7 +96,8 @@ def main() -> int:
         {
             "custom_code": False,
             "locus": "split",
-            "source_claim_ids": ["local_execution", "remote_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["local_documented", "remote_documented"],
         },
         "split_without_local_custom_code",
     )
@@ -90,7 +105,8 @@ def main() -> int:
         {
             "custom_code": True,
             "locus": "cloud",
-            "source_claim_ids": ["local_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["local_documented"],
         },
         "unbounded_locus_token",
     )
@@ -98,18 +114,20 @@ def main() -> int:
         {
             "custom_code": "maybe",
             "locus": "on_device",
-            "source_claim_ids": ["local_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["local_documented"],
         },
         "invalid_custom_code_token",
     )
     expect_fail(
-        {"custom_code": True, "locus": "on_device"},
+        {"custom_code": True, "locus": "on_device", "state": "DOCUMENTED"},
         "missing_locus_evidence_link",
     )
     expect_fail(
         {
             "custom_code": True,
             "locus": "on_device",
+            "state": "DOCUMENTED",
             "source_claim_ids": [],
         },
         "empty_locus_evidence_link",
@@ -118,6 +136,7 @@ def main() -> int:
         {
             "custom_code": True,
             "locus": "on_device",
+            "state": "DOCUMENTED",
             "source_claim_ids": ["missing_claim"],
         },
         "unknown_locus_evidence_claim",
@@ -126,9 +145,46 @@ def main() -> int:
         {
             "custom_code": True,
             "locus": "on_device",
-            "source_claim_ids": ["local_execution", "local_execution"],
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["local_documented", "local_documented"],
         },
         "duplicate_locus_evidence_claim",
+    )
+    expect_fail(
+        {
+            "custom_code": True,
+            "locus": "on_device",
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["contradicted"],
+        },
+        "positive_locus_cannot_rest_on_contradicted_claim",
+    )
+    expect_fail(
+        {
+            "custom_code": False,
+            "locus": "remote_service",
+            "state": "DOCUMENTED",
+            "source_claim_ids": ["deprecated", "unresearched"],
+        },
+        "positive_remote_locus_needs_positive_evidence",
+    )
+    expect_fail(
+        {
+            "custom_code": True,
+            "locus": "on_device",
+            "state": "COMMUNITY_VERIFIED",
+            "source_claim_ids": ["local_documented"],
+        },
+        "locus_state_cannot_outrun_linked_evidence",
+    )
+    expect_fail(
+        {
+            "custom_code": True,
+            "locus": "on_device",
+            "state": "CONTRADICTED",
+            "source_claim_ids": ["local_documented"],
+        },
+        "positive_locus_requires_positive_surface_state",
     )
 
     print("PASS execution-locus regression cases")
