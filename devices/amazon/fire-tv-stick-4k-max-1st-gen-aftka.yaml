@@ -44,6 +44,8 @@ execution:
       privilege: application_user
       access_method: adb_sideload_after_user_enabled_developer_options
       state: DOCUMENTED
+      source_claim_ids:
+        - documented_apk_sideload_and_launch
       notes:
         - "Amazon documents `adb install` for sideloading user-supplied APKs and launching them from the Fire TV UI or through Android activity-manager commands."
         - "Application execution does not establish root, unrestricted Linux administration or bootloader access."

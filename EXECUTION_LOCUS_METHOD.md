@@ -1,8 +1,8 @@
-# Execution Locus Method — v0.2
+# Execution Locus Method — v0.3
 
 **Status:** Evidence-backed additive v0.1 schema extension; optional, mechanically gated when present.  
 **Checked:** 2026-09-15  
-**Purpose:** Prevent a developer extension surface from being silently promoted into on-device custom-code execution when the developer-controlled code actually runs somewhere else.
+**Purpose:** Prevent a developer extension surface from being silently promoted into on-device custom-code execution when the developer-controlled code actually runs somewhere else, and keep every locus annotation traceable to the evidence that justifies it.
 
 ---
 
@@ -38,6 +38,8 @@ execution:
       locus: on_device
       privilege: sandboxed
       state: DOCUMENTED
+      source_claim_ids:
+        - local_home_on_device_execution
 ```
 
 Allowed values:
@@ -65,13 +67,40 @@ Within a physical-device record, `custom_code` continues to mean developer/user-
 Therefore, when `locus` is present:
 
 ```text
-locus: on_device     -> custom_code must be true
-locus: split         -> custom_code must be true
+locus: on_device      -> custom_code must be true
+locus: split          -> custom_code must be true
 locus: remote_service -> custom_code must not be true
-locus: unknown       -> custom_code must not be true
+locus: unknown        -> custom_code must not be true
 ```
 
 This is intentionally conservative. A remote webhook is real programmable behavior, but it must not satisfy a capability contract that requires local code execution on the endpoint.
+
+### Evidence-link relation
+
+Every execution surface that declares `locus` must also declare a non-empty `source_claim_ids` list. Every referenced ID must resolve to an evidence claim in the same device record.
+
+Example:
+
+```yaml
+execution:
+  surfaces:
+    - type: android_apk
+      custom_code: true
+      locus: on_device
+      state: DOCUMENTED
+      source_claim_ids:
+        - documented_apk_sideload_and_launch
+
+evidence:
+  claims:
+    - id: documented_apk_sideload_and_launch
+      state: DOCUMENTED
+      source: https://example.invalid/manufacturer-developer-doc
+```
+
+This gate proves traceability, not interpretation. A matching claim ID does not mechanically prove that the claim actually supports the chosen locus; the researcher still has to scope `proves` / `does_not_prove` honestly, and the existing evidence gates still govern claim quality and source continuity.
+
+The purpose is narrower: a future edit must not be able to add or change `locus: on_device`, `remote_service`, `split`, or `unknown` while leaving no machine-readable pointer to the evidence behind that classification.
 
 The mechanical gate is `tools/validate_execution_locus.py`; its regression test is `tools/test_execution_locus.py`.
 
@@ -206,6 +235,12 @@ Truth boundary:
 - the 15 W value is a rated consumption / adapter specification, not a locally measured idle or active result;
 - the generic device specification does not establish root, shell, bootloader access, arbitrary native package installation, unattended custom service persistence, or writable storage capacity available to developer code.
 
+Google's current EU ecodesign summary also identifies exact model `H2C` and reports a standardized 230 V / 50 Hz networked-standby result of 1.6 W with the microphone switch set to mute. That is manufacturer test evidence for that exact condition; it is **not** a local measurement and must not be relabeled as generic workload-active power.
+
+Primary source, checked 2026-09-15:
+
+- https://support.google.com/product-documentation/answer/9851803?hl=en
+
 ### Remote developer execution — Cloud-to-cloud
 
 Google's Cloud-to-cloud smart-home model requires a developer-provided cloud fulfillment/webhook for smart-home intents. Google's documentation describes Assistant sending intents to the developer's fulfillment and the developer cloud acting on the target device.
@@ -308,9 +343,9 @@ This is a useful dated generation-level market observation, but it is **not** pr
 
 Tweakers product-family context:
 
-- https://tweakers.net/serie/11168/nest/
+- https://tweakers.net/pricewatch/1475630/google-nest-mini-wit.html
 
-That surface is useful for variant/retail discovery, not as a substitute for one seller observation or a completed transaction.
+That Pricewatch surface is useful for variant/specification/retail-context discovery, not as a substitute for one seller observation, exact-H2C proof, or a completed transaction.
 
 Tweakers community anecdotes may still provide failure-mode or hidden-interface leads, but none are used here to establish positive execution-locus truth. The positive locus claims rest on Google developer documentation.
 
@@ -318,7 +353,7 @@ Tweakers community anecdotes may still provide failure-mode or hidden-interface 
 
 ## 7. Recovery boundary for the second case
 
-Google's factory-reset support page documents the Nest Mini (2nd gen) reset sequence: microphone off, press the center for five seconds to begin reset, then continue for about ten more seconds until confirmation.
+Google's factory-reset support page says a factory reset returns the speaker to factory settings, clears data from the device and is irreversible. For Nest Mini (2nd gen), it documents the reset sequence: microphone off, press the center for five seconds to begin reset, then continue for about ten more seconds until confirmation.
 
 Primary source, checked 2026-09-15:
 
@@ -335,13 +370,14 @@ When a device advertises skills, plugins, actions, integrations, webhooks, apps,
 1. **Endpoint identity** — exact model/revision and current software state.
 2. **Extension authoring** — can a third party create behavior at all?
 3. **Execution locus** — endpoint, remote service, split, or unknown?
-4. **Admission** — who approves/enables the extension?
-5. **Privilege** — what authority does the extension have on the endpoint, if any?
-6. **Transport dependency** — does the extension require WAN/vendor infrastructure?
-7. **Persistence** — what survives reboot, update, account/session expiry, memory pressure, or vendor-side removal?
-8. **Recovery** — how are endpoint state and remote extension state independently restored or removed?
-9. **Economics** — account, hosting, subscription, network and maintenance cost belong in total useful cost when developer logic is remote.
-10. **Local verification** — only a physical/authorized experiment receipt can promote endpoint-local behavior to local verification.
+4. **Evidence linkage** — which structured claim IDs justify that locus classification?
+5. **Admission** — who approves/enables the extension?
+6. **Privilege** — what authority does the extension have on the endpoint, if any?
+7. **Transport dependency** — does the extension require WAN/vendor infrastructure?
+8. **Persistence** — what survives reboot, update, account/session expiry, memory pressure, or vendor-side removal?
+9. **Recovery** — how are endpoint state and remote extension state independently restored or removed?
+10. **Economics** — account, hosting, subscription, network and maintenance cost belong in total useful cost when developer logic is remote.
+11. **Local verification** — only a physical/authorized experiment receipt can promote endpoint-local behavior to local verification.
 
 ---
 
@@ -382,23 +418,25 @@ Use `locus` when:
 - an existing execution surface would otherwise be easy to misread as endpoint-local;
 - a capability comparison depends on local-vs-remote execution.
 
-Do not add it when evidence is weak merely to make records look complete.
+When `locus` is used, add `source_claim_ids` in the same surface and point only to claims that actually support that classification. The gate rejects missing, empty, duplicate, or unresolved references.
+
+Do not add `locus` when evidence is weak merely to make records look complete.
 
 Older records without `locus` remain valid. When an older record is touched for relevant evidence, annotate only the surface actually supported by the evidence.
 
-The Amazon Fire TV AFTKA APK surface is an example of a safe first annotation: Amazon documents the sideloaded APK being installed and launched on the Fire TV itself, so `locus: on_device` is grounded for that APK surface without upgrading privilege beyond the existing application-user boundary.
+The Amazon Fire TV AFTKA APK surface is an example of a safe first annotation: Amazon documents the sideloaded APK being installed and launched on the Fire TV itself, so `locus: on_device` is grounded for that APK surface without upgrading privilege beyond the existing application-user boundary. Its machine annotation points to `documented_apk_sideload_and_launch`, preserving the evidence relation explicitly.
 
 ---
 
 ## 11. Root gate
 
-**Truth** — do not turn a remote skill/webhook/backend into endpoint-local execution; do not turn adapter/rated power into measured consumption; per-surface locus must follow evidence.  
+**Truth** — do not turn a remote skill/webhook/backend into endpoint-local execution; do not turn adapter/rated power into measured consumption; per-surface locus must follow evidence and remain linked to the supporting structured claim.  
 **Agency / non-domination** — account linking, developer enrollment and device authorization remain visible; do not seek hidden persistence or unauthorized endpoint access.  
-**Continuity** — preserve exact model, source URLs, checked dates, per-surface execution locus, cloud dependency and recovery boundaries in repo state rather than chat memory.  
+**Continuity** — preserve exact model, source URLs, checked dates, per-surface execution locus, evidence links, cloud dependency and recovery boundaries in repo state rather than chat memory.  
 **Wisdom before speed** — local execution can still have lifecycle, memory, cloud-fallback, account, maintenance and recovery costs; do not treat `on_device` as synonymous with unrestricted or infrastructure-suitable.
 
 ---
 
 ## 12. One-line rule
 
-> **Record where each developer-controlled execution surface actually runs; a programmable endpoint is not automatically the computer executing the program.**
+> **Record where each developer-controlled execution surface actually runs, and link that classification to its evidence; a programmable endpoint is not automatically the computer executing the program.**
