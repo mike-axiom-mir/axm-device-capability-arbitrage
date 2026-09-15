@@ -35,6 +35,12 @@ jobs:
       - name: Validate evidence source continuity
         run: python tools/validate_evidence_source_continuity.py
 
+      - name: Test Tweakers device-evidence gate
+        run: python tools/test_tweakers_device_evidence.py
+
+      - name: Gate Tweakers device-evidence strength
+        run: python tools/validate_tweakers_device_evidence.py
+
       - name: Gate structured evidence strength
         run: python tools/validate_structured_evidence_strength.py
 
