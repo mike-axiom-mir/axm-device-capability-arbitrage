@@ -1,0 +1,287 @@
+schema_version: "0.1"
+record_id: critter-and-guitari-organelle-s2
+
+identity:
+  manufacturer: Critter & Guitari
+  model: Organelle S2
+  common_name: Critter & Guitari Organelle S2
+  marketed_category: programmable_musical_instrument
+  hardware_revision: unknown
+  lifecycle: unknown
+
+compute:
+  soc: unknown
+  cpu_family: ARM_Cortex_A53
+  architecture: arm64
+  cpu_cores: 4
+  clock_mhz: 1800
+  notes:
+    - "Critter & Guitari documents a 1.8 GHz quad-core 64-bit ARM Cortex-A53 processor; the exact SoC part number is not stated in the cited product specification."
+
+memory:
+  ram_mb: 1024
+  internal_persistent_storage_mb: unknown
+  removable_storage:
+    present: true
+    types:
+      - microSD
+      - usb_mass_storage
+  notes:
+    - "The product specification documents an installed 8 GB microSD card split into approximately 4 GB for the OS and 4 GB for patches/files. The user manual identifies the microSD card as the internal microcomputer's root disk."
+    - "Usable free space on a particular acquired card remains a unit/software-state fact."
+
+execution:
+  surfaces:
+    - type: script_runtime
+      environment: Pure_Data_on_Linux
+      custom_code: true
+      privilege: unknown
+      access_method: manufacturer_supported_patch_authoring
+      state: DOCUMENTED
+      notes:
+        - "The official manual describes the Organelle as an open-source Linux platform on which users can create their own patches, with Pure Data as the primary patch environment."
+        - "Patch execution does not by itself establish administrator/root authority over the host."
+    - type: shell
+      environment: Linux
+      custom_code: true
+      privilege: unknown
+      access_method: manufacturer_supported_web_terminal
+      state: DOCUMENTED
+      notes:
+        - "The official programming guide exposes a Terminal for console access and describes it as low-level access for coding."
+        - "The same guide documents a Compile action that runs a patch-local compile.sh so Pd externals or other source files can be built."
+        - "The cited documentation does not establish root, sudo, bootloader control, arbitrary package-manager authority, or cold-boot persistence for custom services."
+
+connectivity:
+  ethernet: unknown
+  wifi:
+    present: false
+    external_usb_adapter_supported: true
+  bluetooth: unknown
+  usb:
+    present: true
+    ports: 2
+    version: "2.0"
+    connector: type_A_host
+    documented_functions:
+      - midi_over_usb
+      - serial_over_usb
+      - usb_storage
+  midi:
+    input: true
+    output: true
+    connector: "1/8-inch TRS Type A"
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "Wi-Fi is provided through a supported USB Wi-Fi adapter rather than being recorded here as an internal radio."
+    - "The record does not infer Ethernet, Bluetooth, GPIO, or custom-code access to every physical interface from the product category."
+
+inputs:
+  audio:
+    stereo_line_input: true
+    electret_microphone: true
+    accessible_to_custom_code: unknown
+  controls:
+    - 25_maple_keys
+    - four_parameter_knobs
+    - selector_knob_with_push
+    - volume_knob
+    - footswitch_input
+    - midi_input
+
+outputs:
+  display:
+    present: true
+    type: OLED
+    custom_rendering_verified: unknown
+  audio:
+    stereo_output: true
+    headphone_output: true
+  hdmi_out:
+    present: true
+    custom_output_verified: unknown
+  midi_out: true
+  leds:
+    present: true
+    type: RGB
+  motors: []
+  relays: []
+
+power:
+  source:
+    external_power: true
+    battery: false
+  external_adapter_rating:
+    output_volts_dc: 9
+    minimum_output_amps: 1.0
+    polarity: center_positive
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  notes:
+    - "9 VDC / 1.0 A is a manufacturer power-supply requirement, not a measurement of Organelle S2 self-consumption."
+    - "No AXM wall-power measurement or comparable always-on workload evidence exists."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: true
+  bootloader_access: unknown
+  notes:
+    - "The manual identifies the removable microSD card as the root disk and documents normal boot into the patch menu."
+    - "A physical power switch starting the normal system does not establish automatic recovery after an external power interruption or cold-boot startup of arbitrary user code."
+
+recovery:
+  factory_reset: documented_via_microsd_reimage
+  official_restore: true
+  rescue_partition: unknown
+  removable_media_recovery: true
+  usb_recovery: unknown
+  serial_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: unknown
+  recovery_state: DOCUMENTED
+  paths:
+    - id: official_microsd_factory_restore
+      from_state: recoverable_or_replaceable_microsd_root_disk
+      target_state: factory_os_state_on_target_microsd
+      method: burn_official_organelle_os_image_to_microsd
+      availability: true
+      state: DOCUMENTED
+      data_impact:
+        system_configuration: erased
+        user_data: erased
+        application_state: erased
+      source_claim_ids:
+        - official_microsd_factory_restore
+      medium_strategy:
+        boot_medium: microSD
+        target_medium_wiped: true
+        alternate_new_medium_supported: true
+        prior_boot_medium_can_be_retained: true
+      notes:
+        - "Critter & Guitari says burning a new disk image resets the Organelle to factory state and completely wipes the target microSD card."
+        - "The same manual explicitly says a brand-new card may be used if the owner wants to keep the old OS available. Destruction of the selected restore target therefore must not be confused with mandatory destruction of the previously retained removable root disk."
+        - "This path does not establish recovery from mainboard, power, bootloader, or physical microSD-slot failure."
+  notes:
+    - "Recovery is unusually stateful because the operating system and user patches share a removable root/storage medium."
+    - "The record preserves both facts: reimaging the target card is destructive, while using a separate new card can retain the previous boot medium for continuity or rollback investigation."
+
+locality:
+  state: cloud_optional
+  vendor_cloud_required_for_basic_operation: false
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: true
+  offline_operation: true
+  notes:
+    - "The official manual describes the Organelle as a fully capable stand-alone instrument and documents normal boot into locally stored patches from microSD or USB storage."
+    - "The programming guide also documents same-LAN VNC/Web workflows."
+    - "Offline operation here is scoped to the instrument's locally stored patch workflow. It does not prove that every third-party patch, download path, update path, or external service dependency is offline-independent."
+
+economics:
+  market_region: NL
+  checked_at: null
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools: []
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "No dated NL/EU acquisition cohort was collected in this activation. Current shop pricing is not copied into the device record as a market value."
+
+roles:
+  - role: programmable_musical_instrument
+    confidence: high
+    reason: "The exact product is a stand-alone instrument with manufacturer-supported user-authored Pure Data patches and audio/MIDI controls."
+  - role: local_audio_signal_processor
+    confidence: high
+    reason: "Stereo audio I/O, microphone input and local programmable patches are directly documented."
+  - role: interactive_local_compute_endpoint
+    confidence: medium
+    reason: "Linux, user-created patches, console access, local networking and removable storage are documented, but privilege and service lifecycle remain unknown."
+  - role: always_on_infrastructure_node
+    confidence: low
+    reason: "Power consumption, unattended restart, service autostart, thermal behavior and opportunity cost as an instrument are not established."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-15"
+  claims:
+    - id: official_s2_hardware_platform
+      state: DOCUMENTED
+      source: "https://critterandguitari.com/products/organelle-m"
+      proves:
+        - "the current Organelle S2 product specification lists a 1.8 GHz quad-core 64-bit ARM Cortex-A53 processor"
+        - "the current Organelle S2 product specification lists 1 GB RAM and a Linux operating system"
+        - "the product specification lists an installed 8 GB microSD card split approximately between OS and patch/file storage"
+        - "the product specification lists stereo audio I/O, electret microphone, MIDI, two USB 2.0 host ports, HDMI, footswitch input and 9 VDC / 1.0 A power requirement"
+      does_not_prove:
+        - "exact SoC part number"
+        - "free RAM or writable storage on an acquired unit"
+        - "root or bootloader authority"
+        - "measured wall power"
+        - "NL/EU used-market price"
+    - id: official_open_patch_execution
+      state: DOCUMENTED
+      source: "https://docs.critterandguitari.com/Organelle/og_sms2/"
+      proves:
+        - "the Organelle M/S/S2 manual identifies the device as a Linux microcomputer and open-source platform"
+        - "users can create their own patches and Pure Data is the primary patch environment"
+        - "the microSD card is the internal microcomputer's root disk and stores both the operating system and patches"
+        - "normal boot reaches the patch menu and patches can be loaded from microSD or USB storage"
+      does_not_prove:
+        - "root privilege"
+        - "sudo availability"
+        - "arbitrary package-manager authority"
+        - "cold-boot autostart of arbitrary custom services"
+    - id: official_console_and_compile_surface
+      state: DOCUMENTED
+      source: "https://docs.critterandguitari.com/Organelle/organelle_programming/"
+      proves:
+        - "the official Web editor provides a Terminal for console access to the Organelle"
+        - "Critter & Guitari describes that terminal as low-level access for coding"
+        - "the official Compile control runs a patch-local compile.sh and can build Pd externals or other source files"
+        - "VNC can expose the Organelle desktop over the same local Wi-Fi network"
+      does_not_prove:
+        - "root or sudo privilege"
+        - "bootloader control"
+        - "unattended custom-service persistence"
+        - "arbitrary remote access without owner configuration"
+    - id: official_microsd_factory_restore
+      state: DOCUMENTED
+      source: "https://docs.critterandguitari.com/Organelle/og_sms2/"
+      proves:
+        - "burning a new Organelle disk image to microSD resets the target card/device software state to factory state"
+        - "the restore procedure completely wipes the target microSD card"
+        - "the manual explicitly permits using a brand-new card when the owner wants to keep the old OS available"
+        - "the current manual identifies an Organelle M/S/S2 OS image intended for 8 GB or larger microSD media"
+      does_not_prove:
+        - "recovery from failed mainboard, power, bootloader, or microSD-slot hardware"
+        - "automatic rollback between cards"
+        - "AXM local recovery reproduction"
+    - id: official_standalone_basic_operation
+      state: DOCUMENTED
+      source: "https://docs.critterandguitari.com/Organelle/og_sms2/"
+      proves:
+        - "the manual describes the Organelle as a fully capable stand-alone instrument"
+        - "basic locally stored patch operation does not require a vendor cloud session"
+      does_not_prove:
+        - "every third-party patch is offline-independent"
+        - "firmware/update acquisition is fully offline"
+        - "every network-facing workflow is cloud-independent"
+
+notes:
+  - "This is the first programmable musical-instrument/audio-processor record in the census."
+  - "The key execution finding is manufacturer-supported user-authored patch and console/compile capability on Linux, not a speculative root claim."
+  - "The strongest new recovery lesson is removable-root-medium continuity: a factory restore destroys the selected target card, while a separate new card can be used so the previous OS medium remains physically retained."
+  - "No local unit test, privilege test, cold-boot service test, wall-power measurement, market sample, or destructive recovery reproduction was performed."

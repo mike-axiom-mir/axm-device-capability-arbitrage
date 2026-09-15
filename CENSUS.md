@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    17 / 25
-Categories: 17 distinct / 8 required
+Devices:    18 / 25
+Categories: 18 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -46,6 +46,7 @@ A device counts when it has:
 | 15 | LG OLED55C1PUB / C1 55-inch OLED | Smart TV / display appliance | Manufacturer-supported webOS Developer Mode `.ipk` execution; sandboxed app authority whose renewable developer session can expire and remove Developer Mode-installed apps | DOCUMENTED | No | `devices/lg/oled55c1pub.yaml` |
 | 16 | Polestar 2 model year 2026 | Vehicle infotainment / non-safety computer | Manufacturer-supported Google Play installation of car-adapted Android Automotive apps; sandboxed infotainment execution explicitly bounded away from whole-vehicle/safety-control authority | DOCUMENTED | No | `devices/polestar/polestar-2-my2026.yaml` |
 | 17 | Grandstream GXV3370 | Enterprise IP video phone / desk endpoint | Manufacturer-supported Android 7 application development/deployment with administrator-controlled third-party app admission; Safe Mode, factory reset and SD-card firmware recovery remain distinct | DOCUMENTED | No | `devices/grandstream/gxv3370.yaml` |
+| 18 | Critter & Guitari Organelle S2 | Programmable musical instrument / audio processor | Manufacturer-supported Pure Data patch authoring plus Linux terminal/compile access; OS and patch state live on a removable microSD root disk with destructive official re-image and retainable prior-media path | DOCUMENTED | No | `devices/critter-and-guitari/organelle-s2.yaml` |
 
 ## Category coverage
 
@@ -66,6 +67,7 @@ A device counts when it has:
 - [x] Industrial / commercial surplus
 - [x] Vehicle infotainment / non-safety computer
 - [x] Enterprise IP video phone / desk endpoint
+- [x] Programmable musical instrument / audio processor
 - [ ] Other / unknown category
 
 Only eight categories are required for Milestone 01. New records should now optimize for **evidence diversity and model pressure**, not category-count padding.
@@ -94,6 +96,8 @@ The smart-TV/display slot is now represented by LG OLED55C1PUB. Its value is not
 The vehicle-infotainment slot is now represented by Polestar 2 model year 2026. Its value is not merely that Android apps run in a car: the evidence forces a parent-system boundary. A sandboxed infotainment application may be valid custom execution while braking, steering, propulsion, safety systems, CAN and arbitrary vehicle-property authority remain outside the proven scope.
 
 The enterprise IP video-phone / desk-endpoint slot is now represented by Grandstream GXV3370. Its value is not simply Android-on-a-phone: Grandstream documents a real custom-application path whose install/uninstall admission can be allowed, administrator-gated, source-sensitive, or prohibited, plus separate Safe Mode, factory-reset and SD-card firmware-recovery layers.
+
+The programmable musical-instrument / audio-processor slot is now represented by Critter & Guitari Organelle S2. Its value is not simply Linux in an instrument: the manufacturer documents user-authored patch execution plus console/compile access while leaving privilege unproven, and the removable microSD root disk creates a recovery case where re-imaging the chosen target is destructive even though an untouched prior OS card can be retained physically.
 
 ## Schema pressure learned so far
 
@@ -351,6 +355,24 @@ Android's car application model is admission-, permission- and driving-policy-bo
 
 This is one vehicle pressure case. Preserve the distinction, but do not freeze a universal parent-system schema until independent hardware demonstrates the same need again.
 
+### 15. Destructive restore can still preserve continuity through removable root media
+
+Organelle S2 adds a recovery distinction that does not fit a single destructive/non-destructive label:
+
+```text
+microSD root disk selected for factory re-image
+  -> target card is completely wiped
+  -> factory OS state can be restored
+
+owner instead uses a new microSD card
+  -> new card receives factory image
+  -> prior OS/root disk can remain physically retained
+```
+
+The recovery action is destructive to its selected target, but removable-media choice can preserve the previous boot state outside that target. A recovery model therefore may need to keep **target-medium data impact** separate from **whether prior boot media can be retained**.
+
+This is one pressure case. The Organelle record stores the distinction locally on its recovery path instead of freezing a universal removable-root-medium schema after a single device.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -421,6 +443,8 @@ The Polestar 2 MY2026 is not added merely because it can run car-adapted Android
 
 The Grandstream GXV3370 is not added merely because it has 2 GB RAM, Gigabit Ethernet and manufacturer-supported Android application execution. Its application admission policy is state-dependent, privilege remains unknown, cold-boot service persistence is unverified, wall power is unmeasured, and no dated acquisition cohort or registry workload evidence exists.
 
+The Organelle S2 is not added merely because it has Linux, 1 GB RAM, local networking through a USB adapter and a real console/compile surface. Root privilege, service autostart, hard-power-loss restart, measured wall power, acquisition cost and opportunity cost as a musical instrument remain unverified, so registry-node suitability is not inferred from programmability alone.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -441,6 +465,7 @@ The milestone should answer:
 12. Can exact manufacturer order numbers remain revision-aware when a functional-status change alters real capability?
 13. Can a vendor-session-gated developer surface remain distinct from indefinitely durable deployment without hiding account/network renewal dependency?
 14. Can execution authority inside one subsystem remain distinct from authority over a safety-critical parent machine?
+15. Can recovery distinguish destructive impact on the selected removable boot medium from the separate ability to retain an earlier boot medium intact?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

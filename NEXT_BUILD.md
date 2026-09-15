@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains seventeen grounded records across seventeen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, and enterprise IP video phone/desk endpoint. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 8 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains eighteen grounded records across eighteen marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, enterprise IP video phone/desk endpoint, and programmable musical instrument/audio processor. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 7 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; and Polestar 2 MY2026 now shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; Polestar 2 MY2026 shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine; and Critter & Guitari Organelle S2 now shows that destructive factory re-imaging of a selected removable root disk can coexist with continuity through physically retaining the prior boot medium.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -192,7 +192,7 @@ An exact marketed model can still contain an acquisition variant that gates the 
 
 ```text
 Pixel 3a, bootloader-unlockable unit
-  -> UBports Ubuntu Touch installation path exists
+  -> UBports-supported Ubuntu Touch installation path exists
 
 Pixel 3a, Verizon unit
   -> UBports says bootloader cannot be unlocked
@@ -333,7 +333,7 @@ This is one vehicle pressure case. Preserve the local `safety_boundary` evidence
 
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 17 distinct categories. Do not pad the remaining 8 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 18 distinct categories. Do not pad the remaining 7 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
@@ -355,7 +355,9 @@ The vehicle-infotainment/non-safety slot is now represented by Polestar 2 MY2026
 
 The enterprise IP video-phone / desk-endpoint slot is now represented by Grandstream GXV3370. Its value is not merely Android execution; the manufacturer exposes a policy-controlled third-party application surface and separately documents Safe Mode, factory reset and SD-card Recovery Mode. It independently pressures admission control and layered recovery without requiring exploit-based access.
 
-Each new record should expose something the existing seventeen do not.
+The programmable musical-instrument/audio-processor slot is now represented by Critter & Guitari Organelle S2. Its value is not merely Linux execution: the manufacturer documents user-authored patches, console/compile workflows and a removable microSD root disk whose official factory restore wipes the selected card while explicitly permitting a new card so the old OS can be retained.
+
+Each new record should expose something the existing eighteen do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -391,6 +393,21 @@ factory erase
 ```
 
 Do not let `recovery_path: true` hide whether state, configuration or user data survives.
+
+### Removable-root-media recovery rule learned from Organelle S2
+
+A restore can be destructive to its selected target while continuity remains possible by preserving the previous removable boot medium.
+
+```text
+re-image current microSD
+  -> target OS + patch state is erased
+
+image a separate new microSD
+  -> factory boot medium is created
+  -> old OS/root disk can remain physically retained
+```
+
+Do not flatten these into either `recovery is destructive` or `recovery preserves state`. The correct answer depends on **which medium is targeted** and whether the prior medium remains retained outside the restore operation. Preserve that distinction locally until independent hardware shows the smallest reusable schema.
 
 ### Physical-safety rule learned from BASICR2
 
@@ -624,6 +641,19 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect a dated NL/EU used-market cohort with power supply/stand/accessory state and administrator usability preserved where listings disclose it;
 - do not add GXV3370 to the low-power registry comparison merely because it has 2 GB RAM and Gigabit Ethernet; admission policy, privilege, application persistence, power, market cost and workload fit must be comparable first.
 
+### Q. Critter & Guitari Organelle S2
+
+- on an owned/authorized exact S2, record OS version, microSD identity/capacity, free space and installed patch state before changing anything;
+- reproduce one harmless user-authored Pure Data patch and preserve a local experiment receipt;
+- open the manufacturer-supported terminal and compile one noncritical patch-local source artifact without promoting console access to root unless the local evidence proves it;
+- test basic locally stored patch operation with WAN unavailable while preserving the distinction between local performance and internet-dependent patch/update acquisition;
+- test normal restart and external power loss -> boot -> selected patch/service lifecycle rather than assuming arbitrary custom autostart;
+- measure whole-device wall power under a defined audio/patch profile instead of converting the 9 VDC / 1.0 A supply requirement into consumption;
+- on noncritical media, reproduce the official factory-image process and record exact target-card data loss;
+- separately test the documented new-card recovery strategy while physically retaining the prior card, preserving image/hash/card identity and whether the old root disk remains bootable;
+- collect a dated NL/EU used-market cohort only if a real capability contract makes the instrument a plausible candidate;
+- count musical-instrument opportunity cost instead of treating an already-owned programmable instrument as a free Linux node.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -635,6 +665,7 @@ Do not expand the census blindly if:
 - product category begins acting as an implicit capability claim;
 - recovery claims stop identifying which device state they apply to;
 - recovery claims hide configuration/data destruction behind a single positive boolean;
+- removable-root-media recovery is flattened so destructive impact on the selected target is confused with whether an older boot medium can be retained separately;
 - a model-family record silently assigns optional or higher-spec unit variants to every physical device;
 - an exact manufacturer article/order number silently assigns a higher functional-status capability to every physical unit;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
@@ -656,7 +687,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, parent-system authority inflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, parent-system authority inflation, recovery-target/retained-media conflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
 **Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root access stays consent-visible; cameras add privacy/recording consent; physical actuators, industrial process connections and vehicle/safety boundaries remain visibly user/operator-controlled.  
-**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/parent-system boundaries, software/security state, locality states, recovery, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, renewable developer access and cheap listings must be weighed against installation, recovery, update/session durability, opportunity cost, electricity, physical/industrial/vehicle safety and interference with the device's primary useful role.
+**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/parent-system boundaries, software/security state, locality states, recovery target/retained-media distinctions, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, removable-media recovery flexibility, renewable developer access and cheap listings must be weighed against installation, recovery, update/session durability, opportunity cost, electricity, physical/industrial/vehicle safety and interference with the device's primary useful role.
