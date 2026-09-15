@@ -5,8 +5,8 @@
 Current grounded count:
 
 ```text
-Devices:    20 / 25
-Categories: 20 distinct / 8 required
+Devices:    21 / 25
+Categories: 21 distinct / 8 required
 ```
 
 The category-breadth threshold is now exceeded. Milestone 01 is **not complete** until the census reaches 25 grounded devices and the first real capability-arbitrage comparison is evidence-ready.
@@ -49,6 +49,7 @@ A device counts when it has:
 | 18 | Critter & Guitari Organelle S2 | Programmable musical instrument / audio processor | Manufacturer-supported Pure Data patch authoring plus Linux terminal/compile access; OS and patch state live on a removable microSD root disk with destructive official re-image and retainable prior-media path | DOCUMENTED | No | `devices/critter-and-guitari/organelle-s2.yaml` |
 | 19 | Texas Instruments TI-Nspire CX II-T | Graphing calculator / programmable handheld | Manufacturer-supported Python + TI-Basic execution; visible Press-to-Test/exam mode can temporarily block pre-existing programs/documents while session-created data is deleted on exit | DOCUMENTED | No | `devices/texas-instruments/ti-nspire-cx-ii-t.yaml` |
 | 20 | Google Nest Mini (2nd gen) / H2C | Smart speaker / voice assistant | Manufacturer-supported Local Home SDK TypeScript/JavaScript executes on-device in a Chrome sandbox; demand-loaded lifecycle and cloud-linked integration remain separate from host ownership | DOCUMENTED | No | `devices/google/nest-mini-2nd-gen-h2c.yaml` |
+| 21 | Elgato Stream Deck MK.2 - Black / 10GBA9901 | Programmable USB control surface / peripheral | Manufacturer-documented local companion-host plugin architecture plus USB HID key-event/image/configuration surface; programmability without endpoint custom-code evidence | DOCUMENTED | No | `devices/elgato/stream-deck-mk2-black-10gba9901.yaml` |
 
 ## Category coverage
 
@@ -72,6 +73,7 @@ A device counts when it has:
 - [x] Programmable musical instrument / audio processor
 - [x] Graphing calculator / programmable handheld
 - [x] Smart speaker / voice assistant
+- [x] Programmable USB control surface / peripheral
 - [ ] Other / unknown category
 
 Only eight categories are required for Milestone 01. New records should now optimize for **evidence diversity and model pressure**, not category-count padding.
@@ -106,6 +108,8 @@ The programmable musical-instrument / audio-processor slot is now represented by
 The programmable graphing-calculator slot is now represented by Texas Instruments TI-Nspire CX II-T. Its value is not merely Python-on-a-calculator: TI documents a visible Press-to-Test/exam policy mode that can make pre-existing programs/documents temporarily inaccessible without deleting that prior state, while data created during the restricted session is deleted on exit. This adds an operational-mode capability-state pressure case distinct from persistent firmware, update persistence, developer-session expiry, and destructive recovery.
 
 The smart-speaker / voice-assistant slot is now represented by Google Nest Mini H2C. Its value is not merely that JavaScript runs on a speaker: Google documents Local Home code executing on-device while also documenting a sandboxed, demand-loaded lifecycle, cloud SYNC/account linkage and cloud fallback. That keeps execution locus separate from arbitrary host authority, persistent service semantics and whole-system offline operation.
+
+The programmable USB control-surface slot is now represented by Elgato Stream Deck MK.2 Black. Its value is the inverse execution-locus case: Elgato documents a highly programmable product experience while locating developer plugin execution entirely on the user's companion computer. USB HID supplies key events, image upload and device configuration, but that must not be promoted into endpoint custom-code execution or autonomous-node capability.
 
 ## Schema pressure learned so far
 
@@ -402,6 +406,27 @@ Therefore persistent presence of an execution surface or program is not enough t
 
 This is one pressure case. The TI-Nspire record preserves the distinction locally in `operational_modes` but the repo does not freeze a universal operational-mode schema until an independent hardware class reproduces the need.
 
+### 17. Programmable behavior can live entirely on a required companion host
+
+Elgato Stream Deck MK.2 adds the inverse of the Nest Mini on-device case:
+
+```text
+plugin implements custom behavior
+  -> plugin runs entirely on the user's companion computer
+
+physical Stream Deck
+  -> reports key events over USB HID
+  -> accepts image upload and device configuration
+
+therefore
+  -> product is genuinely programmable as a system
+  -> endpoint custom-code execution is not established
+```
+
+A matcher must not treat a programmable peripheral as an autonomous node merely because custom behavior is visible on its keys/displays. The companion computer, host software, attachment transport, restart behavior, power and recovery are part of the actual capability composition.
+
+This is now a concrete census record using the repository's `locus: remote_service` + `remote_kind: companion_host` distinction. It does not yet justify a universal companion-dependency schema beyond preserving those costs/conditions explicitly.
+
 ## First arbitrage comparison set
 
 The first comparison remains deliberately cross-category:
@@ -478,6 +503,8 @@ The TI-Nspire CX II-T is not added merely because it runs Python and TI-Basic. N
 
 The Nest Mini H2C is not added merely because Google documents on-device JavaScript/TypeScript and a 1.6 W standardized networked-standby result. The proven runtime is a sandboxed, demand-loaded Local Home fulfillment surface coupled to Cloud-to-cloud/account state; arbitrary persistent registry service execution, WAN-independent operation, registry-workload power, cold-boot persistence and exact-H2C acquisition economics remain unproven.
 
+The Stream Deck MK.2 is not added merely because its system is programmable and a current Tweakers listing exists. The documented developer logic runs on a required companion computer, endpoint compute resources/custom execution are unproven, and any capability using the plugin path must count the host's acquisition/opportunity cost, power, software lifecycle and recovery rather than pricing only the peripheral.
+
 ## What Milestone 01 must prove
 
 The target is not "25 cool hacks."
@@ -501,6 +528,7 @@ The milestone should answer:
 15. Can recovery distinguish destructive impact on the selected removable boot medium from the separate ability to retain an earlier boot medium intact?
 16. Can operational policy modes temporarily suppress access to persisted capability without being confused with deletion, firmware-state change, or recovery?
 17. Can on-device developer execution remain distinct from arbitrary host ownership, persistent service semantics, and whole-system WAN independence when the platform is sandboxed and vendor-orchestrated?
+18. Can a programmable product whose developer code runs entirely on a required companion host remain distinct from autonomous endpoint execution while still counting the host as part of total useful cost?
 
 If the answer is no, revise the model rather than forcing the hypothesis to win.
 

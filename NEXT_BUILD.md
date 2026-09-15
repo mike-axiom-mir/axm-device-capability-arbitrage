@@ -1,8 +1,8 @@
 # Next Build
 
-**Current state:** The foundation is in place and the census now contains twenty grounded records across twenty marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, enterprise IP video phone/desk endpoint, programmable musical instrument/audio processor, programmable graphing calculator/handheld, and smart speaker/voice-assistant endpoint. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 5 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
+**Current state:** The foundation is in place and the census now contains twenty-one grounded records across twenty-one marketed categories. The set spans a consumer camera, router, e-reader, mobile robot, NAS, thin client, media stick, IP camera, smart-home relay, smartphone, office MFP, 3D-printer/manufacturing appliance, handheld gaming PC/console, industrial IoT gateway, smart TV/display appliance, vehicle infotainment/non-safety computer, enterprise IP video phone/desk endpoint, programmable musical instrument/audio processor, programmable graphing calculator/handheld, smart speaker/voice-assistant endpoint, and programmable USB control-surface/peripheral. The required 8-category breadth threshold is exceeded, but Milestone 01 still requires 4 more evidence-backed devices and an evidence-ready arbitrage result. The first registry comparison now has a dated EU acquisition snapshot, an executable common registry workload, evidence-gated comparison records, and local-experiment receipt validation. It still has no ranked winner because the three physical candidates have not produced comparable workload footprint, wall-power, provisioning, hard-power-loss/restart, recovery-burden, and remaining-life evidence.
 
-The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; Polestar 2 MY2026 shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine; Critter & Guitari Organelle S2 shows that destructive factory re-imaging of a selected removable root disk can coexist with continuity through physically retaining the prior boot medium; Texas Instruments TI-Nspire CX II-T shows that a persisted programming surface can be temporarily inaccessible under a visible operational policy mode without that pre-existing state being deleted; and Google Nest Mini H2C now adds a distinct execution-quality boundary: developer-controlled Local Home JavaScript/TypeScript can execute on-device while remaining sandboxed, demand-loaded, and coupled to Cloud-to-cloud/account state, so execution locus must remain separate from arbitrary host ownership, service persistence, and WAN independence.
+The census has now exposed several durable boundaries: Roborock S5 showed recovery by persistent device state; DS220+ added recovery data-impact semantics; Wyse 3040 exposed configuration identity; Fire TV AFTKA separated application execution from administrator/root authority; Wyze Cam v2 and SONOFF BASICR2 independently established state-dependent locality; Pixel 3a showed that acquisition variant can gate the execution surface; Canon C3530i showed admission-controlled application execution; Grandstream GXV3370 independently repeats that admission boundary through administrator-controlled Android app policy and adds Safe Mode as an application-level recovery layer distinct from factory reset/firmware recovery; Creality K1 showed that manufacturer-documented root host authority must remain separate from physical-actuator suitability and total-useful-cost fit; Steam Deck LCD 256 GB showed that execution privilege must remain separate from persistence across vendor OS updates; Siemens IOT2050 Advanced showed that even an exact manufacturer article number can span functional-status revisions with different hardware capability while acquired software/security state remains a separate deployment fact; LG OLED55C1PUB shows that a manufacturer-supported developer execution surface can itself be a renewable vendor-session lease whose expiry removes Developer Mode-installed applications; Polestar 2 MY2026 shows that sandboxed execution inside one vehicle subsystem must not be promoted into authority over the safety-critical parent machine; Critter & Guitari Organelle S2 shows that destructive factory re-imaging of a selected removable root disk can coexist with continuity through physically retaining the prior boot medium; Texas Instruments TI-Nspire CX II-T shows that a persisted programming surface can be temporarily inaccessible under a visible operational policy mode without that pre-existing state being deleted; Google Nest Mini H2C adds a distinct execution-quality boundary where developer-controlled Local Home JavaScript/TypeScript can execute on-device while remaining sandboxed, demand-loaded, and coupled to Cloud-to-cloud/account state; and Elgato Stream Deck MK.2 now adds the inverse locus case: a product can be genuinely programmable while the developer-controlled plugin logic runs entirely on a required companion computer, so host dependency and composition cost must remain separate from endpoint custom-code claims.
 
 ## Completed foundation step — Mechanical record checks
 
@@ -331,9 +331,35 @@ Android documents car-specific review, driver-distraction restrictions and permi
 
 This is one vehicle pressure case. Preserve the local `safety_boundary` evidence in the record, but do not freeze a universal parent-system schema until independent hardware reproduces the need.
 
+### Companion-host programmability rule learned from Elgato Stream Deck MK.2
+
+A product can expose real user-authored behavior while the developer-controlled code remains off the endpoint.
+
+```text
+Stream Deck plugin
+  -> hosted entirely on the user's local companion computer
+
+Stream Deck MK.2 endpoint
+  -> USB HID key events
+  -> image upload
+  -> device configuration
+```
+
+Therefore:
+
+```text
+programmable system
+  != endpoint custom-code execution
+
+local companion-host execution
+  != autonomous peripheral
+```
+
+Any future comparison that depends on this official plugin path must count the required companion host, Stream Deck software state, attachment transport, host power/opportunity cost and host recovery instead of pricing only the peripheral. The current `locus: remote_service` + `remote_kind: companion_host` vocabulary captures the execution location without pretending one pressure case is enough to freeze a larger dependency schema.
+
 ## Priority 2 — Continue census expansion across genuinely different hardware
 
-The breadth threshold is exceeded at 20 distinct categories. Do not pad the remaining 5 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
+The breadth threshold is exceeded at 21 distinct categories. Do not pad the remaining 4 records with near-duplicates. New records should maximize schema pressure, evidence diversity, or comparison value.
 
 Recommended next categories/patterns:
 
@@ -361,7 +387,9 @@ The programmable graphing-calculator slot is now represented by Texas Instrument
 
 The smart-speaker/voice-assistant slot is now represented by Google Nest Mini H2C. Its value is not merely a voice endpoint: Google documents a real on-device Local Home JavaScript/TypeScript runtime while also documenting cloud-linked admission/fallback and a demand-loaded, memory-pressure-sensitive lifecycle. That pressures execution locus, persistence and locality without pretending the device is a general-purpose Linux host.
 
-Each new record should expose something the existing twenty do not.
+The programmable USB control-surface/peripheral slot is now represented by Elgato Stream Deck MK.2 Black. Its value is not merely that keys can trigger custom actions: the official plugin runs on the companion computer while the endpoint exposes USB HID input/display/configuration control. That pressures execution-locus and composition-cost reasoning in the opposite direction from the Nest Mini on-device case.
+
+Each new record should expose something the existing twenty-one do not.
 
 ### Recovery-state rule learned from the S5
 
@@ -702,6 +730,20 @@ Once the three registry candidates contain comparable cost, power, provisioning 
 - collect an exact-H2C NL/EU market cohort only when listings or physical inspection expose the model code; do not promote generation-only Tweakers listings to exact-model economics;
 - do not add it to the low-power registry comparison merely because JavaScript runs on-device or standardized standby is low: arbitrary persistent service execution, WAN independence, registry compatibility and workload power are unproven.
 
+### T. Elgato Stream Deck MK.2 - Black / 10GBA9901
+
+- on an owned/authorized exact retail SKU, preserve visible product/USB identity, firmware version, host OS and Stream Deck software version before testing;
+- locally verify the USB VID/PID and compare them with Elgato's documented MK.2 HID identity without assuming retail SKU and HID model are interchangeable identifiers;
+- build/run one harmless local plugin through the official SDK path and preserve a local experiment receipt that identifies the companion host as the execution locus;
+- capture only the minimum authorized HID traffic needed to reproduce key-event and image/configuration behavior; do not infer endpoint firmware execution from host control;
+- test companion-host process restart, USB detach/reattach, host reboot and peripheral power interruption separately so host dependency is visible;
+- test WAN-disconnected operation only after normal software/plugin provisioning, keeping local runtime separate from Marketplace/update acquisition dependency;
+- measure peripheral USB power with an appropriate meter under defined idle/display-update/input profiles; do not convert USB standard limits into consumption;
+- create/restore a noncritical profile backup and keep host-profile continuity distinct from physical-device firmware recovery;
+- do not intentionally interrupt firmware update merely to reproduce the documented brick risk; research an official recovery path separately before any recovery experiment;
+- refresh the exact Classic Keys black Tweakers Pricewatch/Vraag & Aanbod evidence only when a real comparison needs it, preserving seller class and asking-vs-transaction scope;
+- do not treat the peripheral's asking price as the cost of the programmable capability when the official plugin path also requires a companion computer and host software lifecycle.
+
 ## Stop conditions
 
 Do not expand the census blindly if:
@@ -719,6 +761,7 @@ Do not expand the census blindly if:
 - an exact manufacturer article/order number silently assigns a higher functional-status capability to every physical unit;
 - an application/developer execution surface is silently promoted to root or unrestricted operating-system authority;
 - an on-device developer execution locus is silently promoted to arbitrary host ownership, persistent service semantics or WAN independence;
+- a companion-host execution path is silently promoted to autonomous endpoint execution or priced without the required host composition;
 - an acquisition variant that gates execution is silently merged into the model-level capability claim;
 - an admission-controlled application platform is treated as freely admitting arbitrary applications;
 - a single locality label hides materially different persistent-state cloud behavior;
@@ -737,7 +780,7 @@ When one of those occurs, repair the model before adding volume.
 
 ## Root gate
 
-**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, execution-locus/host-ownership inflation, parent-system authority inflation, operational-mode accessibility inflation, recovery-target/retained-media conflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
+**Truth:** no fake verification, silent best-variant/functional-status inheritance, privilege inflation, locality flattening, admission inflation, update-persistence inflation, developer-session durability inflation, execution-locus/host-ownership inflation, companion-host/autonomous-endpoint conflation, parent-system authority inflation, operational-mode accessibility inflation, recovery-target/retained-media conflation, security-state guessing, electrical-rating-as-power-measurement substitution, or asking-price-as-transaction-price substitution.  
 **Agency / non-domination:** owned/authorized hardware only; consent-visible developer/root/exam-mode access stays consent-visible; cameras add privacy/recording consent; physical actuators, industrial process connections and vehicle/safety boundaries remain visibly user/operator-controlled.  
-**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/locus/parent-system/operational-mode boundaries, software/security state, locality states, recovery target/retained-media distinctions, market observations, experiment receipts and safety constraints live in repo state.  
-**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, removable-media recovery flexibility, renewable developer access, temporary policy-mode restrictions, low standardized standby, on-device sandbox execution and cheap listings must be weighed against installation, recovery, update/session/mode durability, cloud coupling, opportunity cost, electricity, battery wear, physical/industrial/vehicle safety and interference with the device's primary useful role.
+**Continuity:** evidence, variant/functional-status caveats, execution/admission/update-persistence/session-lease/locus/companion-host/parent-system/operational-mode boundaries, software/security state, locality states, recovery target/retained-media distinctions, market observations, experiment receipts and safety constraints live in repo state.  
+**Wisdom before speed:** compare common evidence before ranking hardware; root/replacement-firmware gains, removable-media recovery flexibility, renewable developer access, temporary policy-mode restrictions, low standardized standby, on-device sandbox execution, companion-host programmability and cheap listings must be weighed against installation, required-host composition, recovery, update/session/mode durability, cloud coupling, opportunity cost, electricity, battery wear, physical/industrial/vehicle safety and interference with the device's primary useful role.

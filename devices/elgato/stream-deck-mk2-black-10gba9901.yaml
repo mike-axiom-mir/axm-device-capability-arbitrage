@@ -1,0 +1,240 @@
+schema_version: "0.1"
+record_id: elgato-stream-deck-mk2-black-10gba9901
+
+identity:
+  manufacturer: Elgato
+  model: Stream Deck MK.2 - Black
+  common_name: Elgato Stream Deck MK.2
+  marketed_category: programmable_usb_control_surface
+  hardware_revision: "USB PID 0x0080"
+  release_period: unknown
+  configuration_scope:
+    retail_sku: "10GBA9901"
+    hid_protocol_model: "20GBA9901"
+    usb_vid: "0x0FD9"
+    usb_pid: "0x0080"
+    key_variant: Classic_Keys
+    color: Black
+    note: "This record is scoped to the black 15-key Stream Deck MK.2 retail SKU 10GBA9901 and its documented MK.2 USB HID identity 20GBA9901 / VID 0x0FD9 / PID 0x0080. Elgato's Scissor Keys MK.2 uses model 20GBL9901 / PID 0x00A5 and is outside this record. Retail SKU and HID protocol model are separate identity namespaces."
+
+compute:
+  soc: unknown
+  architecture: unknown
+  cpu_cores: unknown
+  clock_mhz: unknown
+  accelerator:
+    gpu: unknown
+    npu: unknown
+    dsp: unknown
+  notes:
+    - "No endpoint CPU/SoC architecture is asserted from the sources used here. The documented Stream Deck plugin runtime is on the companion computer, not proven on the peripheral processor."
+
+memory:
+  ram_mb: unknown
+  internal_persistent_storage_mb: unknown
+  removable_storage:
+    present: unknown
+
+execution:
+  surfaces:
+    - type: plugin
+      environment: Stream_Deck_SDK_plugin_on_companion_host
+      version: unknown
+      custom_code: false
+      locus: remote_service
+      remote_kind: companion_host
+      privilege: unknown
+      access_method: Stream_Deck_desktop_software_and_SDK
+      state: DOCUMENTED
+      source_claim_ids:
+        - plugin_companion_host_execution
+      notes:
+        - "Elgato documents Stream Deck plugins as hosted entirely on the user's local machine, with hardware communication managed by the Stream Deck app."
+        - "Within this physical-device record, that is real programmable behavior but not evidence that developer plugin code executes on the Stream Deck endpoint itself."
+        - "No endpoint shell, package manager, native-binary runtime, root, bootloader or arbitrary firmware execution is inferred."
+
+connectivity:
+  ethernet: unknown
+  wifi: unknown
+  bluetooth: unknown
+  usb:
+    present: true
+    standard: USB_2_0
+    protocol: USB_HID
+    connector: USB_C
+    host_control:
+      key_event_reporting: true
+      image_upload: true
+      device_configuration: true
+      state: DOCUMENTED
+      source_claim_ids:
+        - usb_hid_model_and_control
+  serial: unknown
+  gpio: unknown
+  notes:
+    - "Elgato documents host communication through USB HID for the 15-key Classic family. Network interfaces are left unknown rather than inferred absent from the product category."
+
+inputs:
+  sensors: []
+  microphones: []
+  controls:
+    - fifteen_physical_lcd_keys
+  notes:
+    - "The HID documentation establishes key-event reporting to the host; it does not establish arbitrary endpoint-code access."
+
+outputs:
+  display:
+    present: true
+    structure: single_lcd_under_3x5_key_grid
+    host_image_upload: true
+    state: DOCUMENTED
+    source_claim_ids:
+      - usb_hid_model_and_control
+  speaker: unknown
+  leds: unknown
+  motors: []
+  relays: []
+
+power:
+  source:
+    battery: unknown
+    external_power: true
+    method: USB_host_connection
+  idle_watts: unknown
+  active_watts: unknown
+  measured: false
+  always_on_suitability: unknown
+  thermal_notes: unknown
+  notes:
+    - "No endpoint wall/USB power measurement is asserted. USB 2.0 connectivity and cable presence are not converted into a wattage estimate."
+
+boot:
+  unattended_boot: unknown
+  auto_start_custom_code: unknown
+  secure_boot: unknown
+  boot_from_removable_media: unknown
+  bootloader_access: unknown
+  notes:
+    - "The official plugin path depends on companion-host software. Peripheral cold-start behavior and any endpoint custom-code autostart remain unproven."
+
+recovery:
+  factory_reset: unknown
+  official_restore: unknown
+  rescue_partition: unknown
+  dual_firmware: unknown
+  removable_media_recovery: unknown
+  usb_recovery: unknown
+  uart_recovery: unknown
+  bootloader_recovery: unknown
+  known_brick_risk: true
+  recovery_state: DOCUMENTED
+  notes:
+    - "Elgato documents an official firmware-update path through Stream Deck software and warns that a failed update can leave the device nonfunctional. That is maintenance/update evidence, not proof of an unbrick or low-level firmware-restore path."
+    - "Elgato separately documents backup/restore of host-side Stream Deck profiles. Profile continuity is not promoted into physical-device firmware recovery, and profile backups do not themselves contain plugin copies."
+
+locality:
+  state: unknown
+  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_provisioning: unknown
+  local_network_operation: unknown
+  offline_operation: unknown
+  notes:
+    - "The documented plugin runtime is local to the companion computer and hardware communication is local through the Stream Deck app/USB path. This does not by itself prove full offline provisioning, Marketplace independence, or every plugin's WAN independence."
+
+economics:
+  market_region: NL
+  checked_at: "2026-09-15"
+  used_price_eur:
+    low: unknown
+    median: unknown
+    high: unknown
+  new_price_eur: unknown
+  required_adapters_eur: unknown
+  required_storage_eur: unknown
+  setup_minutes: unknown
+  special_tools:
+    - compatible_Windows_or_macOS_companion_host_for_official_software_path
+    - USB_connection
+  replacement_availability: unknown
+  market_data_state: not_collected
+  notes:
+    - "Tweakers Pricewatch was checked for the exact Classic Keys black variant and preserved as dated retail/variant context, not a permanent price property."
+    - "One Tweakers Vraag & Aanbod listing dated 2026-08-26 asked EUR 80 for the exact named Classic Keys black variant with box/cables. It is one asking-price observation, not a transaction or distribution; seller class remains unknown because the listing does not explicitly classify the account as private, business or dealer."
+
+roles:
+  - role: programmable_human_machine_control_surface
+    confidence: high
+    reason: "Elgato documents 15 key inputs, host image upload/device configuration through USB HID, and a local companion-host plugin architecture."
+  - role: host_attached_status_and_control_endpoint
+    confidence: high
+    reason: "The peripheral exposes bidirectional host interaction through key events plus LCD image upload while developer plugin logic runs on the companion computer."
+  - role: autonomous_compute_node
+    confidence: low
+    reason: "No developer-controlled endpoint execution, standalone service lifecycle, endpoint memory/storage, unattended behavior or workload power is established; the official programmable path depends on a companion host."
+
+evidence:
+  overall_state: DOCUMENTED
+  locally_verified: false
+  last_checked: "2026-09-15"
+  claims:
+    - id: exact_retail_sku_mk2_black
+      state: DOCUMENTED
+      source: "https://www.elgato.com/pl/pl/s/elgato-product-msrps-by-region"
+      additional_sources:
+        - "https://www.elgato.com/eu/en/p/stream-deck"
+      proves:
+        - "Elgato lists retail SKU 10GBA9901 as Stream Deck MK.2 - Black"
+        - "Elgato's current 15-key Stream Deck product specification lists 15 customizable LCD keys and USB 2.0 with a USB-C cable"
+      does_not_prove:
+        - "endpoint CPU, RAM or writable-storage capacity"
+        - "developer plugin code executes on the Stream Deck processor"
+        - "endpoint shell, root or bootloader authority"
+        - "device self-consumption in watts"
+    - id: usb_hid_model_and_control
+      state: DOCUMENTED
+      source: "https://docs.elgato.com/streamdeck/hid/stream-deck-classic/"
+      proves:
+        - "Elgato identifies Stream Deck Mk.2 as HID model 20GBA9901 with VID 0x0FD9 and PID 0x0080"
+        - "Elgato identifies the distinct Mk.2 Scissor Keys variant as model 20GBL9901 with PID 0x00A5"
+        - "The 15-key Classic family communicates with the host through USB HID for key-event reporting, image upload and device configuration"
+      does_not_prove:
+        - "retail SKU and HID model are the same identifier namespace"
+        - "developer-controlled code executes on the peripheral"
+        - "endpoint root or firmware modification authority"
+    - id: plugin_companion_host_execution
+      state: DOCUMENTED
+      source: "https://docs.elgato.com/streamdeck/sdk/introduction/plugin-environment/"
+      proves:
+        - "Elgato documents Stream Deck plugins as hosted entirely on the user's local machine"
+        - "Elgato documents hardware communication as managed by the Stream Deck app"
+        - "The official programmable plugin surface therefore executes developer logic off-endpoint on a companion host"
+      does_not_prove:
+        - "plugin code executes on the physical Stream Deck endpoint"
+        - "the companion-host path works without Stream Deck software"
+        - "every plugin works without internet access"
+        - "endpoint shell, root or bootloader access"
+    - id: firmware_update_risk
+      state: DOCUMENTED
+      source: "https://help.elgato.com/hc/en-us/articles/4412175612429-Elgato-Stream-Deck-Update-Device-Firmware"
+      proves:
+        - "Elgato provides a firmware-update path through Stream Deck software"
+        - "Elgato warns that an incorrectly completed firmware update may leave a Stream Deck device nonfunctional"
+      does_not_prove:
+        - "an official low-level unbrick image or rescue bootloader exists"
+        - "USB recovery from arbitrary firmware corruption"
+        - "AXM locally reproduced firmware update or recovery"
+    - id: profile_backup_restore_host_state
+      state: DOCUMENTED
+      source: "https://help.elgato.com/hc/en-us/articles/360048424432-Elgato-Stream-Deck-How-to-Back-Up-and-Restore-Profiles"
+      proves:
+        - "Stream Deck software can back up and restore host-side profiles"
+        - "Elgato documents profile backup as protection against profile corruption or loss"
+      does_not_prove:
+        - "physical-device firmware recovery"
+        - "profile backups contain plugin binaries or copies"
+        - "endpoint state is independently recoverable without the companion host"
+
+notes:
+  - "This record promotes the previously researched Stream Deck MK.2 pressure case into the census as a genuinely different programmable peripheral class."
+  - "The central lesson is that useful programmable behavior can be real while the developer-controlled execution locus remains entirely on a required companion computer."
+  - "No AXM physical Stream Deck was inspected. No plugin was installed, no HID capture was performed, no profile restore or firmware update was attempted, no USB/wall power was measured, and no Tweakers listing was contacted or purchased."
