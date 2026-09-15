@@ -3,7 +3,7 @@
 
 This validator intentionally does not promote any device by itself. It only prevents
 LOCALLY_VERIFIED/REPRODUCIBLE device claims from existing without at least one
-owned/authorized actual experiment receipt that explicitly claims local verification
+owned/authorized local_experiment receipt that explicitly claims local verification
 for the same device. Receipt scope still has to be reviewed before individual claims
 are promoted.
 """
@@ -54,7 +54,9 @@ def load_receipts(paths: list[Path]) -> dict[str, dict[str, Any]]:
 
 
 def qualifying_receipt(receipt: dict[str, Any], record_id: str) -> bool:
-    if receipt.get("receipt_kind") != "actual":
+    # Keep this discriminator aligned with validate_experiment_receipts.py, whose
+    # on-disk receipt kinds are exactly "template" and "local_experiment".
+    if receipt.get("receipt_kind") != "local_experiment":
         return False
     if receipt.get("device_record_id") != record_id:
         return False
@@ -123,7 +125,7 @@ def validate_device(
     )
     if not matching_ids:
         raise ValidationError(
-            "evidence.locally_verified=true requires at least one actual experiment "
+            "evidence.locally_verified=true requires at least one local_experiment "
             "receipt for this device with owned_or_authorized=true, "
             "result.local_verification_claimed=true, a local truth state, and artifacts"
         )
