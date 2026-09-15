@@ -160,7 +160,7 @@ def validate_census(census_text: str, device_paths: list[Path], categories: set[
 
 def validate_next_build(next_build_text: str, actual_devices: int, actual_categories: int) -> None:
     state = require_match(
-        r"\*\*Current state:\*\*.*?contains\s+(\w+)\s+grounded records across\s+(\w+)\s+marketed categories\..*?Milestone 01 still requires\s+(\d+)\s+more evidence-backed devices",
+        r"\*\*Current state:\*\*.*?contains\s+([\w-]+)\s+grounded records across\s+([\w-]+)\s+marketed categories\..*?Milestone 01 still requires\s+(\d+)\s+more evidence-backed devices",
         next_build_text,
         "NEXT_BUILD.md current-state census summary",
         flags=re.DOTALL,
