@@ -35,6 +35,12 @@ jobs:
       - name: Validate evidence claim scope
         run: python tools/validate_evidence_claim_scope.py
 
+      - name: Test generic source-claim link gate
+        run: python tools/test_source_claim_links.py
+
+      - name: Validate generic source-claim links
+        run: python tools/validate_source_claim_links.py
+
       - name: Validate evidence packet synchronization
         run: python tools/validate_evidence_packets.py
 
