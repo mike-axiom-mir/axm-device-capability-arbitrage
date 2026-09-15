@@ -32,6 +32,12 @@ jobs:
       - name: Validate execution-locus annotations
         run: python tools/validate_execution_locus.py
 
+      - name: Test remote execution-kind gate
+        run: python tools/test_remote_execution_kind.py
+
+      - name: Validate remote execution-kind classification
+        run: python tools/validate_remote_execution_kind.py
+
       - name: Validate evidence claim scope
         run: python tools/validate_evidence_claim_scope.py
 
