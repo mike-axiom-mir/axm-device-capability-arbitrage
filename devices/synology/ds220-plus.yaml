@@ -173,12 +173,13 @@ recovery:
 
 locality:
   state: local_after_provisioning
-  vendor_cloud_required_for_basic_operation: unknown
+  vendor_cloud_required_for_basic_operation: false
   vendor_cloud_required_for_provisioning: unknown
   local_network_operation: true
   offline_operation: unknown
   notes:
-    - "DSM and Container Manager expose local NAS/container functionality, but this record has not yet proven a completely internet-independent first-time provisioning/update path."
+    - "Synology's DSM 7.2 guide documents direct DSM sign-in on the same local network using the NAS IP address and a DSM user account; it separately identifies Synology Account as the account for online services such as QuickConnect, DDNS and C2."
+    - "This supports no Synology-vendor-cloud requirement for basic local DSM operation after provisioning. It does not prove an internet-free first installation/update path, WAN-disconnected operation of every package/container, or AXM local verification."
 
 economics:
   market_region: NL
@@ -213,7 +214,7 @@ roles:
 evidence:
   overall_state: DOCUMENTED
   locally_verified: false
-  last_checked: "2026-09-13"
+  last_checked: "2026-09-15"
   claims:
     - id: exact_model_hardware_and_power
       state: DOCUMENTED
@@ -245,6 +246,21 @@ evidence:
         - "Container Manager supports multi-container projects using Compose files"
       does_not_prove:
         - "DS220+ is compatible with every image or Compose feature"
+    - id: dsm_local_access_without_synology_cloud
+      state: DOCUMENTED
+      source: "https://global.download.synology.com/download/Document/Software/UserGuide/Os/DSM/7.2/enu/Syno_UsersGuide_NAServer_7_2_enu.pdf"
+      additional_sources:
+        - "https://kb.synology.com/en-global/DSM/help/ContainerManager/docker_desc"
+      proves:
+        - "after DSM installation, DSM user accounts can sign in from the same local network using the NAS IP address and port 5000"
+        - "Synology Account is described separately from DSM user accounts as the account for Synology online services such as QuickConnect, DDNS and C2"
+        - "QuickConnect is an Internet-access service that is enabled separately"
+        - "Container Manager is a DSM environment for building and running applications inside isolated software containers"
+      does_not_prove:
+        - "first-time DSM installation can be completed without internet access"
+        - "DSM, Container Manager, or container-image updates can be completed without internet access"
+        - "every container workload has no non-Synology internet dependency"
+        - "AXM locally verified WAN-disconnected Container Manager runtime on DS220+"
     - id: cpu_64_bit_capability
       state: DOCUMENTED
       source: "https://www.intel.com/content/www/us/en/products/sku/197307/intel-celeron-processor-j4025-4m-cache-up-to-2-90-ghz/specifications.html"
@@ -273,5 +289,6 @@ notes:
   - "This is the first NAS/storage-appliance record and the first census record with a manufacturer-supported container execution surface."
   - "It also adds a recovery distinction different from the Roborock case: DSM reinstallation may preserve stored data, while a separate factory-reset path erases it. Recovery quality therefore needs both target state and data-impact semantics."
   - "Structured recovery.paths now preserves the evidence-linked Mode 1 and Mode 2 transitions without pretending application/container state survival is known."
+  - "Manufacturer DSM documentation now grounds basic local DSM access without Synology online services; provisioning/update independence and WAN-disconnected container behavior remain unverified."
   - "No local container test, used-market sample, drive-cost model or AXM power measurement has been performed."
   - "The DS220+ is a plausible candidate for the existing low-power local registry contract, but the repo should not mark it a contract winner until market cost, storage cost, fully offline provisioning and restart behavior are grounded."
