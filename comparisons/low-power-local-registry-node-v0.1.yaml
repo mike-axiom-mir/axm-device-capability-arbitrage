@@ -1,7 +1,7 @@
 comparison_version: "0.1"
 comparison_id: low-power-local-registry-node-v0.1
 contract_id: low-power-local-registry-node
-checked_at: "2026-09-14"
+checked_at: "2026-09-15"
 status: evidence_incomplete
 decision: no_ranked_winner
 
@@ -124,7 +124,7 @@ candidates:
       - "replacement availability / remaining-life evidence"
 
   - record_id: synology-ds220-plus
-    hard_requirement_eligibility: blocked_by_unknowns
+    hard_requirement_eligibility: conditional
     hard_requirements:
       - id: custom_code_execution
         contract_path: required.execution.custom_code
@@ -166,11 +166,11 @@ candidates:
         note: "Unattended restart depends on configured Power Recovery behavior."
       - id: no_vendor_cloud_runtime_requirement
         contract_path: required.locality.cloud_required
-        status: unknown
+        status: pass
         record_paths:
           - locality.vendor_cloud_required_for_basic_operation
           - locality.state
-        note: "Local NAS/container operation exists, but the current record still leaves vendor-cloud requirement for basic operation unknown."
+        note: "Synology's DSM 7.2 guide documents same-LAN DSM sign-in by NAS IP with a DSM user account while describing Synology Account/QuickConnect as separate online services. This grounds no Synology-vendor-cloud requirement for basic post-provisioning DSM operation; internet-free provisioning/update and WAN-disconnected workload behavior remain unverified."
       - id: documented_recovery
         contract_path: required.recovery.documented_recovery_path
         status: pass
@@ -225,7 +225,7 @@ candidates:
           - economics.setup_minutes
         note: "Repeat provisioning time has not been measured."
     ranking_gaps:
-      - "prove basic local runtime without vendor-cloud dependency"
+      - "run the shared workload after provisioning with WAN unavailable and preserve exactly which local functions remain available"
       - "count a minimal required drive configuration separately from chassis cost"
       - "refresh/expand the bare-chassis EU market cohort and count shipping/accessory state for ranking-ready acquisition cost"
       - "run workloads/low-power-local-registry-v0.1 in the evaluated DSM/container state and record image/binary, RAM/CPU/state footprint"
@@ -367,7 +367,7 @@ decision_blockers:
 provisional_findings:
   - "Archer C7 v5 currently satisfies every hard field in the capability contract as represented by the census record; this is record-level eligibility, not local workload verification."
   - "Wyse 3040 satisfies the hard contract once a suitable AC Recovery policy is configured; exact used-unit eMMC/WLAN configuration still matters for economics and deployment."
-  - "DS220+ is not yet hard-requirement evidence-ready because its basic-runtime vendor-cloud dependency remains unknown; durable state also requires separately counted drives."
+  - "DS220+ is no longer blocked by Synology-cloud runtime uncertainty at the documentation layer: DSM local-LAN sign-in is documented independently of Synology online-account services. It remains conditional because durable state requires separately counted drives and unattended restart depends on Power Recovery configuration; WAN-disconnected execution of the shared workload remains unverified."
   - "The first EU listing snapshot shows distinct observed acquisition bands: Archer C7 v5 exact-revision private asks €20-€40 (median €32), Wyse 3040 private asks €20-€40 (median €29.50), and DS220+ bare-chassis/no-drive mixed-RAM listings €195-€279 (median €239.50). These are sample statistics, not transaction-price truth or total-useful-cost rankings."
   - "A common executable workload now exists and is host-CI verified; candidate compatibility, resource footprint, power, autostart, and hard-power-loss behavior remain uncollected."
   - "No ranked winner is defensible until the shared workload is run on the candidates and comparable power, provisioning and restart evidence exists."
