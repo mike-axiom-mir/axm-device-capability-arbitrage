@@ -6,7 +6,7 @@
 
 `tools/validate_evidence_packets.py` already proves that every device record has exactly one narrative evidence packet and that the packet agrees with the YAML record on checked date, overall evidence state, and local-verification status.
 
-That is necessary, but it leaves a source-chain gap: a machine-readable `evidence.claims[].source` can be changed, removed, or replaced while the narrative packet still points at an older source. Both files can remain structurally valid while no longer describing the same evidence trail.
+That is necessary, but it leaves a source-chain gap: a machine-readable `evidence.claims[].source` or `evidence.claims[].additional_sources[]` entry can be changed, removed, or replaced while the narrative packet still points at an older evidence trail. Both files can remain structurally valid while no longer preserving the same declared provenance.
 
 This gate closes that gap.
 
@@ -15,8 +15,8 @@ This gate closes that gap.
 For every device under `devices/**/*.yaml`:
 
 1. locate the corresponding `evidence/**/*.md` packet through its metadata device reference;
-2. read every machine-readable `evidence.claims[].source` value;
-3. require that the primary source is still discoverable in that device's narrative packet.
+2. read every machine-readable claim's required primary `source` plus every optional `additional_sources[]` entry;
+3. require that **every declared source** is still discoverable in that device's narrative packet.
 
 For HTTP(S) sources, comparison is conservative:
 
@@ -35,7 +35,7 @@ Passing this validator does **not** prove that:
 - a source is authoritative, trustworthy, or current;
 - the narrative interpretation of the source is correct;
 - a source proves every machine-readable claim attached to it;
-- additional/supporting sources are complete;
+- undeclared additional/supporting sources are complete;
 - local verification occurred;
 - any evidence state should be promoted.
 
@@ -43,27 +43,40 @@ Those questions remain owned by the claim-scope, structured-evidence-strength, p
 
 The validator deliberately performs no network fetch. CI therefore remains reproducible even if an external site is temporarily unavailable.
 
-## Why primary sources first
+## Why all declared sources are now protected
 
-The current machine-readable record contract requires one primary `source` for every evidence claim. `additional_sources` is optional and is already checked structurally by `tools/validate_evidence_claim_scope.py`.
+The first version of this gate protected the required primary `source` only. That was the smallest safe continuity invariant.
 
-This gate therefore starts with the smallest stable continuity invariant: the required primary source may not silently disappear from the durable narrative packet.
+The census now has machine-readable claims that intentionally preserve more than one source. For example, the TI-Nspire CX II-T record uses `additional_sources` to keep a product-family page alongside the primary specification and to keep a second manufacturer exam guide alongside the primary regional exam-mode page.
 
-A later extension may also require all `additional_sources` to be mirrored when enough evidence shows that doing so improves continuity without making packets brittle or duplicative.
+Once a supporting source is explicitly declared in the machine-readable claim, silently losing it from the narrative packet is still provenance loss. The gate therefore now protects the whole declared source set rather than only its first entry.
+
+This does **not** require researchers to invent a supporting source where none is justified. `additional_sources` remains optional; the validator only preserves evidence references that the record actually declares.
 
 ## Failure examples
 
 The gate fails if:
 
 ```text
-YAML claim source
+YAML claim primary source
   -> https://vendor.example/manual-v2
 
 narrative evidence packet
   -> only preserves https://vendor.example/manual-v1
 ```
 
-It also fails if a machine-readable claim is added with a source that never appears in the corresponding narrative packet.
+It also fails when the primary source is preserved but a declared supporting source silently disappears:
+
+```text
+YAML claim
+  source: https://vendor.example/specification
+  additional_sources:
+    - https://vendor.example/recovery-guide
+
+narrative evidence packet
+  -> specification is present
+  -> recovery guide is absent
+```
 
 It does not fail merely because the packet uses a URL fragment and the YAML stores the same source document without that fragment, or vice versa.
 
@@ -79,7 +92,7 @@ The GitHub validation workflow runs this immediately after evidence-packet synch
 
 ### Truth
 
-Machine-readable evidence cannot silently point somewhere different from the narrative evidence trail.
+Machine-readable evidence cannot silently point somewhere different from the narrative evidence trail, including supporting sources that may carry a separate part of the claim boundary.
 
 ### Agency / non-domination
 
@@ -87,8 +100,8 @@ The gate adds no hidden control and performs no external action. It only validat
 
 ### Continuity
 
-A future human or machine can follow the primary source from either representation without depending on chat history or a temporary operator.
+A future human or machine can follow every declared claim source from either representation without depending on chat history or a temporary operator.
 
 ### Wisdom before speed
 
-The guard checks the smallest durable invariant and intentionally avoids live-network availability tests or universal source-quality scoring that would create brittle or overreaching CI.
+The guard protects declared provenance without adding live-network availability tests, source-ranking heuristics, or a requirement to collect unnecessary supporting sources. It strengthens reproducibility without pretending to solve source quality mechanically.

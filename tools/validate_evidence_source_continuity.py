@@ -3,8 +3,9 @@
 
 The existing packet-sync gate proves that every device has exactly one evidence packet
 and that its metadata agrees with the YAML record. This gate closes a different gap:
-for every evidence claim, the claim's primary source must still be discoverable in that
-device's narrative evidence packet.
+for every evidence claim, every declared source (the required primary source plus any
+optional additional sources) must still be discoverable in that device's narrative
+evidence packet.
 
 This is intentionally a continuity check, not a web verifier. It does not fetch sources,
 judge source quality, or promote evidence strength.
@@ -103,10 +104,35 @@ def source_is_preserved(source: str, packet_text: str, packet_urls: set[str]) ->
     return source in packet_text
 
 
+def declared_claim_sources(claim: dict[str, Any], context: str) -> list[tuple[str, str]]:
+    """Return every source the machine-readable claim explicitly declares.
+
+    Source list shape is also validated by validate_evidence_claim_scope.py. Rechecking
+    the small amount needed here keeps this validator safe to run independently and
+    prevents a malformed additional_sources value from being silently ignored.
+    """
+
+    sources = [("primary", require_string(claim.get("source"), f"{context}.source"))]
+    additional = claim.get("additional_sources")
+    if additional is None:
+        return sources
+    if not isinstance(additional, list):
+        raise ValidationError(f"{context}.additional_sources must be a list when present")
+
+    for source_index, source in enumerate(additional):
+        sources.append(
+            (
+                f"additional[{source_index}]",
+                require_string(source, f"{context}.additional_sources[{source_index}]"),
+            )
+        )
+    return sources
+
+
 def validate_device(
     path: Path,
     packets: dict[str, tuple[Path, str, set[str]]],
-) -> tuple[int, str]:
+) -> tuple[int, int, str]:
     rel = path.relative_to(ROOT).as_posix()
     data = load_yaml(path)
     evidence = data.get("evidence")
@@ -120,19 +146,23 @@ def validate_device(
         raise ValidationError(f"no narrative evidence packet found for {rel}")
     packet_path, packet_text, packet_urls = packets[rel]
 
+    source_count = 0
     for index, claim in enumerate(claims):
         context = f"evidence.claims[{index}]"
         if not isinstance(claim, dict):
             raise ValidationError(f"{context} must be a mapping")
         claim_id = require_string(claim.get("id"), f"{context}.id")
-        source = require_string(claim.get("source"), f"{context}.source")
-        if not source_is_preserved(source, packet_text, packet_urls):
-            raise ValidationError(
-                f"claim {claim_id!r} primary source is missing from "
-                f"{packet_path.relative_to(ROOT)}: {source}"
-            )
+        sources = declared_claim_sources(claim, context)
+        source_count += len(sources)
 
-    return len(claims), packet_path.relative_to(ROOT).as_posix()
+        for source_kind, source in sources:
+            if not source_is_preserved(source, packet_text, packet_urls):
+                raise ValidationError(
+                    f"claim {claim_id!r} {source_kind} source is missing from "
+                    f"{packet_path.relative_to(ROOT)}: {source}"
+                )
+
+    return len(claims), source_count, packet_path.relative_to(ROOT).as_posix()
 
 
 def main() -> int:
@@ -149,20 +179,25 @@ def main() -> int:
 
     errors: list[str] = []
     claim_count = 0
+    source_count = 0
 
     for path in device_paths:
         rel = path.relative_to(ROOT)
         try:
-            count, packet_rel = validate_device(path, packets)
-            claim_count += count
-            print(f"PASS {rel}: {count} primary claim source(s) preserved in {packet_rel}")
+            claims, sources, packet_rel = validate_device(path, packets)
+            claim_count += claims
+            source_count += sources
+            print(
+                f"PASS {rel}: {claims} claim(s), {sources} declared source(s) "
+                f"preserved in {packet_rel}"
+            )
         except (ValidationError, OSError) as exc:
             errors.append(f"FAIL {rel}: {exc}")
 
     print()
     print(
-        f"Checked primary-source continuity for {claim_count} evidence claim(s) "
-        f"across {len(device_paths)} device record(s)."
+        f"Checked declared-source continuity for {claim_count} evidence claim(s) and "
+        f"{source_count} declared source(s) across {len(device_paths)} device record(s)."
     )
 
     if errors:
@@ -172,8 +207,8 @@ def main() -> int:
         return 1
 
     print(
-        "Every machine-readable evidence claim preserves its primary source in the "
-        "corresponding narrative evidence packet."
+        "Every machine-readable evidence claim preserves all of its declared sources "
+        "in the corresponding narrative evidence packet."
     )
     return 0
 
