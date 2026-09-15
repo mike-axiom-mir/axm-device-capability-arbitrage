@@ -7,6 +7,12 @@ Tweakers has a separate provenance dimension: Pricewatch, Vraag & Aanbod,
 community/forum, review, or editorial. This gate keeps those meanings separate
 and prevents community or aggregate Pricewatch pages from being silently
 represented as direct acquisition-price observations.
+
+Vraag & Aanbod seller class is also treated as evidence, not an inference. The
+listing must preserve a bounded seller_class plus an explicit basis for that
+classification. When the public page does not establish private/business/dealer
+status, seller_class must remain ``unknown`` rather than being guessed from an
+account name, first-person wording, history, location, or number of listings.
 """
 
 from __future__ import annotations
@@ -23,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TWEAKERS_VA_MARKETPLACE = "Tweakers_Vraag_En_Aanbod"
 TWEAKERS_VA_SOURCE_SURFACE = "tweakers_vraag_en_aanbod_listing"
 TWEAKERS_VA_PRICE_TYPES = {"asking", "displayed_sold_listing_price"}
+TWEAKERS_VA_SELLER_CLASSES = {"private", "business", "dealer", "unknown"}
 
 
 class ValidationError(Exception):
@@ -130,7 +137,19 @@ def validate_tweakers_observation(context: str, observation: dict[str, Any]) -> 
                 "the visible listing date"
             )
 
-        require_string(observation.get("seller_class"), f"{context}.seller_class")
+        seller_class = require_string(
+            observation.get("seller_class"), f"{context}.seller_class"
+        )
+        if seller_class not in TWEAKERS_VA_SELLER_CLASSES:
+            allowed = ", ".join(sorted(TWEAKERS_VA_SELLER_CLASSES))
+            raise ValidationError(
+                f"{context}: Tweakers Vraag & Aanbod seller_class {seller_class!r} "
+                f"must be one of: {allowed}"
+            )
+        require_string(
+            observation.get("seller_class_basis"), f"{context}.seller_class_basis"
+        )
+
         require_string(observation.get("model_identity"), f"{context}.model_identity")
         configuration = observation.get("configuration")
         if not isinstance(configuration, dict) or not configuration:

@@ -62,6 +62,9 @@ jobs:
       - name: Validate market snapshots
         run: python tools/validate_market_snapshots.py
 
+      - name: Test Tweakers market-provenance gate
+        run: python tools/test_tweakers_market_provenance.py
+
       - name: Gate Tweakers market provenance
         run: python tools/validate_tweakers_market_provenance.py
 

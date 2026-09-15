@@ -21,7 +21,7 @@ method:
   aggregation: cohort_descriptive_only
   revision_rule: "Exact model/revision is required when the comparison record is revision-specific."
   configuration_rule: "Material configuration differences remain attached to each observation and are not silently normalized."
-  seller_rule: "Private-used and dealer-refurbished offers remain separate cohorts."
+  seller_rule: "Seller class remains evidence-bounded; unknown is preserved when a source does not establish it, and private/dealer cohorts stay separate when evidenced."
   sold_rule: "A marketplace label such as sold does not prove the final transaction price equaled the displayed price."
   missing_rule: "No listing observation may be converted into a permanent market price or a ranked winner."
 
@@ -215,7 +215,7 @@ candidates:
   - record_id: synology-ds220-plus
     cohorts:
       - id: used_bare_chassis_mixed_ram
-        condition_scope: used_private_bare_chassis_no_drives
+        condition_scope: used_private_or_unspecified_seller_bare_chassis_no_drives
         sample_count: 6
         descriptive_statistics:
           low_eur: 195
@@ -293,7 +293,8 @@ candidates:
             checked_at: "2026-09-14"
             price_eur: 195
             price_type: asking
-            seller_class: private
+            seller_class: unknown
+            seller_class_basis: "The public listing shows account identity, location, history and first-person ownership language, but it does not explicitly establish private, business or dealer seller class."
             model_identity: "Synology DS220+"
             configuration:
               installed_ram_gb: 6
@@ -301,7 +302,7 @@ candidates:
               power_supply: included
             source: "https://tweakers.net/aanbod/4197732/synology-diskstation-ds220%2B-6gb-ram-zonder-harde-schijven.html"
             source_scope: direct_listing
-            note: "6 GB RAM, no drives; box and power supply stated as included."
+            note: "6 GB RAM, no drives; box and power supply stated as included. Seller class remains unknown because the public page does not explicitly classify the advertiser."
           - id: ds220plus-de-2026-08-18-220
             marketplace: Kleinanzeigen
             country: DE

@@ -1,14 +1,14 @@
-# Tweakers Source Method — v0.2
+# Tweakers Source Method — v0.3
 
 **Status:** Supporting research method.  
-**Purpose:** Use the Dutch Tweakers ecosystem as a strong local discovery, specification-cross-check and market-observation source without promoting community anecdotes into verified hardware truth.
+**Purpose:** Use the Dutch Tweakers ecosystem as a strong local discovery, specification-cross-check and market-observation source without promoting community anecdotes or inferred seller identity into verified hardware/market truth.
 
 ## 1. Why Tweakers matters here
 
 Tweakers combines several surfaces that are unusually useful for device-capability arbitrage in the Netherlands:
 
 - **Pricewatch** — product identity, variants, specifications, price history/current retail context and linked user reviews;
-- **Vraag & Aanbod** — dated Dutch used-market offers, often with seller class, condition, location and configuration details;
+- **Vraag & Aanbod** — dated Dutch used-market offers, often with condition, location, configuration details and sometimes seller-class evidence;
 - **community / forum discussions** — device-specific modifications, hidden interfaces, firmware tricks, power/thermal observations, failure modes, recovery notes and practical ownership experience.
 
 Those surfaces solve different research problems and must not be flattened into one evidence class.
@@ -39,7 +39,8 @@ Preserve each observation as a dated listing observation, including where visibl
 exact model / revision
 configuration
 asking price
-seller class
+seller class or explicit unknown
+seller-class evidence basis
 condition
 included accessories
 location / market region
@@ -50,7 +51,16 @@ source URL
 
 Treat displayed prices as asking prices unless the page explicitly establishes another bounded price type.
 
-Do not merge private used, dealer refurbished, bare chassis, bundled storage, or materially different configurations into one cohort merely to enlarge the sample.
+Seller class is an evidence claim, not a guess. A username, location, first-person wording, account age, karma score, number of advertisements or the absence of a visible company name does **not** by itself prove that a seller is private. Likewise, a professional-looking description does not prove business/dealer status. When the public listing does not explicitly establish `private`, `business`, or `dealer`, preserve:
+
+```yaml
+seller_class: unknown
+seller_class_basis: "Public listing does not explicitly establish seller class."
+```
+
+If a non-unknown seller class is recorded, preserve the visible basis that supports it. The current Tweakers provenance validator requires this basis mechanically but does not fetch the listing or judge whether the prose is true; human/machine review still owns that evidence interpretation.
+
+Do not merge private used, dealer refurbished, seller-unknown, bare chassis, bundled storage, or materially different configurations into one cohort merely to enlarge the sample when the distinction matters to the comparison.
 
 ### Community / forum threads
 
@@ -121,7 +131,7 @@ tweakers_news_or_editorial
 
 Where a record shape can carry additive metadata without changing existing semantics, `source_surface` is the preferred field name.
 
-Example:
+Example when seller class is not explicitly established by the public page:
 
 ```yaml
 marketplace: Tweakers_Vraag_En_Aanbod
@@ -129,7 +139,8 @@ listed_at: "2026-08-18"
 checked_at: "2026-09-14"
 price_eur: 195
 price_type: asking
-seller_class: private
+seller_class: unknown
+seller_class_basis: "Public listing identifies the account and location but does not explicitly establish private, business or dealer status."
 model_identity: "Synology DS220+"
 configuration:
   installed_ram_gb: 6
@@ -160,19 +171,23 @@ Pricewatch can provide useful retail and historical context beside used-market o
 
 - Tweakers `/aanbod/` observations must remain identifiable as `Tweakers_Vraag_En_Aanbod`;
 - they must use `source_scope: direct_listing`;
-- their visible listing date, seller class, model identity and configuration must remain explicit;
+- their visible listing date, model identity and configuration must remain explicit;
+- `seller_class` is restricted to `private`, `business`, `dealer`, or `unknown`;
+- every Tweakers Vraag & Aanbod observation must preserve a non-empty `seller_class_basis` explaining what supports the classification or why it remains unknown;
 - their current price type must be an asking price or a displayed sold-listing price, not a fabricated transaction price;
 - optional `source_surface`, when present, must agree with the URL;
 - Pricewatch pages are rejected as raw v0.1 acquisition observations because the current observation vocabulary cannot faithfully represent the aggregate/history surface;
 - Tweakers forum/community/review/editorial pages are rejected as raw acquisition-price observations.
 
-The gate validates provenance shape only. It does not fetch the source, prove seller claims, establish a transaction price, or promote community evidence.
+The gate validates provenance shape only. It does not fetch the source, prove seller claims, establish a transaction price, or promote community evidence. A non-empty `seller_class_basis` is traceability, not automatic corroboration.
 
 ## 5. Example already relevant to the repo
 
-The current low-power-registry snapshot already contains a direct Tweakers Vraag & Aanbod observation for a DS220+ bare chassis with an explicit RAM configuration, no drives, seller class, listing date, checked date and exact source URL.
+The current low-power-registry snapshot contains a direct Tweakers Vraag & Aanbod observation for a DS220+ bare chassis with 6 GB RAM, no drives, visible listing date, checked date and exact source URL.
 
-That is the intended pattern: preserve the exact offered configuration and the observation scope instead of collapsing everything to `DS220+ = one price`.
+A re-check of the public page on 2026-09-15 showed the advertiser account name, Dendermonde location, account history and first-person ownership language, but no explicit private/business/dealer classification. The snapshot therefore now preserves `seller_class: unknown` and an evidence-basis note instead of silently interpreting those clues as `private`.
+
+That is the intended pattern: preserve exactly what the listing establishes and keep uncertainty explicit rather than collapsing everything to `DS220+ = one price` or `ordinary-looking account = private seller`.
 
 Pricewatch also exposes an important configuration distinction around the DS220+ family: bare chassis and drive bundles/capacities are separate products/offers. Use that to discover and cross-check configuration, not to erase cohort boundaries.
 
@@ -204,14 +219,14 @@ forum anecdote
 
 ## 7. Root gate
 
-**Truth** — preserve source type, capture mode, evidence surface, date, exact model/configuration and uncertainty; community reports remain secondary until corroborated.  
+**Truth** — preserve source type, capture mode, evidence surface, date, exact model/configuration, seller-class basis and uncertainty; community reports remain secondary until corroborated.  
 **Agency / non-domination** — observe public information only; do not bypass account/access controls, pressure sellers, or modify devices not owned/authorized by the operator.  
-**Continuity** — record exact URLs, listed/checked dates and claim scope in repository evidence rather than relying on remembered forum knowledge.  
+**Continuity** — record exact URLs, listed/checked dates, seller-class basis and claim scope in repository evidence rather than relying on remembered marketplace/forum knowledge.  
 **Wisdom before speed** — use Tweakers to widen discovery and sharpen Dutch market evidence, but do not let rich community information shortcut recovery, safety, power or reproducibility requirements.
 
 ## 8. One-line rule
 
-> **Use Tweakers broadly for discovery and Dutch market reality; preserve capture mode separately from source surface, and promote only the exact claims stronger evidence can actually carry.**
+> **Use Tweakers broadly for discovery and Dutch market reality; preserve capture mode separately from source surface, preserve seller class only to the strength of visible evidence, and promote only the exact claims stronger evidence can actually carry.**
 
 ## Initial public surfaces checked
 
@@ -220,4 +235,5 @@ forum anecdote
 - https://tweakers.net/servers/aanbod/
 - https://tweakers.net/opslag/aanbod/
 - https://tweakers.net/netwerkaccessoires/aanbod/
+- Example DS220+ direct listing: https://tweakers.net/aanbod/4197732/synology-diskstation-ds220%2B-6gb-ram-zonder-harde-schijven.html
 - Example DS220+ bare-chassis Pricewatch page: https://tweakers.net/pricewatch/1551242/synology-diskstation-ds220%2B-zonder-harde-schijven.html
