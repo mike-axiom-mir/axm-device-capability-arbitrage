@@ -245,6 +245,7 @@ The structure should grow only when evidence or use requires it.
 - [`COST_MODEL.md`](COST_MODEL.md) — total useful cost instead of sticker-price ranking.
 - [`SAFETY_AND_RECOVERY.md`](SAFETY_AND_RECOVERY.md) — modification depth, authorization and recovery boundaries.
 - [`research/RESEARCH_SEED_v0.1.md`](research/RESEARCH_SEED_v0.1.md) — preserved origin direction before the split.
+- [`research/MF800_MODEM_THING_ARBITRAGE_CASE.md`](research/MF800_MODEM_THING_ARBITRAGE_CASE.md) — external reference case for integrated-substrate arbitrage: a cheap 4G hotspot reused as the compute/radio/battery foundation of a Linux handheld, with its adaptation costs and unresolved boundaries preserved.
 - [`NEXT_BUILD.md`](NEXT_BUILD.md) — grounded next-build priorities and stop conditions.
 
 ## Current census records
