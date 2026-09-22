@@ -55,6 +55,42 @@ Examples:
 
 Only count accessories required for the target role or provisioning path.
 
+### Integration dividend — descriptive, not a fake credit
+
+A mass-produced donor can include useful integration that would otherwise require separate boards, modules or engineering work.
+
+Examples:
+
+- battery + charging path;
+- regulators / power sequencing;
+- cellular, Wi-Fi or Bluetooth radios;
+- antennas;
+- USB PHY / connector;
+- display and controls;
+- enclosure and thermal solution;
+- factory-tested board assembly.
+
+Track this as an **integration dividend** only to explain why a donor is interesting. Do not subtract hypothetical retail BOM prices from Total Useful Cost.
+
+Instead preserve two lists:
+
+```yaml
+integration_dividend:
+  useful_included_capabilities: []
+  avoided_separate_parts_or_integration: []
+
+adaptation_cost:
+  required_new_parts: []
+  destructive_work: unknown
+  driver_or_device_tree_work: unknown
+  repeatability: unknown
+  variant_uncertainty: unknown
+```
+
+The dividend is real only when the included capabilities matter to the target goal. Adapter hardware, reverse engineering, unreliable suspend, destructive modification or inconsistent marketplace variants can still make the donor a poor arbitrage choice.
+
+Reference pressure case: `research/MF800_MODEM_THING_ARBITRAGE_CASE.md`.
+
 ### Electricity
 
 Use measured power when possible.
