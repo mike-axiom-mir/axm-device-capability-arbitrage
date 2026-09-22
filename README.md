@@ -266,7 +266,7 @@ The important verified finding is the **execution surface**: a working public im
 
 The exact v5 hardware is represented as a small general Linux node after OpenWrt installation: QCA9563 / MIPS, 128 MB RAM, 16 MB flash, five Gigabit Ethernet ports, dual-band Wi-Fi, USB, serial, and a documented U-Boot/TFTP recovery path. Market price and measured power remain deliberately unfilled until evidence is collected.
 
-Current census count: **2 / 25 devices, 2 / 8 marketed categories**.
+The two records above are early examples only. Current grounded census count: **21 / 25 devices across 21 distinct marketed categories**. See [`CENSUS.md`](CENSUS.md) for the live record set.
 
 ## Example capability contract
 
