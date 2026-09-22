@@ -51,6 +51,33 @@ For each candidate collect, where evidence exists:
 
 Unknown stays `unknown`. Do not fill gaps from a neighboring model unless the record explicitly marks the inference.
 
+### Integrated-substrate check
+
+Do not value a donor only by CPU/RAM. Ask what integration mass production has already paid for.
+
+Capture useful pre-integrated functions such as:
+
+- battery, charger and power sequencing;
+- cellular/Wi-Fi/Bluetooth radios and antennas;
+- USB host/device hardware;
+- SIM path;
+- display, controls, audio and sensors;
+- enclosure and thermal solution;
+- boot/recovery hardware;
+- accessible board-level buses or test pads.
+
+Then capture the adaptation cost required to reuse them:
+
+- helper PCB/components;
+- level shifting or power conversion;
+- cables/connectors;
+- soldering or destructive mechanical work;
+- driver/device-tree work;
+- signal-integrity constraints;
+- variant uncertainty.
+
+The MF800 modem-thing case in `research/MF800_MODEM_THING_ARBITRAGE_CASE.md` is the reference pressure case. It demonstrates why an inexpensive finished consumer device can be a more valuable donor substrate than its product label suggests, while also showing how adapter hardware, physical modification, suspend behavior and unit consistency can erase apparent savings.
+
 ## 3. Find the execution surface
 
 A chip inside a box is not enough. Determine how code actually reaches execution.

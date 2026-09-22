@@ -245,6 +245,7 @@ The structure should grow only when evidence or use requires it.
 - [`COST_MODEL.md`](COST_MODEL.md) — total useful cost instead of sticker-price ranking.
 - [`SAFETY_AND_RECOVERY.md`](SAFETY_AND_RECOVERY.md) — modification depth, authorization and recovery boundaries.
 - [`research/RESEARCH_SEED_v0.1.md`](research/RESEARCH_SEED_v0.1.md) — preserved origin direction before the split.
+- [`research/MF800_MODEM_THING_ARBITRAGE_CASE.md`](research/MF800_MODEM_THING_ARBITRAGE_CASE.md) — external reference case for integrated-substrate arbitrage: a cheap 4G hotspot reused as the compute/radio/battery foundation of a Linux handheld, with its adaptation costs and unresolved boundaries preserved.
 - [`NEXT_BUILD.md`](NEXT_BUILD.md) — grounded next-build priorities and stop conditions.
 
 ## Current census records
@@ -265,7 +266,7 @@ The important verified finding is the **execution surface**: a working public im
 
 The exact v5 hardware is represented as a small general Linux node after OpenWrt installation: QCA9563 / MIPS, 128 MB RAM, 16 MB flash, five Gigabit Ethernet ports, dual-band Wi-Fi, USB, serial, and a documented U-Boot/TFTP recovery path. Market price and measured power remain deliberately unfilled until evidence is collected.
 
-Current census count: **2 / 25 devices, 2 / 8 marketed categories**.
+The two records above are early examples only. Current grounded census count: **21 / 25 devices across 21 distinct marketed categories**. See [`CENSUS.md`](CENSUS.md) for the live record set.
 
 ## Example capability contract
 
